@@ -1,7 +1,11 @@
 Package: TCGAmisc
-Title: Additional Functions Atop RTCGAToolbox
+Title: Additional Functions Atop RTCGAToolbox for MultiAssayExperiment
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: c(
+  person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
+  person("Lucas", "Schiffer", role = "aut"),
+  person("WaldronLab", role = "aut")
+  )
 Description: A suite of functions aimed at simplifying and making the use of TCGA data more trival, emerging from development of the bioconductor MultiAssayExperiment package.
 Depends:
     R (>= 3.4.0)
@@ -12,5 +16,6 @@ Suggests:
     testthat,
     covr
 Imports:
+    MultiAssayExperiment,
     RTCGAToolbox
 RoxygenNote: 5.0.1
