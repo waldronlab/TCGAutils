@@ -1,21 +1,27 @@
 Package: TCGAmisc
-Title: Additional Functions Atop RTCGAToolbox for MultiAssayExperiment
-Version: 0.0.0.9000
+Title: Helper functions for creating a MultiAssayExperiment instance with TCGA data
+Version: 0.0.1
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "aut"),
   person("WaldronLab", role = "aut")
   )
-Description: A suite of functions aimed at simplifying and making the use of TCGA data more trival, emerging from development of the bioconductor MultiAssayExperiment package.
+Description: A suite of functions aimed at simplifying and making the use of TCGA data manageable.
 Depends:
-    R (>= 3.4.0)
+    R (>= 3.3.0)
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Suggests:
     testthat,
-    covr
 Imports:
     MultiAssayExperiment,
-    RTCGAToolbox
+    RTCGAToolbox,
+    GenomicRanges,
+    S4Vectors,
+    plyr,
+    readr,
+    Biobase,
+    GenomeInfoDb,
+    httr
 RoxygenNote: 5.0.1
