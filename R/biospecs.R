@@ -20,9 +20,9 @@
 #' @export biospecs
  biospecs <- function(barcodes) {
   sample_type <- as.character(
-    sampleType[,"Definition"][
+    sampleTypes[,"Definition"][
       match(as.numeric(barcode(barcodes, sample = TRUE, part = FALSE)),
-            sampleType[,"Code"])])
+            sampleTypes[,"Code"])])
   tb <- data.frame(patientids = barcode(barcodes),
                    sample_type,
                    sample_code = as.character(
