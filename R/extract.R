@@ -119,8 +119,8 @@ extract <- function(object, type = NULL) {
     } else {
         if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
             annote <- dm[, !grepl("TCGA", names(dm))]
-            isCharRow <- all(grepl("[0-9]", rownames(dm)))
-            if (isCharRow) {
+            isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
+            if (isNumRow) {
                 geneSymbols <- annote[, grep("symbol", names(annote),
                                              ignore.case = TRUE, value = TRUE)]
                 rNames <- geneSymbols
