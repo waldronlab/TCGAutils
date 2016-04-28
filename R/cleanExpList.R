@@ -3,7 +3,7 @@
 #' This function is intended to drop any unmatched samples from all of the
 #' listed experiments that are not present in the rownames of the pheno data.
 #'
-#' @param exlist A named \code{list} of experiments compatible with the
+#' @param exlist A named \linkS4class{Elist} of experiments compatible with the
 #' MultiAssayExperiment API
 #' @param mPheno A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
@@ -13,15 +13,18 @@
 #'
 #' @export cleanExpList
 cleanExpList <- function(exlist, mPheno) {
-    sampNames <- lapply(exlist, colnames)
-    PatientsInSamp <- lapply(sampNames,
-                             function(bcode) {
-                                 unique(barcode(bcode))
-                             })
-    patientID <- rownames(mPheno)
-    validIDs <- Reduce(intersect, PatientsInSamp, patientID)
-    logicSub <- lapply(exlist, function(elem) {
-        barcode(colnames(elem)) %in% validIDs
+    exlist <- MultiAssayExperiment::Elist(exlist)
+    sampNames <- as.list(colnames(exlist))
+    patientIDS <- tolower(rownames(mPheno))
+    filler <- substr(patientIDS[1], 5, 5)
+    if (filler != "-") {
+        patientIDS <- gsub(paste0("\\", filler), "-", patientIDS)
+    }
+    logicSub <- lapply(sampNames, function(assay) {
+        barcode(assay) %in% patientIDS
     })
-    return(Map(function(x, y) {x[, y]}, x = exlist, y = logicSub))
+    newElist <- mapply(function(x, y) {x[, y]}, x = exlist, y = logicSub,
+                       SIMPLIFY = FALSE)
+    newElist <- MultiAssayExperiment::Elist(newElist)
+    return(newElist)
 }
