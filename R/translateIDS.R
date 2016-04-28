@@ -1,13 +1,13 @@
 #' Translate TCGA Barcode to Universally Unique Identifiers and vice versa
-#' 
+#'
 #' This function allows the user to enter a character vector of identifiers
-#' to translate from barcodes to UUIDs and vice versa. 
-#' 
+#' to translate from barcodes to UUIDs and vice versa.
+#'
 #' @param identifier A \code{character} vector of either TCGA
 #' barcodes or UUID identifiers
-#' 
+#'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
-#' 
+#'
 #' @return A \code{data.frame} of original and translated identifiers
 #' @export translateIDS
 #' @importFrom httr POST content content_type

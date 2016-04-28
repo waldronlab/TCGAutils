@@ -1,6 +1,6 @@
 Package: TCGAmisc
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA data
-Version: 0.0.11
+Version: 0.0.21
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "aut"),

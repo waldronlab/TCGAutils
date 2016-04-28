@@ -42,6 +42,7 @@ extract <- function(object, type = NULL) {
     if (!is.null(type)) {
         if (is.character(type)) {
             type <- tolower(gsub("_", "", type))
+            type <- gsub("s$", "", type)
         } else {
             stop("Data type must be a character string")
         }
@@ -52,7 +53,7 @@ extract <- function(object, type = NULL) {
         gsub("_", "",
              c("RNAseq_Gene", "miRNASeq_Gene", "RNAseq2_Gene_Norm",
                "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH", "Methylation",
-               "Mutation", "mRNA_Array", "miRNA_Array", "RPPA")))
+               "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array")))
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     if (type %in% choices) {
         slotreq <- grep(paste0("^", type) , slotNames(object),
@@ -119,8 +120,8 @@ extract <- function(object, type = NULL) {
     } else {
         if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
             annote <- dm[, !grepl("TCGA", names(dm))]
-            isCharRow <- all(grepl("[0-9]", rownames(dm)))
-            if (isCharRow) {
+            isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
+            if (isNumRow) {
                 geneSymbols <- annote[, grep("symbol", names(annote),
                                              ignore.case = TRUE, value = TRUE)]
                 rNames <- geneSymbols
