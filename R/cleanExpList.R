@@ -13,8 +13,13 @@
 #'
 #' @export cleanExpList
 cleanExpList <- function(exlist, mPheno) {
+    if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     exlist <- MultiAssayExperiment::Elist(exlist)
     sampNames <- as.list(colnames(exlist))
+    } else {
+    sampNames <- lapply(exlist, colnames)
+    warning("attempting to use colnames on each experiment")
+    }
     patientIDS <- tolower(rownames(mPheno))
     filler <- substr(patientIDS[1], 5, 5)
     if (filler != "-") {
@@ -25,6 +30,8 @@ cleanExpList <- function(exlist, mPheno) {
     })
     newElist <- mapply(function(x, y) {x[, y]}, x = exlist, y = logicSub,
                        SIMPLIFY = FALSE)
+    if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     newElist <- MultiAssayExperiment::Elist(newElist)
+    }
     return(newElist)
 }
