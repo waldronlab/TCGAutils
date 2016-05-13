@@ -7,8 +7,8 @@
 cleanExpList(exlist, mPheno)
 }
 \arguments{
-\item{exlist}{A named \linkS4class{Elist} of experiments compatible with the
-MultiAssayExperiment API}
+\item{exlist}{A named \code{\link[MultiAssayExperiment]{Elist}} of
+experiments compatible with the \code{MultiAssayExperiment} API}
 
 \item{mPheno}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}

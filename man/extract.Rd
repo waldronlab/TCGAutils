@@ -19,9 +19,10 @@ Either an \linkS4class{ExpressionSet} object or a
 }
 \description{
 This function obtains and processes data from a
-\link[RTCGAToolbox]{FirehoseData} object. Processing involves converting
-raw data to structured S4 Bioconductor objects. The function returns an
-\linkS4class{ExpressionSet} or \linkS4class{GRangesList} class object.
+\code{\linkS4class{FirehoseData}} object. Processing involves
+converting raw data to structured S4 Bioconductor objects. The function
+returns an \linkS4class{ExpressionSet} or \linkS4class{GRangesList} class
+object.
 }
 \section{type}{
 
