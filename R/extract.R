@@ -14,27 +14,32 @@
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
 #'
-#' This extracts data from a \code{FirehoseData} object and converts it to a
-#' structured S4 object for analysis. The function returns an ExpressionSet or
-#' GRangesList #' class object (see \code{\link{ExpressionSet}} and
-#' \code{\link{GRangesList}}).
+#' This function obtains and processes data from a
+#' \link[RTCGAToolbox]{FirehoseData} object. Processing involves converting
+#' raw data to structured S4 Bioconductor objects. The function returns an
+#' \linkS4class{ExpressionSet} or \linkS4class{GRangesList} class object.
 #'
-#' @param object A \code{FirehoseData} object from which to extract data.
-#' @param type The type of data to extract from the "FirehoseData" object.
-#' @return Either an \code{\link{ExpressionSet}} object or a
-#' \code{\link{GRangesList}}) object. Choices include: "RNAseq_Gene",
+#' @section type:
+#' Choices include: "RNAseq_Gene",
 #' "Clinic", "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP",
 #' "CNA_Seq", "CNA_CGH", "Methylation", "Mutation", "mRNA_Array",
-#' "miRNA_Array", "RPPA", "GISTIC_A", "GISTIC_T". The "GISTIC_A" type of
+#' "miRNA_Array", "RPPA_Array", "GISTIC_A", "GISTIC_T". The "GISTIC_A" type of
 #' dataset represents GISTIC data by all genes. "GISTIC_T" represents data
-#' thresholded by genes.
+#' thresholded by genes. Lowercase entries and entries without the "underscore"
+#' character are also valid inputs.
+#'
+#' @param object A \code{FirehoseData} object from which to extract data.
+#' @param type The type of data to extract from the "FirehoseData" object,
+#' see type section.
+#' @return Either an \linkS4class{ExpressionSet} object or a
+#' \linkS4class{GRangesList} object.
 #'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
 #' @examples
 #'
 #' \dontrun{
-#' b2 <- extract(a2, "Methylation", clinical=TRUE)
+#' b2 <- extract(a2, "Methylation")
 #' }
 #'
 #' @export extract

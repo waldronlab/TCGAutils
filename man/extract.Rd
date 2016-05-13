@@ -10,27 +10,33 @@ extract(object, type = NULL)
 \arguments{
 \item{object}{A \code{FirehoseData} object from which to extract data.}
 
-\item{type}{The type of data to extract from the "FirehoseData" object.}
+\item{type}{The type of data to extract from the "FirehoseData" object,
+see type section.}
 }
 \value{
-Either an \code{\link{ExpressionSet}} object or a
-\code{\link{GRangesList}}) object. Choices include: "RNAseq_Gene",
-"Clinic", "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP",
-"CNA_Seq", "CNA_CGH", "Methylation", "Mutation", "mRNA_Array",
-"miRNA_Array", "RPPA", "GISTIC_A", "GISTIC_T". The "GISTIC_A" type of
-dataset represents GISTIC data by all genes. "GISTIC_T" represents data
-thresholded by genes.
+Either an \linkS4class{ExpressionSet} object or a
+\linkS4class{GRangesList} object.
 }
 \description{
-This extracts data from a \code{FirehoseData} object and converts it to a
-structured S4 object for analysis. The function returns an ExpressionSet or
-GRangesList #' class object (see \code{\link{ExpressionSet}} and
-\code{\link{GRangesList}}).
+This function obtains and processes data from a
+\link[RTCGAToolbox]{FirehoseData} object. Processing involves converting
+raw data to structured S4 Bioconductor objects. The function returns an
+\linkS4class{ExpressionSet} or \linkS4class{GRangesList} class object.
+}
+\section{type}{
+
+Choices include: "RNAseq_Gene",
+"Clinic", "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP",
+"CNA_Seq", "CNA_CGH", "Methylation", "Mutation", "mRNA_Array",
+"miRNA_Array", "RPPA_Array", "GISTIC_A", "GISTIC_T". The "GISTIC_A" type of
+dataset represents GISTIC data by all genes. "GISTIC_T" represents data
+thresholded by genes. Lowercase entries and entries without the "underscore"
+character are also valid inputs.
 }
 \examples{
 
 \dontrun{
-b2 <- extract(a2, "Methylation", clinical=TRUE)
+b2 <- extract(a2, "Methylation")
 }
 
 }
