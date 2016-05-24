@@ -2,26 +2,42 @@
 % Please edit documentation in R/makeGRangesList.R
 \name{makeGRangesList}
 \alias{makeGRangesList}
-\title{Convert raw TCGA Mutation data to GRangesList}
+\title{Convert raw Mutation data to GRangesList}
 \usage{
-makeGRangesList(inputData)
+makeGRangesList(inputData, dataparam = NULL, ...)
 }
 \arguments{
-\item{inputData}{A \code{data.frame} or \code{list} class of TCGA
-mutation data}
+\item{inputData}{A \code{data.frame} or \code{list} class of mutation data}
+
+\item{dataparam}{A function for specifying a list of parameters to pass to
+the function depending on the type of data}
+
+\item{...}{Additional arguments passed to the identifier parser function}
 }
 \value{
 A \linkS4class{GRangesList} class object
 }
 \description{
-This function takes the data.frame of raw data from the output of a TCGA
-data pipeline and converts it to a \linkS4class{GRangesList} class.
-Input data can be entered as either a \code{data.frame} with a sample
-indicator titled as "tumor_sample_barcode" or "sample." If input data is a
-entered as a list, all element names are expected to be TCGA
-sample identifiers.
+This function takes the data.frame or list of raw data and converts it to
+a \linkS4class{GRangesList} class. Input data can be entered along with a
+function that indicates the parameters of the data such as, range column
+names, sample/specimen identifier column name and an ID parsing function
+(such as for TCGA barcodes). If input data is entered as a list, all
+element names are expected to be sample/specimen identifiers. See data
+specific functions for more details.
+}
+\examples{
+\dontrun{
+makeGRangesList(meso, tcga(standard = TRUE,
+                         targetCol = "Tumor_Sample_Barcode"),
+         sample = TRUE, collapse = TRUE)
+}
+
 }
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
+}
+\seealso{
+tcga ccle
 }
 
