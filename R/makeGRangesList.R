@@ -1,43 +1,63 @@
-#' Convert raw TCGA Mutation data to GRangesList
+#' Convert raw Mutation data to GRangesList
 #'
-#' This function takes the data.frame of raw data from the output of a TCGA
-#' data pipeline and converts it to a \linkS4class{GRangesList} class.
-#' Input data can be entered as either a \code{data.frame} with a sample
-#' indicator titled as "tumor_sample_barcode" or "sample." If input data is a
-#' entered as a list, all element names are expected to be TCGA
-#' sample identifiers.
+#' This function takes the data.frame or list of raw data and converts it to
+#' a \linkS4class{GRangesList} class. Input data can be entered along with a
+#' function that indicates the parameters of the data such as, range column
+#' names, sample/specimen identifier column name and an ID parsing function
+#' (such as for TCGA barcodes). If input data is entered as a list, all
+#' element names are expected to be sample/specimen identifiers. See data
+#' specific functions for more details.
 #'
-#' @param inputData A \code{data.frame} or \code{list} class of TCGA
-#' mutation data
+#' @param inputData A \code{data.frame} or \code{list} class of mutation data
+#' @param dataparam A function for specifying a list of parameters to pass to
+#' the function depending on the type of data
+#' @param ... Additional arguments passed to the identifier parser function
+#'
 #' @return A \linkS4class{GRangesList} class object
+#'
+#' @examples \dontrun{
+#' makeGRangesList(meso, tcga(standard = TRUE,
+#'                          targetCol = "Tumor_Sample_Barcode"),
+#'          sample = TRUE, collapse = TRUE)
+#' }
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
+#' @seealso tcga ccle
+#'
 #' @importFrom GenomeInfoDb genome
 #' @export makeGRangesList
-makeGRangesList <- function(inputData) {
+makeGRangesList <- function(inputData, dataparam = NULL, ...) {
     if (is(inputData, "data.frame")) {
-    names(inputData) <- tolower(names(inputData))
-    sampleIndicator <- ifelse(is.null(inputData$sample),
-                              "tumor_sample_barcode", "sample")
-    ## Convert data to list for GRangesList
-    inputData <- split(inputData, barcode(as.character(
-        inputData[, sampleIndicator]),
-        sample = TRUE, collapse = TRUE))
+        names(inputData) <- tolower(names(inputData))
+        if (!is.null(dataparam)) {
+            sampleIndicator <- tolower(dataparam$targetCol)
+            if (length(sampleIndicator) == 0L) {
+                stop("please indicate a target sample column the data parameters")
+            }
+        } else {
+            warning("trying to obtain target column...")
+            sampleIndicator <- ifelse(is.null(inputData$sample),
+                                      "tumor_sample_barcode", "sample")
+        }
+        ## Convert data to list for GRangesList
+        f <- dataparam$idFUN
+        inputData <- split(inputData, f(as.character(
+            inputData[, sampleIndicator]), ...))
     }
     inputData <- lapply(inputData, function(elements) {
         names(elements) <- tolower(names(elements))
         elements
     })
-    longNames <- c("chromosome", "start_position", "end_position")
-    shortNames <- c("chrom", "start", "end")
+    longNames <- dataparam$rangeID
+    shortNames <- c("chrom", "start", "end", "strand")
     twoMeta <- ifelse(all(c("num_probes", "segment_mean") %in%
                               names(inputData[[1]])), TRUE, FALSE)
     hugo <- ifelse("hugo_symbol" %in% names(inputData[[1]]), TRUE, FALSE)
     if ("ncbi_build" %in% names(inputData[[1]])) {
         ncbi_build <- Reduce(intersect, lapply(inputData,
                                                function(x)
-                                                   { x[, "ncbi_build"] }))
+                                               { x[, "ncbi_build"] }))
         if (length(ncbi_build) == 1L) {
             ncbi <- ncbi_build
         } else {
@@ -48,9 +68,6 @@ makeGRangesList <- function(inputData) {
         names(elements) <- plyr::mapvalues(names(elements),
                                            longNames, shortNames,
                                            warn_missing = FALSE)
-        elements
-    })
-    inputData <- lapply(inputData, function(elements) {
         elements[, c("start", "end")] <-
             sapply(elements[, c("start", "end")], as.numeric)
         elements
