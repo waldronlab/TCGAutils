@@ -4,13 +4,13 @@
 #' converting raw data. The parameters in this function indicate properties
 #' of the TCGA data.
 #'
+#' @param primary The column name for primary samples/specimen, defaults to
+#' "Tumor_Sample_Barcode" (case ignored).
 #' @param standard logical (default TRUE) whether to use standard range column
 #' indicators found in the tcga data, these include "chromosome",
-#' "start_position", "end_position", and "strand".
-#' @param single logical (default FALSE) whether to use a single column for
-#' the conversion of ranged values. Such column may look like: "chr1:100-200:+"
-#' @param targetCol A \code{character} string that indicates the name of the
-#' column to use when a single column is used (i.e., TRUE)
+#' "start_position", "end_position", and "strand"
+#' @param rangeID An optional \code{character} vector of length four indicating
+#' genomic positions when standard argument is FALSE
 #' @param idFUN A function that helps in the parsing of barcode identifiers
 #' (barcode used by default)
 #'
@@ -18,14 +18,16 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #' @export tcga
-tcga <- function (standard = TRUE, single = FALSE, targetCol = character(), idFUN = NULL) {
+tcga <- function (primary = NULL, standard = TRUE,
+                  rangeID = character(), idFUN = NULL) {
+    if (is.null(primary)) {
+        primary <- "Tumor_Sample_Barcode"
+    }
     if (standard) {
         rangeID <- c("chromosome", "start_position", "end_position", "strand")
-    }
-    if (single) {
-        rangeID <- NULL
-        if (length(targetCol) == 0L) {
-            stop("No target column specified")
+    } else {
+        if (!is.character(rangeID) || length(rangeID) != 4L) {
+            stop("enter a range identifier character vector of length 4")
         }
     }
     if (is.null(idFUN)) {
@@ -33,7 +35,6 @@ tcga <- function (standard = TRUE, single = FALSE, targetCol = character(), idFU
             barcode(x, ...)
         }
     }
-    newArgs <- list(rangeID = rangeID,
-                    targetCol = targetCol, idFUN = idFUN)
+    newArgs <- list(primary = primary, rangeID = rangeID, idFUN = idFUN)
     return(newArgs)
 }

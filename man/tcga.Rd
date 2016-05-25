@@ -4,19 +4,19 @@
 \alias{tcga}
 \title{Set TCGA data parameters}
 \usage{
-tcga(standard = TRUE, single = FALSE, targetCol = character(),
+tcga(primary = NULL, standard = TRUE, rangeID = character(),
   idFUN = NULL)
 }
 \arguments{
+\item{primary}{The column name for primary samples/specimen, defaults to
+"Tumor_Sample_Barcode" (case ignored).}
+
 \item{standard}{logical (default TRUE) whether to use standard range column
 indicators found in the tcga data, these include "chromosome",
-"start_position", "end_position", and "strand".}
+"start_position", "end_position", and "strand"}
 
-\item{single}{logical (default FALSE) whether to use a single column for
-the conversion of ranged values. Such column may look like: "chr1:100-200:+"}
-
-\item{targetCol}{A \code{character} string that indicates the name of the
-column to use when a single column is used (i.e., TRUE)}
+\item{rangeID}{An optional \code{character} vector of length four indicating
+genomic positions when standard argument is FALSE}
 
 \item{idFUN}{A function that helps in the parsing of barcode identifiers
 (barcode used by default)}

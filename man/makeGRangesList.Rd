@@ -28,8 +28,8 @@ specific functions for more details.
 }
 \examples{
 \dontrun{
-makeGRangesList(meso, tcga(standard = TRUE,
-                         targetCol = "Tumor_Sample_Barcode"),
+makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
+                             standard = TRUE)
          sample = TRUE, collapse = TRUE)
 }
 
@@ -38,6 +38,6 @@ makeGRangesList(meso, tcga(standard = TRUE,
 Marcel Ramos \email{mramos09@gmail.com}
 }
 \seealso{
-tcga ccle
+tcga(), ccle()
 }
 

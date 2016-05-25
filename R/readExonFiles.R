@@ -24,7 +24,7 @@ readExonFiles <- function(filepaths) {
     })
   names(btData) <- sampNames
   newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
-    newGRanges <- as(range[, "exon"], "GRanges")
+    newGRanges <- as(as.character(range[, "exon"]), "GRanges")
     mcols(newGRanges) <- range[, -(which(names(range) == "exon"))]
     newGRanges
   }))

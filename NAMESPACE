@@ -2,6 +2,7 @@
 
 export(barcode)
 export(biospecs)
+export(ccle)
 export(cleanExpList)
 export(extract)
 export(generateTCGAmap)

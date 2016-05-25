@@ -16,14 +16,14 @@
 #' @return A \linkS4class{GRangesList} class object
 #'
 #' @examples \dontrun{
-#' makeGRangesList(meso, tcga(standard = TRUE,
-#'                          targetCol = "Tumor_Sample_Barcode"),
+#' makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
+#'                              standard = TRUE)
 #'          sample = TRUE, collapse = TRUE)
 #' }
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @seealso tcga ccle
+#' @seealso tcga(), ccle()
 #'
 #' @importFrom GenomeInfoDb genome
 #' @export makeGRangesList
@@ -31,7 +31,7 @@ makeGRangesList <- function(inputData, dataparam = NULL, ...) {
     if (is(inputData, "data.frame")) {
         names(inputData) <- tolower(names(inputData))
         if (!is.null(dataparam)) {
-            sampleIndicator <- tolower(dataparam$targetCol)
+            sampleIndicator <- tolower(dataparam$primary)
             if (length(sampleIndicator) == 0L) {
                 stop("please indicate a target sample column the data parameters")
             }
