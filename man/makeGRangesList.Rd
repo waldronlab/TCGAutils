@@ -22,12 +22,16 @@ This function takes the data.frame or list of raw data and converts it to
 a \linkS4class{GRangesList} class. Input data can be entered along with a
 function that indicates the parameters of the data such as, range column
 names, sample/specimen identifier column name and an ID parsing function
-(such as for TCGA barcodes). If input data is entered as a list, all
+(such as TCGAbarcodes). If input data is entered as a list, all
 element names are expected to be sample/specimen identifiers. See data
 specific functions for more details.
 }
 \examples{
 \dontrun{
+## TCGA example
+library(TCGAbiolinks)
+meso <- TCGAquery_maf(tumor = "meso")
+## Select number 2
 makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
                              standard = TRUE)
          sample = TRUE, collapse = TRUE)

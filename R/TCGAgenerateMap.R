@@ -12,8 +12,8 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @export generateTCGAmap
-generateTCGAmap <- function(exlist, mPheno) {
+#' @export TCGAgenerateMap
+TCGAgenerateMap <- function(exlist, mPheno) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     exlist <- MultiAssayExperiment::Elist(exlist)
     samps <- as.list(colnames(exlist))
@@ -26,7 +26,7 @@ generateTCGAmap <- function(exlist, mPheno) {
     }, x = samps)
     full_map <- do.call(S4Vectors::rbind, listM)
     # matches <- match(full_map$assay, rownames(mPheno))
-    matches <- match(barcode(full_map$assay), rownames(mPheno))
+    matches <- match(TCGAbarcode(full_map$assay), rownames(mPheno))
     if (all(is.na(matches))) {
         stop("no way to map pData to Elist")
     }

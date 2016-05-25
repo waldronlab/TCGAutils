@@ -12,7 +12,7 @@
 #' @param rangeID An optional \code{character} vector of length four indicating
 #' genomic positions when standard argument is FALSE
 #' @param idFUN A function that helps in the parsing of barcode identifiers
-#' (barcode used by default)
+#' (TCGAbarcode used by default)
 #'
 #' @return A \code{list} of arguments for use by \link{makeGRangesList}
 #'
@@ -32,7 +32,7 @@ tcga <- function (primary = NULL, standard = TRUE,
     }
     if (is.null(idFUN)) {
         idFUN <- function(x, ...) {
-            barcode(x, ...)
+            TCGAbarcode(x, ...)
         }
     }
     newArgs <- list(primary = primary, rangeID = rangeID, idFUN = idFUN)

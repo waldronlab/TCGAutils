@@ -11,35 +11,31 @@
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @examples
+#' example("TCGAbarcode")
+#' right_bctable <- TCGAbiospec(barcodes)
 #'
-#' \dontrun{
-#' barcodes <- colnames(getElement(a2, "RNASeqGene"))
-#' right_bctable <- biospecs(barcodes)
-#' }
-#'
-#' @export biospecs
- biospecs <- function(barcodes) {
-  sample_type <- as.character(
-    sampleTypes[,"Definition"][
-      match(as.numeric(barcode(barcodes, sample = TRUE, part = FALSE)),
-            sampleTypes[,"Code"])])
-  tb <- data.frame(patientids = barcode(barcodes),
+#' @export TCGAbiospec
+TCGAbiospec <- function(barcodes) {
+  sample_type <- sampleTypes[["Definition"]][
+      match(TCGAbarcode(barcodes, sample = TRUE, part = FALSE),
+            sampleTypes[["Code"]])]
+  tb <- data.frame(patientids = TCGAbarcode(barcodes),
                    sample_type,
                    sample_code = as.character(
-                     barcode(barcodes, part=FALSE, sample = TRUE)),
+                     TCGAbarcode(barcodes, part=FALSE, sample = TRUE)),
                    vial = as.character(
-                     substr(barcode(barcodes, part=FALSE, sample = TRUE,
+                     substr(TCGAbarcode(barcodes, part=FALSE, sample = TRUE,
                                   vial = TRUE), 3,3)),
                    portion = as.character(
-                     substr(barcode(barcodes, part = FALSE, portion = TRUE),
+                     substr(TCGAbarcode(barcodes, part = FALSE, portion = TRUE),
                             1,2)),
                    analyte = as.character(
-                     substr(barcode(barcodes, part = FALSE, portion = TRUE),
+                     substr(TCGAbarcode(barcodes, part = FALSE, portion = TRUE),
                             3,3)),
                    plate = as.character(
-                     barcode(barcodes, part = FALSE, plate = TRUE)),
+                     TCGAbarcode(barcodes, part = FALSE, plate = TRUE)),
                    center = as.character(
-                     barcode(barcodes, part = FALSE, center=TRUE)),
-                   stringsAsFactors = FALSE)
+                     TCGAbarcode(barcodes, part = FALSE, center=TRUE)),
+                   stringsAsFactors = FALSE, row.names = NULL)
   return(tb)
 }

@@ -11,8 +11,8 @@
 #'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
-#' @export cleanExpList
-cleanExpList <- function(exlist, mPheno) {
+#' @export TCGAcleanExpList
+TCGAcleanExpList <- function(exlist, mPheno) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     exlist <- MultiAssayExperiment::Elist(exlist)
     sampNames <- as.list(colnames(exlist))
@@ -26,7 +26,7 @@ cleanExpList <- function(exlist, mPheno) {
         patientIDS <- gsub(paste0("\\", filler), "-", patientIDS)
     }
     logicSub <- lapply(sampNames, function(assay) {
-        barcode(assay) %in% patientIDS
+        TCGAbarcode(assay) %in% patientIDS
     })
     newElist <- mapply(function(x, y) {x[, y]}, x = exlist, y = logicSub,
                        SIMPLIFY = FALSE)

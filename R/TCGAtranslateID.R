@@ -9,9 +9,9 @@
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
 #' @return A \code{data.frame} of original and translated identifiers
-#' @export translateIDS
+#' @export TCGAtranslateID
 #' @importFrom httr POST content content_type
-translateIDS <- function(identifier) {
+TCGAtranslateID <- function(identifier) {
     identifier <- unique(identifier)
     if (length(identifier) > 500) {
         stop("enter 500 at a time for now")

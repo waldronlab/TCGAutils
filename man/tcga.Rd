@@ -19,7 +19,7 @@ indicators found in the tcga data, these include "chromosome",
 genomic positions when standard argument is FALSE}
 
 \item{idFUN}{A function that helps in the parsing of barcode identifiers
-(barcode used by default)}
+(TCGAbarcode used by default)}
 }
 \value{
 A \code{list} of arguments for use by \link{makeGRangesList}

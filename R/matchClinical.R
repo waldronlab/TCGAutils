@@ -33,9 +33,9 @@ matchClinical <- function (expData, phenoDat) {
     if (filler != "-") {
         rownames(phenoDat) <- gsub(paste0("\\", filler),
                                    "\\-", rownames(phenoDat)) }
-    commonNames <- intersect(barcode(getNames(expData)), barcode(rownames(phenoDat)))
-    namesRight <- getNames(expData)[match(commonNames, barcode(getNames(expData)))]
-    righttab <- biospecs(namesRight)
+    commonNames <- intersect(TCGAbarcode(getNames(expData)), TCGAbarcode(rownames(phenoDat)))
+    namesRight <- getNames(expData)[match(commonNames, TCGAbarcode(getNames(expData)))]
+    righttab <- TCGAbiospec(namesRight)
     clindup <- matrix(NA, nrow = length(commonNames))
     ## Rownames here use samples
     rownames(clindup) <- namesRight

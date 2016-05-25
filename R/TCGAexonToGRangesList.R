@@ -12,13 +12,13 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @export readExonFiles
-readExonFiles <- function(filepaths) {
+#' @export TCGAexonToGRangesList
+TCGAexonToGRangesList <- function(filepaths) {
   fileNames <- basename(filepaths)
   fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
-  bcodes <- translateIDS(fileuuids)
-  extraInfo <- biospecs(bcodes$barcode)
-  sampNames <- barcode(bcodes$barcode, sample = TRUE, collapse = TRUE)
+  bcodes <- TCGAtranslateID(fileuuids)
+  extraInfo <- TCGAbiospec(bcodes$barcode)
+  sampNames <- TCGAbarcode(bcodes$barcode, sample = TRUE, collapse = TRUE)
   btData <- lapply(filepaths, function(file) {
     readr::read_delim(file, delim = "\t")
     })

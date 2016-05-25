@@ -5,31 +5,36 @@ NULL
 
 #' Parse data from TCGA barcode
 #'
-#' This function returns the specified snippet of information obtained from the TCGA barcode.
-#'
+#' This function returns the specified snippet of information obtained from
+#' the TCGA barcode.
 #'
 #' @param barcodes A character vector of TCGA barcodes
 #' @param position A numerical vector of TCGA barcode positions desired
 #' @param part Logical (default TRUE) participant identifier chunk
-#' @param sample Logical (default FALSE) includes the numeric sample code of the barcode
+#' @param sample Logical (default FALSE) includes the numeric sample code of
+#' the barcode
 #' @param vial Logical (default FALSE) includes the sample vial label
-#' @param portion Logical (default FALSE) includes the portion and analyte codes of the barcode
+#' @param portion Logical (default FALSE) includes the portion and analyte
+#' codes of the barcode
 #' @param plate Logical (default FALSE) returns the plate value
-#' @param center Logical (default FALSE) returns a matrix with the plate and center codes
-#' @param collapse Logical (default FALSE) concatenates requested barcode chunks
+#' @param center Logical (default FALSE) returns a matrix with the plate and
+#' center codes
+#' @param collapse Logical (default FALSE) concatenates requested barcode
+#' chunks
 #' @return A character vector or data matrix of TCGA barcode information
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @examples
+#' library(TCGAbiolinks)
+#' query <- TCGAquery(tumor = "OV", level = 3)
+#' barcodes <- unlist(strsplit(query$barcode[1], ","))
+#' TCGAsamplebc <- TCGAbarcode(barcodes, sample = TRUE, collapse = TRUE)
 #'
-#' \dontrun{
-#'  barcodes <- colnames(getElement(a2, "RNASeqGene"))
-#' TCGAsamplebc <- barcode(barcodes, sample = TRUE, collapse = TRUE)
-#' }
-#'
-#' @export barcode
-barcode <- function(barcodes, position = NULL, part = TRUE, sample=FALSE, vial = FALSE, portion = FALSE, plate = FALSE, center=FALSE, collapse=FALSE){
+#' @export TCGAbarcode
+TCGAbarcode <- function(barcodes, position = NULL, part = TRUE, sample=FALSE,
+                        vial = FALSE, portion = FALSE, plate = FALSE,
+                        center=FALSE, collapse=FALSE) {
     if(!is.character(barcodes)){
         stop("Barcodes must be a character vector!")
     } else {

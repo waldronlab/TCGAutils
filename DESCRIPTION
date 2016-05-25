@@ -1,6 +1,6 @@
 Package: TCGAmisc
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA data
-Version: 0.0.22
+Version: 0.0.40
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "aut"),
@@ -14,7 +14,8 @@ Encoding: UTF-8
 LazyData: true
 Suggests:
     testthat,
-    MultiAssayExperiment
+    MultiAssayExperiment,
+    TCGAbiolinks
 Imports:
     RTCGAToolbox,
     GenomicRanges,

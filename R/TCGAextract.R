@@ -2,7 +2,7 @@
     g <- readline(
         paste0("The selected data type has more than one",
                "file available.\nPlease select the desired file.",
-               "\n(Enter 0 for the first file with the most number of samples)\n_"))
+       "\n(Enter 0 for the first file with the most number of samples)\n_"))
     g <- suppressWarnings(as.integer(g))
     if(is.na(g)){
         stop("Your selection must be an integer!")
@@ -15,10 +15,12 @@
 #' \code{GRangesList} object
 #'
 #' This function obtains and processes data from a
-#' \code{\linkS4class{FirehoseData}} object. Processing involves
-#' converting raw data to structured S4 Bioconductor objects. The function
-#' returns an \linkS4class{ExpressionSet} or \linkS4class{GRangesList} class
-#' object.
+#' \code{\linkS4class{FirehoseData}} object obtained from the
+#' \code{RTCGAToolbox} package. Processing involves converting raw data to
+#' structured S4 Bioconductor objects. The function returns an
+#' \linkS4class{ExpressionSet} or \linkS4class{GRangesList} class object. Note:
+#' this function works best with the modifications found in the github fork:
+#' \code{LiNk-NY/RTCGAToolbox}.
 #'
 #' @section type:
 #' Choices include: "RNAseq_Gene",
@@ -43,8 +45,8 @@
 #' b2 <- extract(a2, "Methylation")
 #' }
 #'
-#' @export extract
-extract <- function(object, type = NULL) {
+#' @export TCGAextract
+TCGAextract <- function(object, type = NULL) {
     if (!is.null(type)) {
         if (is.character(type)) {
             type <- tolower(gsub("_", "", type))
@@ -74,7 +76,7 @@ extract <- function(object, type = NULL) {
                                          })
                     dimensions <- sapply(lapply(getElement(object, slotreq),
                                                 function(tmp) {
-                                                    getElement(tmp, "DataMatrix")
+                                                getElement(tmp, "DataMatrix")
                                                 }), dim)
                     cat(paste0("[", seq(length(sourceName)), "] ",
                                sourceName, paste0("\n\tNumber of rows: ",
@@ -91,7 +93,7 @@ extract <- function(object, type = NULL) {
                                    }), ncol)
                         )
                     }
-                    message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
+                message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
                     dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
                 } else {
                     dm <- lapply(getElement(object, slotreq),
@@ -148,7 +150,7 @@ extract <- function(object, type = NULL) {
             }
             return(mygrl)
         }
-        colnames(dm) <- barcode(colnames(dm), sample=TRUE, collapse=TRUE)
+        colnames(dm) <- TCGAbarcode(colnames(dm), sample=TRUE, collapse=TRUE)
         eset <- ExpressionSet(dm)
         if (exists("annote")) {
             featureData(eset) <- AnnotatedDataFrame(annote)
