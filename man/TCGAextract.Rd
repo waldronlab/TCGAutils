@@ -18,13 +18,14 @@ Either an \linkS4class{ExpressionSet} object or a
 \linkS4class{GRangesList} object.
 }
 \description{
-This function obtains and processes data from a
-\code{\linkS4class{FirehoseData}} object obtained from the
-\code{RTCGAToolbox} package. Processing involves converting raw data to
-structured S4 Bioconductor objects. The function returns an
+This function processes data from a \code{\linkS4class{FirehoseData}}
+object from the \code{RTCGAToolbox} package. Raw data is converted to
+conventional Bioconductor objects. The function returns an
 \linkS4class{ExpressionSet} or \linkS4class{GRangesList} class object. Note:
 this function works best with the modifications found in the github fork:
-\code{LiNk-NY/RTCGAToolbox}.
+\code{LiNk-NY/RTCGAToolbox}. In cases where range data are found
+(i.e., "mutations") the default extraction method is used
+(see makeGRangesList).
 }
 \section{type}{
 
@@ -37,13 +38,19 @@ thresholded by genes. Lowercase entries and entries without the "underscore"
 character are also valid inputs.
 }
 \examples{
-
 \dontrun{
-b2 <- extract(a2, "Methylation")
+library(RTCGAToolbox)
+dataFolder <- normalizePath("~/Documents/data")
+coadmut <- getFirehoseData("COAD", runDate = "20151101", Mutation = TRUE,
+                         destdir = dataFolder)
+cm <- TCGAextract(coadmut, "mutations")
 }
 
 }
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
+}
+\seealso{
+makeGRangesList()
 }
 

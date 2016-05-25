@@ -14,13 +14,14 @@
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
 #'
-#' This function obtains and processes data from a
-#' \code{\linkS4class{FirehoseData}} object obtained from the
-#' \code{RTCGAToolbox} package. Processing involves converting raw data to
-#' structured S4 Bioconductor objects. The function returns an
+#' This function processes data from a \code{\linkS4class{FirehoseData}}
+#' object from the \code{RTCGAToolbox} package. Raw data is converted to
+#' conventional Bioconductor objects. The function returns an
 #' \linkS4class{ExpressionSet} or \linkS4class{GRangesList} class object. Note:
 #' this function works best with the modifications found in the github fork:
-#' \code{LiNk-NY/RTCGAToolbox}.
+#' \code{LiNk-NY/RTCGAToolbox}. In cases where range data are found
+#' (i.e., "mutations") the default extraction method is used
+#' (see makeGRangesList).
 #'
 #' @section type:
 #' Choices include: "RNAseq_Gene",
@@ -39,12 +40,15 @@
 #'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
-#' @examples
-#'
-#' \dontrun{
-#' b2 <- extract(a2, "Methylation")
+#' @examples \dontrun{
+#' library(RTCGAToolbox)
+#' dataFolder <- normalizePath("~/Documents/data")
+#' coadmut <- getFirehoseData("COAD", runDate = "20151101", Mutation = TRUE,
+#'                          destdir = dataFolder)
+#' cm <- TCGAextract(coadmut, "mutations")
 #' }
 #'
+#' @seealso makeGRangesList()
 #' @export TCGAextract
 TCGAextract <- function(object, type = NULL) {
     if (!is.null(type)) {
@@ -144,7 +148,9 @@ TCGAextract <- function(object, type = NULL) {
             }
         } else if (slotreq %in% rangeslots) {
             colnames(dm) <- tolower(colnames(dm))
-            mygrl <- makeGRangesList(dm)
+            mygrl <- makeGRangesList(dm, tcga(primary = "Tumor_Sample_Barcode",
+                                              standard = TRUE),
+                                     sample = TRUE, collapse = TRUE)
             if(exists("sourceName")) {
                 mygrl@metadata <- list("fileName" = sourceName[fileNo])
             }

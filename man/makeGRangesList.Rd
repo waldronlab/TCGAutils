@@ -18,13 +18,14 @@ the function depending on the type of data}
 A \linkS4class{GRangesList} class object
 }
 \description{
-This function takes the data.frame or list of raw data and converts it to
-a \linkS4class{GRangesList} class. Input data can be entered along with a
-function that indicates the parameters of the data such as, range column
-names, sample/specimen identifier column name and an ID parsing function
-(such as TCGAbarcodes). If input data is entered as a list, all
-element names are expected to be sample/specimen identifiers. See data
-specific functions for more details.
+This function takes the \code{data.frame} or \code{list} of raw data and
+converts it to a \linkS4class{GRangesList} class. Input data can be
+entered along with a function that indicates the parameters of the data
+such as, range column names, sample/specimen identifier column name and
+an ID parsing function (such as TCGAbarcodes). If input data is entered
+as a list, all element names are expected to be sample/specimen identifiers.
+See data #' specific functions for more details. Note: Classes such as
+\code{tbl_df} are not supported at this time.
 }
 \examples{
 \dontrun{

@@ -31,10 +31,9 @@ ccle <- function (primary = NULL, standard = TRUE,
         }
     }
     if (is.null(idFUN)) {
-        cutCLN <- function(CLN) {
+        idFUN <- function(CLN) {
             gsub("(^[^_]+)_\\w+", "\\1", CLN, perl = TRUE)
         }
-        idFUN <- cutCLN
     }
     newArgs <- list(primary = primary, rangeID = rangeID, idFUN = idFUN)
     return(newArgs)

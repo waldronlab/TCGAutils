@@ -1,12 +1,13 @@
 #' Convert raw Mutation data to GRangesList
 #'
-#' This function takes the data.frame or list of raw data and converts it to
-#' a \linkS4class{GRangesList} class. Input data can be entered along with a
-#' function that indicates the parameters of the data such as, range column
-#' names, sample/specimen identifier column name and an ID parsing function
-#' (such as TCGAbarcodes). If input data is entered as a list, all
-#' element names are expected to be sample/specimen identifiers. See data
-#' specific functions for more details.
+#' This function takes the \code{data.frame} or \code{list} of raw data and
+#' converts it to a \linkS4class{GRangesList} class. Input data can be
+#' entered along with a function that indicates the parameters of the data
+#' such as, range column names, sample/specimen identifier column name and
+#' an ID parsing function (such as TCGAbarcodes). If input data is entered
+#' as a list, all element names are expected to be sample/specimen identifiers.
+#' See data #' specific functions for more details. Note: Classes such as
+#' \code{tbl_df} are not supported at this time.
 #'
 #' @param inputData A \code{data.frame} or \code{list} class of mutation data
 #' @param dataparam A function for specifying a list of parameters to pass to
@@ -37,7 +38,7 @@ makeGRangesList <- function(inputData, dataparam = NULL, ...) {
         if (!is.null(dataparam)) {
             sampleIndicator <- tolower(dataparam$primary)
             if (length(sampleIndicator) == 0L) {
-                stop("please indicate a target sample column the data parameters")
+            stop("please indicate a target sample column the data parameters")
             }
         } else {
             warning("trying to obtain target column...")
