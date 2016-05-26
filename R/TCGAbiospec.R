@@ -19,13 +19,13 @@ TCGAbiospec <- function(barcodes) {
   sample_type <- sampleTypes[["Definition"]][
       match(TCGAbarcode(barcodes, sample = TRUE, part = FALSE),
             sampleTypes[["Code"]])]
+  vialSlice <- TCGAbarcode(barcodes, part=FALSE, sample = TRUE, vial = TRUE)
   tb <- data.frame(patientids = TCGAbarcode(barcodes),
                    sample_type,
                    sample_code = as.character(
                      TCGAbarcode(barcodes, part=FALSE, sample = TRUE)),
-                   vial = as.character(
-                     substr(TCGAbarcode(barcodes, part=FALSE, sample = TRUE,
-                                  vial = TRUE), 3,3)),
+                   vial = ifelse(nchar(vialSlice) < 3, NA_character_,
+                                 substr(vialSlice, 3,3)),
                    portion = as.character(
                      substr(TCGAbarcode(barcodes, part = FALSE, portion = TRUE),
                             1,2)),
@@ -37,5 +37,6 @@ TCGAbiospec <- function(barcodes) {
                    center = as.character(
                      TCGAbarcode(barcodes, part = FALSE, center=TRUE)),
                    stringsAsFactors = FALSE, row.names = NULL)
+  tb <- tb[, apply(!is.na(tb), 2, all)]
   return(tb)
 }

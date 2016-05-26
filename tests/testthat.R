@@ -1,4 +1,4 @@
 library(testthat)
-#library(TCGAmisc)
+#library(BiocInterfaces)
 
-#test_check("TCGAmisc")
+#test_check("BiocInterfaces")

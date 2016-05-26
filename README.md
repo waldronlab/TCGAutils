@@ -8,4 +8,4 @@ derived data classes (i.e., `FirehoseData`). Other functions like `TCGAexonToGRa
 work on text files to create a `GRangesList` object from exon level data.
 
 Please feel free to report bugs at our
-[github page](https://github.com/waldronlab/TCGAmisc).
+[github page](https://github.com/waldronlab/BiocInterfaces).

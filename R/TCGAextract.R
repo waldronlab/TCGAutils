@@ -148,8 +148,12 @@ TCGAextract <- function(object, type = NULL) {
             }
         } else if (slotreq %in% rangeslots) {
             colnames(dm) <- tolower(colnames(dm))
-            mygrl <- makeGRangesList(dm, tcga(primary = "Tumor_Sample_Barcode",
-                                              standard = TRUE),
+            primary <- ifelse(is.null(dm$tumor_sample_barcode),
+                              "Sample", "Tumor_Sample_Barcode")
+            dataRangedNames <- getRangeNames(names(dm))
+            mygrl <- makeGRangesList(dm, tcga(primary = primary,
+                                              standard = FALSE,
+                                              rangeID = dataRangedNames),
                                      sample = TRUE, collapse = TRUE)
             if(exists("sourceName")) {
                 mygrl@metadata <- list("fileName" = sourceName[fileNo])

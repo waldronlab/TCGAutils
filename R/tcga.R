@@ -26,8 +26,8 @@ tcga <- function (primary = NULL, standard = TRUE,
     if (standard) {
         rangeID <- c("chromosome", "start_position", "end_position", "strand")
     } else {
-        if (!is.character(rangeID) || length(rangeID) != 4L) {
-            stop("enter a range identifier character vector of length 4")
+        if (!is.character(rangeID) || !(length(rangeID) %in% 3L:4L)) {
+            stop("range indicator vector length should be between 3 and 4")
         }
     }
     if (is.null(idFUN)) {

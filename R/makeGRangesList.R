@@ -55,7 +55,11 @@ makeGRangesList <- function(inputData, dataparam = NULL, ...) {
         elements
     })
     longNames <- dataparam$rangeID
-    shortNames <- c("chrom", "start", "end", "strand")
+    if (length(longNames) == 3L) {
+        shortNames <- c("chrom", "start", "end")
+    } else {
+        shortNames <- c("chrom", "start", "end", "strand")
+    }
     twoMeta <- ifelse(all(c("num_probes", "segment_mean") %in%
                               names(inputData[[1]])), TRUE, FALSE)
     hugo <- ifelse("hugo_symbol" %in% names(inputData[[1]]), TRUE, FALSE)
