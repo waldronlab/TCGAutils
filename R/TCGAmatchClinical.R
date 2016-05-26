@@ -1,8 +1,9 @@
-#' Match Clinical with Experiment Data
+#' Match Clinical with Experiment TCGA Data
 #'
-#' This function parses patient barcode identifiers to find matches in both
-#' the experiment data and the clinical datasets. It creates a corresponding
-#' clinical dataset for all of the unique patients in the experiment dataset.
+#' This function parses TCGA patient barcode identifiers to find matches in
+#' both the experiment data and the clinical datasets. It creates a
+#' corresponding clinical dataset for all of the unique patients in the
+#' experiment dataset.
 #'
 #' @param expData Either a \code{list} or \code{data.frame} of data where
 #' identifiers are element names or column names, respectively
@@ -14,8 +15,8 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @export matchClinical
-matchClinical <- function (expData, phenoDat) {
+#' @export TCGAmatchClinical
+TCGAmatchClinical <- function (expData, phenoDat) {
     if (is(expData, "list")) {
         filler <- substr(names(expData)[1], 5, 5)
         if (filler != "-") {
