@@ -1,3 +1,11 @@
+# BiocInterfaces 0.0.46
+
+* `makeRSE` function for creating a `RangedSummarizedExperiment` object from a
+data frame. 
+* Bug fixes to `getRangeNames` including the option to enter a regular expression
+vector for finding ranged column names. 
+* `matchClinical` renamed to `TCGAmatchClinical`
+
 # BiocInterfaces 0.0.44
 
 * `getRangedNames` function will try to extract minimum necessary names for creating ranges 

@@ -4,10 +4,15 @@
 \alias{getRangeNames}
 \title{Obtain minimum necessary names for the creation of a GRangesList object}
 \usage{
-getRangeNames(namesVector)
+getRangeNames(namesVector, regEx = character())
 }
 \arguments{
 \item{namesVector}{A \code{character} vector or names in a dataset}
+
+\item{regEx}{A \code{character} vector of regular expressions to
+pass to \code{grepl} for detecting chromosome, start range, end range, and
+strand column names, in that order. If empty, it will default to common use
+cases of the names i.e.,\code{c("^chr", "start", "end", "strand")}.}
 }
 \value{
 The 3 to 4 length \code{character} vector of minimum necessary names to
@@ -18,8 +23,8 @@ This function attempts to match chromosome, start position, end position and
 strand names in the given character vector.
 }
 \examples{
-myDataColNames <- c("txStart_position", "txEnd_position", "strand", "chromo",
-"num_probes", "segment_mean")
+myDataColNames <- c("txStart_position", "txEnd_position", "strand",
+                 "chromo", "num_probes", "segment_mean")
 getRangeNames(myDataColNames)
 
 }
