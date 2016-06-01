@@ -146,6 +146,9 @@ TCGAextract <- function(object, type = NULL) {
             if (filler != "-") {
                 colnames(dm) <- gsub(paste0("\\", filler), "-", colnames(dm))
             }
+            newSE <- SummarizedExperiment::SummarizedExperiment(
+                assays = SimpleList(counts = dm), rowData = annote)
+            return(newSE)
         } else if (slotreq %in% rangeslots) {
             colnames(dm) <- tolower(colnames(dm))
             primary <- ifelse(is.null(dm$tumor_sample_barcode),

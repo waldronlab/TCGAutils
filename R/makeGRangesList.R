@@ -1,3 +1,17 @@
+.setHGBuild <- function(hgbuild) {
+    buildDF <- DataFrame(Date = c("July 2003", "May 2004", "March 2006"),
+                         NCBI = c("34", "35", "36"),
+                         UCSC = c("hg16", "hg17", "hg18"))
+    buildIndex <- match(hgbuild, buildDF[["NCBI"]])
+    if (is.na(buildIndex)) {
+        warning("build could not be matched")
+        return(NULL)
+    } else {
+        ucscBuild <- buildDF$UCSC[match(hgbuild, buildDF[["NCBI"]])]
+        return(ucscBuild)
+    }
+}
+
 #' Convert raw Mutation data to GRangesList
 #'
 #' This function takes the \code{data.frame} or \code{list} of raw data and
@@ -21,7 +35,7 @@
 #' library(TCGAbiolinks)
 #' meso <- TCGAquery_maf(tumor = "meso")
 #' ## Select number 2
-#' makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
+#' newGRL <- makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
 #'                              standard = TRUE)
 #'          sample = TRUE, collapse = TRUE)
 #' }
@@ -68,9 +82,9 @@ makeGRangesList <- function(inputData, dataparam = NULL, ...) {
                                                function(x)
                                                { x[, "ncbi_build"] }))
         if (length(ncbi_build) == 1L) {
-            ncbi <- ncbi_build
+            hgBuild <- .setHGBuild(ncbi_build)
         } else {
-            message("NCBI build was not consistent")
+            message("NCBI build was not consistent for conversion")
         }
     }
     inputData <- lapply(inputData, function(elements) {
@@ -107,8 +121,8 @@ makeGRangesList <- function(inputData, dataparam = NULL, ...) {
         return(NewGR)
     }
     ))
-    if (exists("ncbi")) {
-        GenomeInfoDb::genome(mygrl) <- ncbi
+    if (exists("hgBuild")) {
+        GenomeInfoDb::genome(mygrl) <- hgBuild
     }
     metadata(mygrl) <- metadats
     return(mygrl)

@@ -1,3 +1,8 @@
+# BiocInterfaces 0.0.47
+
+* Add proper genome build to ranged based objects.
+* Return `SummarizedExperiment` class for certain data types.
+
 # BiocInterfaces 0.0.46
 
 * `makeRSE` function for creating a `RangedSummarizedExperiment` object from a
