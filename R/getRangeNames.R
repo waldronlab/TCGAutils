@@ -39,21 +39,18 @@ getRangeNames <- function(namesVector, regEx = character()) {
     grangeNames <- sapply(rangeNames, function(name) {
         grep(name, namesVector, value = TRUE, ignore.case = TRUE)
     })
-    nonMatch <- vapply(grangeNames, function(name) {
-        length(name) == 0L
-    }, logical(1L))
+    grangeNames <- lapply(grangeNames, "[", 1)
+    nonMatch <- vapply(grangeNames, is.na, logical(1L))
     if (any(multipleMatches)) {
-        stop("'", multiMatched, "' had more than one range indicator match")
+        warning(paste(multiMatched, collapse =", "),
+                ": had more than one match, using first result")
     } else if (any(nonMatch)) {
         warning("not all ranged indicators found")
-        if (all(timesMatched[1:3] == 1L)) {
-            grangeNames <- BiocGenerics::Filter(function(string) {
-                length(string) != 0L}, grangeNames)
-            return(unlist(grangeNames))
-        } else {
+        if (any(timesMatched[1:3] == 0L)) {
             stop("minimum necessary range indicators not found")
         }
-    } else {
-        return(grangeNames)
     }
+    grangeNames <- BiocGenerics::Filter(function(element) {
+        !is.na(element)}, grangeNames)
+    return(unlist(grangeNames))
 }

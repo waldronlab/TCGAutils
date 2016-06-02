@@ -33,7 +33,7 @@ See data #' specific functions for more details. Note: Classes such as
 library(TCGAbiolinks)
 meso <- TCGAquery_maf(tumor = "meso")
 ## Select number 2
-makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
+newGRL <- makeGRangesList(meso, tcga(primary = "Tumor_Sample_Barcode",
                              standard = TRUE)
          sample = TRUE, collapse = TRUE)
 }
