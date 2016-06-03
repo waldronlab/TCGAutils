@@ -1,7 +1,8 @@
 .setHGBuild <- function(hgbuild) {
-    buildDF <- DataFrame(Date = c("July 2003", "May 2004", "March 2006"),
-                         NCBI = c("34", "35", "36"),
-                         UCSC = c("hg16", "hg17", "hg18"))
+    buildDF <- DataFrame(Date = c("July 2004", "May 2004", "March 2006",
+                                  "February 2009"),
+                         NCBI = c("34", "35", "36", "37"),
+                         UCSC = c("hg16", "hg17", "hg18", "hg19"))
     buildIndex <- match(hgbuild, buildDF[["NCBI"]])
     if (is.na(buildIndex)) {
         warning("build could not be matched")
@@ -122,7 +123,9 @@ makeGRangesList <- function(inputData, dataparam = NULL, ...) {
     }
     ))
     if (exists("hgBuild")) {
+        if (!is.null(hgBuild)) {
         GenomeInfoDb::genome(mygrl) <- hgBuild
+        }
     }
     metadata(mygrl) <- metadats
     return(mygrl)

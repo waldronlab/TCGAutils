@@ -1,7 +1,8 @@
-# BiocInterfaces 0.0.47
+# BiocInterfaces 0.0.49
 
 * Add proper genome build to ranged based objects.
 * Return `SummarizedExperiment` class for certain data types.
+* Fix genome build bugs
 
 # BiocInterfaces 0.0.46
 

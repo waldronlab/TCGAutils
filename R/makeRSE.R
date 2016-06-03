@@ -24,7 +24,8 @@ makeRSE <- function(inputData, geneCol = character(), regEx) {
     grangeNames <- getRangeNames(names(inputData), regEx = regEx)
     DFranges <- inputData[, grangeNames]
     chrName <- grangeNames[1]
-    if (all(grepl("^[0-9]+$", sample(DFranges[, chrName], size = 5)))) {
+    if (all(grepl("^[0-9]+$", sample(DFranges[, chrName], size = 5,
+                                     replace = TRUE)))) {
         DFranges[, chrName] <- paste0("chr", DFranges[, chrName])
     }
     if (!chrName %in% c("seqnames", "chr", "chrom")) {
