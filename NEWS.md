@@ -1,5 +1,6 @@
-# BiocInterfaces 0.0.49
+# BiocInterfaces 0.0.50
 
+* Add your own identifier parsing function for generating a `sampleMap` in `generateMap`!
 * Add proper genome build to ranged based objects.
 * Return `SummarizedExperiment` class for certain data types.
 * Fix genome build bugs

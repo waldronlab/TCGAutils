@@ -7,13 +7,20 @@
 #' MultiAssayExperiment API
 #' @param mPheno A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
+#' @param idConverter A function to be used against the sample or specimen
+#' identifiers to match those in the rownames of the \code{pData} (default NULL)
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @export TCGAgenerateMap
-TCGAgenerateMap <- function(exlist, mPheno) {
+#' @examples \dontrun{
+#' ## For TCGA data
+#' newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
+#' }
+#'
+#' @export generateMap
+generateMap <- function(exlist, mPheno, idConverter = NULL) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     exlist <- MultiAssayExperiment::Elist(exlist)
     samps <- as.list(colnames(exlist))
@@ -25,8 +32,11 @@ TCGAgenerateMap <- function(exlist, mPheno) {
         S4Vectors::DataFrame(assay = x[[i]], assayname = names(x)[i])
     }, x = samps)
     full_map <- do.call(S4Vectors::rbind, listM)
-    # matches <- match(full_map$assay, rownames(mPheno))
-    matches <- match(TCGAbarcode(full_map$assay), rownames(mPheno))
+    if (is.null(idConverter)) {
+        matches <- match(full_map$assay, rownames(mPheno))
+    } else {
+        matches <- match(idConverter(full_map$assay), rownames(mPheno))
+    }
     if (all(is.na(matches))) {
         stop("no way to map pData to Elist")
     }
@@ -34,9 +44,9 @@ TCGAgenerateMap <- function(exlist, mPheno) {
     autoMap <- S4Vectors::cbind(DataFrame(primary), full_map)
     if (any(is.na(autoMap$primary))) {
         notFound <- autoMap[is.na(autoMap$primary), ]
-        warning("Data from rows:",
+        warning("Data dropped from rows:",
                 sprintf("\n %s - %s", notFound[, 2], notFound[, 3]),
-                "\ndropped due to missing phenotype data")
+                "\ndue to missing phenotype data")
     }
     autoMap <- autoMap[!is.na(autoMap$primary), ]
     return(autoMap)
