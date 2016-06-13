@@ -10,7 +10,7 @@
 #'
 #' @return A \code{data.frame} of original and translated identifiers
 #' @export TCGAtranslateID
-#' @importFrom httr POST content content_type
+#' @importFrom httr POST content_type
 TCGAtranslateID <- function(identifier) {
     identifier <- unique(identifier)
     if (length(identifier) > 500) {
