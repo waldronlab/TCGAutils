@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeGRangesListFromDataFrame.R
 \name{makeGRangesListFromDataFrame}
 \alias{makeGRangesListFromDataFrame}
-\title{Convert DataFrame to GRangesList}
+\title{Make a GRangesList object from a data.frame or DataFrame}
 \usage{
 makeGRangesListFromDataFrame(df, partitioning.field,
   keep.extra.columns = FALSE, ignore.strand = FALSE, seqinfo = NULL,
@@ -84,15 +84,33 @@ grouping order of the \code{DataFrame} rows}
     Table Browser (\url{http://genome.ucsc.edu/cgi-bin/hgTables}).
   }
 }
-\value{
-A \linkS4class{GRangesList} class object
-}
 \description{
 \code{makeGRangesListFromDataFrame} extends the
 \link[GenomicRanges]{makeGRangesFromDataFrame} functionality from
 \code{GenomicRanges}. It returns a \link{GRangesList} object.
 }
-\seealso{
-GenomicRanges::makeGRangesFromDataFrame
+\section{Value}{
+
+A \linkS4class{GRangesList} class object.
+
+Refer to the \link{makeGRangesFromDataFrame} documentation for more details.
+}
+\examples{
+##----
+## BASIC EXAMPLES
+##----
+
+df <- data.frame(chr="chr1", start=11:15, end=12:16,
+                 strand=c("+","-","+","*","."), score=1:5,
+                 specimen = c("a", "a", "b", "b", "c"))
+df
+makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
+
+##----
+## Adding feature names
+##----
+rownames(df) <- paste0("GENE", 1:5)
+makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
+
 }
 

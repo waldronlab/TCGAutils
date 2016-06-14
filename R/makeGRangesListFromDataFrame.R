@@ -1,4 +1,4 @@
-#' Convert DataFrame to GRangesList
+#' Make a GRangesList object from a data.frame or DataFrame
 #'
 #' \code{makeGRangesListFromDataFrame} extends the
 #' \link[GenomicRanges]{makeGRangesFromDataFrame} functionality from
@@ -9,9 +9,27 @@
 #' grouping order of the \code{DataFrame} rows
 #' @inheritParams GenomicRanges::makeGRangesFromDataFrame
 #'
-#' @return A \linkS4class{GRangesList} class object
+#' @section Value:
+#' A \linkS4class{GRangesList} class object.
 #'
-#' @seealso GenomicRanges::makeGRangesFromDataFrame
+#' Refer to the \link{makeGRangesFromDataFrame} documentation for more details.
+#'
+#' @examples
+#' ##----
+#' ## BASIC EXAMPLES
+#' ##----
+#'
+#' df <- data.frame(chr="chr1", start=11:15, end=12:16,
+#'                  strand=c("+","-","+","*","."), score=1:5,
+#'                  specimen = c("a", "a", "b", "b", "c"))
+#' df
+#' makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
+#'
+#' ##----
+#' ## Adding feature names
+#' ##----
+#' rownames(df) <- paste0("GENE", 1:5)
+#' makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
 #'
 #' @export makeGRangesListFromDataFrame
 makeGRangesListFromDataFrame <-

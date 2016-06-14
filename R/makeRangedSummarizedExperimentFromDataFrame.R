@@ -1,4 +1,4 @@
-#' Create a RangedSummarizedExperiment from a data frame
+#' Make a RangedSummarizedExperiment from a data.frame or DataFrame
 #'
 #' This function uses input data and some regular expression to guess or
 #' indicate the method for matching ranged column names. Such column names are
@@ -13,8 +13,8 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @export makeRSE
-makeRSE <- function(inputData, geneCol = character(), regEx) {
+#' @export makeRangedSummarizedExperimentFromDataFrame
+makeRangedSummarizedExperimentFromDataFrame <- function(inputData, geneCol = character(), regEx) {
     if (length(geneCol) == 0L) {
         geneCol <- "gene"
     } else if (!is.character(geneCol)) {
