@@ -1,46 +1,55 @@
 #' Make a RangedSummarizedExperiment from a data.frame or DataFrame
 #'
-#' This function uses input data and some regular expression to guess or
-#' indicate the method for matching ranged column names. Such column names are
-#' used to create \code{rowRanges} for the \link{SummarizedExperiment}.
+#' \code{makeRangedSummarizedExperimentFromDataFrame} uses \code{data.frame} or
+#' \code{DataFrame} column names to create a \link{GRanges} object for the
+#' \code{rowRanges} of the resulting \link{SummarizedExperiment} object.
+#' It requires that non-range data columns be coercible into a \code{numeric}
+#' \code{matrix} for the \link{SummarizedExperiment} constructor.
 #'
-#' @param inputData A \code{data.frame} of ranged and expression data
-#' @param geneCol The name of the gene symbol column as character
-#' @param regEx A vector of regular expressions for "grepping" each of the 4
-#' columns needed to create the necessary \link{GRanges} object
+#' @inheritParams GenomicRanges::makeGRangesFromDataFrame
 #'
 #' @return A \link{SummarizedExperiment} object with rowRanges
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
-#'
 #' @export makeRangedSummarizedExperimentFromDataFrame
-makeRangedSummarizedExperimentFromDataFrame <- function(inputData, geneCol = character(), regEx) {
-    if (length(geneCol) == 0L) {
-        geneCol <- "gene"
-    } else if (!is.character(geneCol)) {
-        stop("provide a valid gene column name")
+makeRangedSummarizedExperimentFromDataFrame <-
+    function(df,
+             seqnames.field = c(
+                 "seqnames", "seqname", "chromosome",
+                 "chrom", "chr", "chromosome_name", "seqid"),
+             start.field = "start",
+             end.field = c("end", "stop"),
+             strand.field = "strand",
+             ignore.strand = FALSE,
+             seqinfo = NULL,
+             starts.in.df.are.0based = FALSE)
+    {
+        ## feature.field not needed if DF has rownames
+        rowRanges <- makeGRangesFromDataFrame(
+            df,
+            keep.extra.columns = FALSE,
+            ignore.strand = ignore.strand,
+            seqinfo = seqinfo,
+            seqnames.field = seqnames.field,
+            start.field = start.field,
+            end.field = end.field,
+            strand.field = strand.field,
+            starts.in.df.are.0based = starts.in.df.are.0based)
+
+        granges_cols <-
+            GenomicRanges:::.find_GRanges_cols(names(df),
+                                               seqnames.field = seqnames.field,
+                                               start.field = start.field,
+                                               end.field = end.field,
+                                               strand.field = strand.field,
+                                               ignore.strand = ignore.strand)
+
+        droppedColumns <- names(df)[na.omit(granges_cols)]
+        idx <- match(droppedColumns, names(df))
+        counts <- as.matrix(df[, -idx, drop = FALSE])
+
+        if (!is(as.vector(counts), "numeric"))
+            stop("failed to coerce non-range columns to 'numeric'")
+
+        SummarizedExperiment::SummarizedExperiment(
+            assays=SimpleList(counts=counts), rowRanges=rowRanges)
     }
-    genName <- grep(geneCol, names(inputData), value = TRUE, ignore.case = TRUE)
-    grangeNames <- getRangeNames(names(inputData), regEx = regEx)
-    DFranges <- inputData[, grangeNames]
-    chrName <- grangeNames[1]
-    if (all(grepl("^[0-9]+$", sample(DFranges[, chrName], size = 5,
-                                     replace = TRUE)))) {
-        DFranges[, chrName] <- paste0("chr", DFranges[, chrName])
-    }
-    if (!chrName %in% c("seqnames", "chr", "chrom")) {
-        names(DFranges)[which(names(DFranges) == chrName)] <- "chrom"
-    }
-    RowRanges <- as(DFranges, "GRanges")
-    if(length(unique(inputData[, genName])) == dim(inputData)[1]) {
-        names(RowRanges) <- inputData[, genName]
-        rNames <- inputData[, genName]
-    }
-    dm <- inputData[, !(names(inputData) %in% c(grangeNames, genName))]
-    if(exists("rNames")) {
-        rownames(dm) <- rNames
-    }
-    newSE <- SummarizedExperiment::SummarizedExperiment(
-        assays = SimpleList(counts = dm), rowRanges = RowRanges)
-    return(newSE)
-}

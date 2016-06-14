@@ -4,26 +4,87 @@
 \alias{makeRangedSummarizedExperimentFromDataFrame}
 \title{Make a RangedSummarizedExperiment from a data.frame or DataFrame}
 \usage{
-makeRangedSummarizedExperimentFromDataFrame(inputData, geneCol = character(),
-  regEx)
+makeRangedSummarizedExperimentFromDataFrame(df, seqnames.field = c("seqnames",
+  "seqname", "chromosome", "chrom", "chr", "chromosome_name", "seqid"),
+  start.field = "start", end.field = c("end", "stop"),
+  strand.field = "strand", ignore.strand = FALSE, seqinfo = NULL,
+  starts.in.df.are.0based = FALSE)
 }
 \arguments{
-\item{inputData}{A \code{data.frame} of ranged and expression data}
+\item{df}{
+    A data.frame or \link[S4Vectors]{DataFrame} object. If not, then
+    the function tries to turn \code{df} into a data frame with
+    \code{as.data.frame(df)}.
+  }
 
-\item{geneCol}{The name of the gene symbol column as character}
+\item{seqnames.field}{
+    A character vector of recognized names for the column in \code{df}
+    that contains the chromosome name (a.k.a. sequence name) associated
+    with each genomic range.
+    Only the first name in \code{seqnames.field} that is found
+    in \code{colnames(df)} is used.
+    If no one is found, then an error is raised.
+  }
 
-\item{regEx}{A vector of regular expressions for "grepping" each of the 4
-columns needed to create the necessary \link{GRanges} object}
+\item{start.field}{
+    A character vector of recognized names for the column in \code{df}
+    that contains the start positions of the genomic ranges.
+    Only the first name in \code{start.field} that is found
+    in \code{colnames(df)} is used.
+    If no one is found, then an error is raised.
+  }
+
+\item{end.field}{
+    A character vector of recognized names for the column in \code{df}
+    that contains the end positions of the genomic ranges.
+    Only the first name in \code{start.field} that is found
+    in \code{colnames(df)} is used.
+    If no one is found, then an error is raised.
+  }
+
+\item{strand.field}{
+    A character vector of recognized names for the column in \code{df}
+    that contains the strand associated with each genomic range.
+    Only the first name in \code{strand.field} that is found
+    in \code{colnames(df)} is used.
+    If no one is found or if \code{ignore.strand} is \code{TRUE},
+    then the strand of the returned \link{GRanges} object is
+    set to \code{"*"}.
+  }
+
+\item{ignore.strand}{
+    \code{TRUE} or \code{FALSE} (the default).
+    If \code{TRUE}, then the strand of the returned \link{GRanges} object
+    is set to \code{"*"}.
+  }
+
+\item{seqinfo}{
+    Either \code{NULL}, or a \link{Seqinfo} object, or a character vector
+    of seqlevels, or a named numeric vector of sequence lengths.
+    When not \code{NULL}, it must be compatible with the genomic ranges
+    in \code{df} i.e. it must include at least the sequence levels
+    represented in \code{df}.
+  }
+
+\item{starts.in.df.are.0based}{
+    \code{TRUE} or \code{FALSE} (the default).
+    If \code{TRUE}, then the start positions of the genomic ranges in
+    \code{df} are considered to be \emph{0-based} and are converted to
+    \emph{1-based} in the returned \link{GRanges} object.
+    This feature is intended to make it more convenient to handle input
+    that contains data obtained from resources using the "0-based
+    start" convention. A notorious example of such resource is the UCSC
+    Table Browser (\url{http://genome.ucsc.edu/cgi-bin/hgTables}).
+  }
 }
 \value{
 A \link{SummarizedExperiment} object with rowRanges
 }
 \description{
-This function uses input data and some regular expression to guess or
-indicate the method for matching ranged column names. Such column names are
-used to create \code{rowRanges} for the \link{SummarizedExperiment}.
-}
-\author{
-Marcel Ramos \email{mramos09@gmail.com}
+\code{makeRangedSummarizedExperimentFromDataFrame} uses \code{data.frame} or
+\code{DataFrame} column names to create a \link{GRanges} object for the
+\code{rowRanges} of the resulting \link{SummarizedExperiment} object.
+It requires that non-range data columns be coercible into a \code{numeric}
+\code{matrix} for the \link{SummarizedExperiment} constructor.
 }
 
