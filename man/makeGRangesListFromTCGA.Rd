@@ -4,8 +4,7 @@
 \alias{makeGRangesListFromTCGA}
 \title{Make a GRangesList from TCGA data}
 \usage{
-makeGRangesListFromTCGA(x, primary, feature.field = "hugo_symbol",
-  idFUN = I, ...)
+makeGRangesListFromTCGA(x, primary, feature.field = "hugo_symbol", ...)
 }
 \arguments{
 \item{x}{A \code{data.frame} or \code{DataFrame} class object. \code{list}
@@ -17,9 +16,6 @@ column to be used as sample identifiers}
 \item{feature.field}{A \code{character} vector of length one indicating the
 column to be used as names for each of the ranges in the data}
 
-\item{idFUN}{A \code{function} to be used for parsing the TCGA barcode,
-defaults to the "I" function}
-
 \item{...}{Additional arguments to pass on to
 \link{makeGRangesListFromDataFrame}}
 }
@@ -30,7 +26,6 @@ A \link{GRangesList} class object
 \code{makeGRangesListFromTCGA} allows the user to convert objects of class
 data.frame or DataFrame to a \link{GRangesList}. It includes additional
 features specific to TCGA data such as, hugo symbols, probe numbers,
-segment means, and ucsc build (if available). Parsing of the identifiers is
-also available via the "idFUN" arugment.
+segment means, and ucsc build (if available).
 }
 
