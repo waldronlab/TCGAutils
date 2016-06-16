@@ -4,7 +4,7 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(exlist, mPheno, idConverter = NULL)
+generateMap(exlist, mPheno, idConverter = NULL, ...)
 }
 \arguments{
 \item{exlist}{A named \code{list} of experiments compatible with the
@@ -15,6 +15,8 @@ as rownames}
 
 \item{idConverter}{A function to be used against the sample or specimen
 identifiers to match those in the rownames of the \code{pData} (default NULL)}
+
+\item{...}{Additonal arguments to pass to the 'idConverter' function.}
 }
 \value{
 A \code{DataFrame} class object of mapped samples and patient
