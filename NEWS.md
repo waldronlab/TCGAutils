@@ -1,3 +1,11 @@
+# BiocInterfaces 0.0.60
+
+* `makeGRangesListFromTCGA` data builds on `makeGRangesListFromDataFrame`
+* `makeGRangesListFromDataFrame` and `makeRangedSummarizedExperimentFromDataFrame` will be
+moving to standard Bioconductor packages soon. 
+* `tcga` and `ccle` functions soon to be deprecated. 
+* Upcoming: `TCGAbarcode` will be modified for efficiency
+
 # BiocInterfaces 0.0.50
 
 * Add your own identifier parsing function for generating a `sampleMap` in `generateMap`!

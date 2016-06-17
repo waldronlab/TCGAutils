@@ -20,7 +20,7 @@ TCGAcleanExpList <- function(exlist, mPheno) {
     sampNames <- lapply(exlist, colnames)
     warning("attempting to use colnames on each experiment")
     }
-    patientIDS <- tolower(rownames(mPheno))
+    patientIDS <- rownames(mPheno)
     filler <- substr(patientIDS[1], 5, 5)
     if (filler != "-") {
         patientIDS <- gsub(paste0("\\", filler), "-", patientIDS)
