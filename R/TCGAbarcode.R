@@ -12,7 +12,6 @@ NULL
 #' @param participant Logical (default TRUE) participant identifier chunk
 #' @param sample Logical (default FALSE) includes the numeric sample code of
 #' the barcode
-#' @param vial Logical (default FALSE) includes the sample vial label
 #' @param portion Logical (default FALSE) includes the portion and analyte
 #' codes of the barcode
 #' @param plate Logical (default FALSE) returns the plate value
@@ -32,12 +31,11 @@ NULL
 #'
 #' @export TCGAbarcode
 TCGAbarcode <- function(barcodes, participant = TRUE,
-                        sample = TRUE, vial = FALSE,
-                        portion = FALSE, plate = FALSE,
-                        center = FALSE, index = NULL)
+                        sample = FALSE,  portion = FALSE,
+                        plate = FALSE, center = FALSE, index = NULL)
 {
     if (!all(nchar(barcodes) == 28L)) {
-        stop("inconsistent barcode lengths")
+        warning("inconsistent barcode lengths")
     }
     stopifnot(all(startsWith(toupper(barcodes), "TCGA")))
 
@@ -45,10 +43,6 @@ TCGAbarcode <- function(barcodes, participant = TRUE,
     if (length(filler) != 1L)  stop("barcode delimiters not consistent")
 
     barcodeMat <- do.call(rbind, strsplit(barcodes, "-"))
-    if (!vial) {
-        barcodeMat <- cbind(barcodeMat, substr(barcodeMat[, 4], 3, 3))
-        barcodeMat[, 4] <- substr(barcodeMat[, 4], 1, 2)
-    }
     if (is.null(index)) {
         if (participant) index <- c(index, 1:3)
         if (sample) index <- c(index, 4)
@@ -56,5 +50,5 @@ TCGAbarcode <- function(barcodes, participant = TRUE,
         if (plate) index <- c(index, 6)
         if (center) index <- c(index, 7)
     }
-    apply(barcodeMat[, index], 1, paste, collapse = filler)
+    apply(barcodeMat[, index, drop = FALSE], 1, paste, collapse = filler)
 }

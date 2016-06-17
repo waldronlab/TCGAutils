@@ -5,8 +5,8 @@
 #' plates and the center.
 #'
 #' @param barcodes A character vector of TCGA barcodes
-#' @return A \code{dataframe} with sample type, sample code, vial, portion, analyte,
-#' plate, and center columns.
+#' @return A \code{dataframe} with sample type, sample code, portion, plate,
+#' and center columns.
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
@@ -16,27 +16,28 @@
 #'
 #' @export TCGAbiospec
 TCGAbiospec <- function(barcodes) {
-  sample_type <- sampleTypes[["Definition"]][
-      match(TCGAbarcode(barcodes, sample = TRUE, part = FALSE),
-            sampleTypes[["Code"]])]
-  vialSlice <- TCGAbarcode(barcodes, part=FALSE, sample = TRUE, vial = TRUE)
-  tb <- data.frame(patientids = TCGAbarcode(barcodes),
-                   sample_type,
-                   sample_code = as.character(
-                     TCGAbarcode(barcodes, part=FALSE, sample = TRUE)),
-                   vial = ifelse(nchar(vialSlice) < 3, NA_character_,
-                                 substr(vialSlice, 3,3)),
-                   portion = as.character(
-                     substr(TCGAbarcode(barcodes, part = FALSE, portion = TRUE),
-                            1,2)),
-                   analyte = as.character(
-                     substr(TCGAbarcode(barcodes, part = FALSE, portion = TRUE),
-                            3,3)),
-                   plate = as.character(
-                     TCGAbarcode(barcodes, part = FALSE, plate = TRUE)),
-                   center = as.character(
-                     TCGAbarcode(barcodes, part = FALSE, center=TRUE)),
-                   stringsAsFactors = FALSE, row.names = NULL)
-  tb <- tb[, apply(!is.na(tb), 2, all)]
-  return(tb)
+    if (!all(nchar(barcodes) == 28L)) {
+        stop("inconsistent barcode lengths")
+    }
+    stopifnot(all(startsWith(toupper(barcodes), "TCGA")))
+    filler <- unique(substr(barcodes, 5, 5))
+    if (length(filler) != 1L) {
+        stop("barcode delimiters not consistent")
+    }
+    sample_type <- sampleTypes[["Definition"]][
+        match(substr(TCGAbarcode(barcodes, participant = FALSE, sample = TRUE), 1, 2),
+              sampleTypes[["Code"]])]
+    newBiospec <- data.frame(patient_id = TCGAbarcode(barcodes),
+                             sample_type,
+                             sample_code = TCGAbarcode(barcodes,
+                                                       participant = FALSE,
+                                                       sample = TRUE),
+                             stringsAsFactors = FALSE)
+    portPlateCent <- data.frame(
+        do.call(rbind,
+                strsplit(TCGAbarcode(barcodes, index = 5:7), filler)),
+        stringsAsFactors = FALSE)
+    names(portPlateCent) <- c("portion", "plate", "center")
+    newBiospec <- cbind(newBiospec, portPlateCent)
+    return(newBiospec)
 }

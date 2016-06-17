@@ -4,8 +4,8 @@
 \alias{TCGAbarcode}
 \title{Parse data from TCGA barcode}
 \usage{
-TCGAbarcode(barcodes, participant = TRUE, sample = TRUE, vial = FALSE,
-  portion = FALSE, plate = FALSE, center = FALSE, index = NULL)
+TCGAbarcode(barcodes, participant = TRUE, sample = FALSE, portion = FALSE,
+  plate = FALSE, center = FALSE, index = NULL)
 }
 \arguments{
 \item{barcodes}{A character vector of TCGA barcodes}
@@ -14,8 +14,6 @@ TCGAbarcode(barcodes, participant = TRUE, sample = TRUE, vial = FALSE,
 
 \item{sample}{Logical (default FALSE) includes the numeric sample code of
 the barcode}
-
-\item{vial}{Logical (default FALSE) includes the sample vial label}
 
 \item{portion}{Logical (default FALSE) includes the portion and analyte
 codes of the barcode}

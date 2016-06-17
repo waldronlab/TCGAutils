@@ -10,8 +10,8 @@ TCGAbiospec(barcodes)
 \item{barcodes}{A character vector of TCGA barcodes}
 }
 \value{
-A \code{dataframe} with sample type, sample code, vial, portion, analyte,
-plate, and center columns.
+A \code{dataframe} with sample type, sample code, portion, plate,
+and center columns.
 }
 \description{
 This function uses the full TCGA barcode to return a data frame of the

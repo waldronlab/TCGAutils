@@ -9,6 +9,8 @@
 #' as rownames
 #' @param idConverter A function to be used against the sample or specimen
 #' identifiers to match those in the rownames of the \code{pData} (default NULL)
+#' @param ... Additonal arguments to pass to the 'idConverter' function.
+#'
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
@@ -20,7 +22,7 @@
 #' }
 #'
 #' @export generateMap
-generateMap <- function(exlist, mPheno, idConverter = NULL) {
+generateMap <- function(exlist, mPheno, idConverter = NULL, ...) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     exlist <- MultiAssayExperiment::Elist(exlist)
     samps <- as.list(colnames(exlist))
@@ -35,7 +37,7 @@ generateMap <- function(exlist, mPheno, idConverter = NULL) {
     if (is.null(idConverter)) {
         matches <- match(full_map$assay, rownames(mPheno))
     } else {
-        matches <- match(idConverter(full_map$assay), rownames(mPheno))
+        matches <- match(idConverter(full_map$assay, ...), rownames(mPheno))
     }
     if (all(is.na(matches))) {
         stop("no way to map pData to Elist")
