@@ -35,7 +35,7 @@ TCGAbarcode <- function(barcodes, participant = TRUE,
                         plate = FALSE, center = FALSE, index = NULL)
 {
     if (!all(nchar(barcodes) == 28L)) {
-        stop("inconsistent barcode lengths")
+        warning("inconsistent barcode lengths")
     }
     stopifnot(all(startsWith(toupper(barcodes), "TCGA")))
 
