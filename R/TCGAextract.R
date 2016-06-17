@@ -150,13 +150,24 @@ TCGAextract <- function(object, type = NULL) {
                 assays = SimpleList(counts = dm), rowData = annote)
             return(newSE)
         } else if (slotreq %in% rangeslots) {
-            primary <- ifelse(is.null(dm$tumor_sample_barcode),
+            primary <- ifelse(is.null(dm$Tumor_Sample_Barcode),
                               "Sample", "Tumor_Sample_Barcode")
-            dataRangedNames <- getRangeNames(names(dm))
-            mygrl <- makeGRangesList(dm, tcga(primary = primary,
-                                              standard = FALSE,
-                                              rangeID = dataRangedNames),
-                                     sample = TRUE, collapse = TRUE)
+            granges_cols <- GenomicRanges:::.find_GRanges_cols(names(dm),
+                                               seqnames.field = "Chromosome",
+                                               start.field = "Start_position",
+                                               end.field = "End_position")
+            ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
+            ans_start <- names(dm)[granges_cols[["start"]]]
+            ans_end <- names(dm)[granges_cols[["end"]]]
+            ans_strand <- names(dm)[granges_cols[["strand"]]]
+            mygrl <- makeGRangesListFromTCGA(dm, primary,
+                                             feature.field = "Hugo_Symbol",
+                                             seqnames.field = ans_seqnames,
+                                             start.field = ans_start,
+                                             end.field = ans_end,
+                                             strand.field = ans_strand,
+                                             keep.extra.columns = FALSE)
+            ## might want to start partitioning and keeping metadata
             if(exists("sourceName")) {
                 mygrl@metadata <- list("fileName" = sourceName[fileNo])
             }
