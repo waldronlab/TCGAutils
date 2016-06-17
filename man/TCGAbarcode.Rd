@@ -4,16 +4,13 @@
 \alias{TCGAbarcode}
 \title{Parse data from TCGA barcode}
 \usage{
-TCGAbarcode(barcodes, position = NULL, part = TRUE, sample = FALSE,
-  vial = FALSE, portion = FALSE, plate = FALSE, center = FALSE,
-  collapse = FALSE)
+TCGAbarcode(barcodes, participant = TRUE, sample = TRUE, vial = FALSE,
+  portion = FALSE, plate = FALSE, center = FALSE, index = NULL)
 }
 \arguments{
 \item{barcodes}{A character vector of TCGA barcodes}
 
-\item{position}{A numerical vector of TCGA barcode positions desired}
-
-\item{part}{Logical (default TRUE) participant identifier chunk}
+\item{participant}{Logical (default TRUE) participant identifier chunk}
 
 \item{sample}{Logical (default FALSE) includes the numeric sample code of
 the barcode}
@@ -28,8 +25,7 @@ codes of the barcode}
 \item{center}{Logical (default FALSE) returns a matrix with the plate and
 center codes}
 
-\item{collapse}{Logical (default FALSE) concatenates requested barcode
-chunks}
+\item{index}{A numerical vector of TCGA barcode positions desired}
 }
 \value{
 A character vector or data matrix of TCGA barcode information
@@ -42,7 +38,7 @@ the TCGA barcode.
 library(TCGAbiolinks)
 query <- TCGAquery(tumor = "OV", level = 3)
 barcodes <- unlist(strsplit(query$barcode[1], ","))
-TCGAsamplebc <- TCGAbarcode(barcodes, sample = TRUE, collapse = TRUE)
+TCGAsamplebc <- TCGAbarcode(barcodes)
 
 }
 \author{
