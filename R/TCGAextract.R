@@ -21,7 +21,7 @@
 #' this function works best with the modifications found in the github fork:
 #' \code{LiNk-NY/RTCGAToolbox}. In cases where range data are found
 #' (i.e., "mutations") the default extraction method is used
-#' (see makeGRangesList).
+#' (see makeGRangesListFromTCGA).
 #'
 #' @section type:
 #' Choices include: "RNAseq_Gene",
@@ -48,7 +48,7 @@
 #' cm <- TCGAextract(coadmut, "mutations")
 #' }
 #'
-#' @seealso makeGRangesList()
+#' @seealso makeGRangesListFromTCGA()
 #' @export TCGAextract
 TCGAextract <- function(object, type = NULL) {
     if (!is.null(type)) {
@@ -160,16 +160,21 @@ TCGAextract <- function(object, type = NULL) {
             ans_start <- names(dm)[granges_cols[["start"]]]
             ans_end <- names(dm)[granges_cols[["end"]]]
             ans_strand <- names(dm)[granges_cols[["strand"]]]
-            mygrl <- makeGRangesListFromTCGA(dm, primary,
-                                             feature.field = "Hugo_Symbol",
+            dropIdx <- which(tolower(names(dm)) %in%
+                      c("seqnames", "ranges", "seqlevels",
+                        "seqlengths", "isCircular", "start", "end",
+                        "width", "element", "chr"))
+            mygrl <- makeGRangesListFromTCGA(dm[, -dropIdx], primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
                                              end.field = ans_end,
                                              strand.field = ans_strand,
                                              keep.extra.columns = FALSE)
-            ## might want to start partitioning and keeping metadata
+            grIdx <- c(dropIdx, na.omit(granges_cols))
+            metadata(mygrl) <- S4Vectors::split(dm[, -grIdx], dm[[primary]])
             if(exists("sourceName")) {
-                mygrl@metadata <- list("fileName" = sourceName[fileNo])
+                mygrl@metadata <- c(mygrl@metadata,
+                                    list("fileName" = sourceName[fileNo]))
             }
             return(mygrl)
         }

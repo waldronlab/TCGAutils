@@ -25,7 +25,7 @@ conventional Bioconductor objects. The function returns an
 this function works best with the modifications found in the github fork:
 \code{LiNk-NY/RTCGAToolbox}. In cases where range data are found
 (i.e., "mutations") the default extraction method is used
-(see makeGRangesList).
+(see makeGRangesListFromTCGA).
 }
 \section{type}{
 
@@ -51,6 +51,6 @@ cm <- TCGAextract(coadmut, "mutations")
 Marcel Ramos \email{mramos09@gmail.com}
 }
 \seealso{
-makeGRangesList()
+makeGRangesListFromTCGA()
 }
 
