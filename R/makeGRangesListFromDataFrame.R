@@ -21,19 +21,16 @@
 #'
 #' df <- data.frame(chr="chr1", start=11:15, end=12:16,
 #'                  strand=c("+","-","+","*","."), score=1:5,
-#'                  specimen = c("a", "a", "b", "b", "c"))
+#'                  specimen = c("a", "a", "b", "b", "c"),
+#'                  gene_symbols = paste0("GENE", letters[1:5]))
 #' df
-#' makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
-#'
-#' ##----
-#' ## Adding feature names
-#' ##----
-#' rownames(df) <- paste0("GENE", 1:5)
-#' makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
+#' makeGRangesListFromDataFrame(df, partitioning.field = "specimen",
+#'                              names.field = "gene_symbols")
 #'
 #' @export makeGRangesListFromDataFrame
 makeGRangesListFromDataFrame <-
     function(df, partitioning.field,
+             names.field = NULL,
              keep.extra.columns = FALSE,
              ignore.strand = FALSE,
              seqinfo = NULL,
@@ -52,8 +49,10 @@ makeGRangesListFromDataFrame <-
         if (is.na(partitioningIdx))
             stop("'partitioning.field' is not in 'names(df)'")
 
+        namesIdx <- match(names.field, names(df))
+
         gr <- GenomicRanges::makeGRangesFromDataFrame(
-            df[, -match(partitioning.field, names(df))],
+            df[, -c(partitioningIdx, namesIdx)],
             keep.extra.columns=keep.extra.columns,
             ignore.strand=ignore.strand,
             seqinfo = seqinfo,
@@ -62,6 +61,9 @@ makeGRangesListFromDataFrame <-
             end.field = end.field,
             strand.field = strand.field,
             starts.in.df.are.0based = starts.in.df.are.0based)
+
+        if (!is.null(names.field))
+            names(gr) <- df[[names.field]]
 
         S4Vectors::split(gr, df[[partitioning.field]])
     }

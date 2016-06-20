@@ -4,7 +4,7 @@
 \alias{makeGRangesListFromDataFrame}
 \title{Make a GRangesList object from a data.frame or DataFrame}
 \usage{
-makeGRangesListFromDataFrame(df, partitioning.field,
+makeGRangesListFromDataFrame(df, partitioning.field, names.field = NULL,
   keep.extra.columns = FALSE, ignore.strand = FALSE, seqinfo = NULL,
   seqnames.field = c("seqnames", "seqname", "chromosome", "chrom", "chr",
   "chromosome_name", "seqid"), start.field = "start", end.field = c("end",
@@ -102,15 +102,11 @@ Refer to the \link{makeGRangesFromDataFrame} documentation for more details.
 
 df <- data.frame(chr="chr1", start=11:15, end=12:16,
                  strand=c("+","-","+","*","."), score=1:5,
-                 specimen = c("a", "a", "b", "b", "c"))
+                 specimen = c("a", "a", "b", "b", "c"),
+                 gene_symbols = paste0("GENE", letters[1:5]))
 df
-makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
-
-##----
-## Adding feature names
-##----
-rownames(df) <- paste0("GENE", 1:5)
-makeGRangesListFromDataFrame(df, partitioning.field = "specimen")
+makeGRangesListFromDataFrame(df, partitioning.field = "specimen",
+                             names.field = "gene_symbols")
 
 }
 
