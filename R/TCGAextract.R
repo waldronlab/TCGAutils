@@ -51,138 +51,141 @@
 #' @seealso makeGRangesListFromTCGA()
 #' @export TCGAextract
 TCGAextract <- function(object, type = NULL) {
-    if (!is.null(type)) {
-        if (is.character(type)) {
-            type <- tolower(gsub("_", "", type))
-            type <- gsub("s$", "", type)
-        } else {
-            stop("Data type must be a character string")
-        }
+  if (!is.null(type)) {
+    if (is.character(type)) {
+      type <- tolower(gsub("_", "", type))
+      type <- gsub("s$", "", type)
     } else {
-        stop("Specify type")
+      stop("Data type must be a character string")
     }
-    choices <- tolower(
-        gsub("_", "",
-             c("RNAseq_Gene", "miRNASeq_Gene", "RNAseq2_Gene_Norm",
-               "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH", "Methylation",
-               "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array")))
-    rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
-    if (type %in% choices) {
-        slotreq <- grep(paste0("^", type) , slotNames(object),
-                        ignore.case=TRUE, perl=TRUE, value=TRUE)
-        if (is(getElement(object, slotreq), "list")) {
-            elemlength <- length(getElement(object, slotreq))
-            if (elemlength > 1L) {
-                if (interactive()) {
-                    sourceName <- sapply(getElement(object, slotreq),
-                                         function(FHarray) {
-                                             getElement(FHarray, "Filename")
-                                         })
-                    dimensions <- sapply(lapply(getElement(object, slotreq),
-                                                function(tmp) {
-                                                getElement(tmp, "DataMatrix")
-                                                }), dim)
-                    cat(paste0("[", seq(length(sourceName)), "] ",
-                               sourceName, paste0("\n\tNumber of rows: ",
-                                                  dimensions[1,],
-                                                  "\tNumber of columns: ",
-                                                  dimensions[2,]) ),
-                        fill = TRUE, sep = "\n")
-                    fileNo <- .fileSelect()
-                    if (fileNo == 0) {
-                        fileNo <- which.max(sapply(
-                            lapply(getElement(object, slotreq),
-                                   function(tmp) {
-                                       getElement(tmp, "DataMatrix")
-                                   }), ncol)
-                        )
-                    }
-                message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
-                    dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
-                } else {
-                    dm <- lapply(getElement(object, slotreq),
-                                 function(tmp) {
-                                     getElement(tmp, "DataMatrix")
-                                 })
-                    keeplist <- which.max(sapply(dm, ncol))
-                    dm <- dm[[keeplist]]
-                    warning(paste("Taking the array platform with",
-                                  "the greatest number of samples:", keeplist))
-                }
-            } else if(elemlength == 1L) {
-                dm <- getElement(object, slotreq)[[1]]@DataMatrix
-            } else if(elemlength == 0L) {
-                dm <- matrix(NA, nrow=0, ncol=0)
-            }
+  } else {
+    stop("Specify type")
+  }
+  choices <- tolower(
+    gsub("_", "",
+         c("RNAseq_Gene", "miRNASeq_Gene", "RNAseq2_Gene_Norm",
+           "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH", "Methylation",
+           "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array")))
+  rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
+  if (type %in% choices) {
+    slotreq <- grep(paste0("^", type) , slotNames(object),
+                    ignore.case=TRUE, perl=TRUE, value=TRUE)
+    if (is(getElement(object, slotreq), "list")) {
+      elemlength <- length(getElement(object, slotreq))
+      if (elemlength > 1L) {
+        if (interactive()) {
+          sourceName <- sapply(getElement(object, slotreq),
+                               function(FHarray) {
+                                 getElement(FHarray, "Filename")
+                               })
+          dimensions <- sapply(lapply(getElement(object, slotreq),
+                                      function(tmp) {
+                                        getElement(tmp, "DataMatrix")
+                                      }), dim)
+          cat(paste0("[", seq(length(sourceName)), "] ",
+                     sourceName, paste0("\n\tNumber of rows: ",
+                                        dimensions[1,],
+                                        "\tNumber of columns: ",
+                                        dimensions[2,]) ),
+              fill = TRUE, sep = "\n")
+          fileNo <- .fileSelect()
+          if (fileNo == 0) {
+            fileNo <- which.max(sapply(
+              lapply(getElement(object, slotreq),
+                     function(tmp) {
+                       getElement(tmp, "DataMatrix")
+                     }), ncol)
+            )
+          }
+          message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
+          dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
         } else {
-            dm <- getElement(object, slotreq)
+          dm <- lapply(getElement(object, slotreq),
+                       function(tmp) {
+                         getElement(tmp, "DataMatrix")
+                       })
+          keeplist <- which.max(sapply(dm, ncol))
+          dm <- dm[[keeplist]]
+          warning(paste("Taking the array platform with",
+                        "the greatest number of samples:", keeplist))
         }
-    } else  if (type %in% c("gistica", "gistict")) {
-        if(type=="gistica"){
-            slotreq <- "AllByGene"
-        } else {
-            slotreq <- "ThresholdedByGene"
-        }
-        dm <- getElement(object@GISTIC, slotreq)
+      } else if(elemlength == 1L) {
+        dm <- getElement(object, slotreq)[[1]]@DataMatrix
+      } else if(elemlength == 0L) {
+        dm <- matrix(NA, nrow=0, ncol=0)
+      }
     } else {
-        stop(paste("Data type not yet supported or could not be matched."))
+      dm <- getElement(object, slotreq)
     }
-    if (dim(dm)[1] == 0 | dim(dm)[2] == 0) {
-        stop("There is no data for that data type!")
+  } else  if (type %in% c("gistica", "gistict")) {
+    if(type=="gistica"){
+      slotreq <- "AllByGene"
     } else {
-        if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
-            annote <- dm[, !grepl("TCGA", names(dm))]
-            isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
-            if (isNumRow) {
-                geneSymbols <- annote[, grep("symbol", names(annote),
-                                             ignore.case = TRUE, value = TRUE)]
-                rNames <- geneSymbols
-            } else {
-                rNames <- rownames(dm)
-            }
-            dm <- apply(dm[grepl("TCGA", names(dm))], 2, as.numeric, as.matrix)
-            rownames(dm) <- rNames
-            filler <- substr(colnames(dm)[1], 5, 5)
-            if (filler != "-") {
-                colnames(dm) <- gsub(paste0("\\", filler), "-", colnames(dm))
-            }
-            newSE <- SummarizedExperiment::SummarizedExperiment(
-                assays = SimpleList(counts = dm), rowData = annote)
-            return(newSE)
-        } else if (slotreq %in% rangeslots) {
-            primary <- ifelse(is.null(dm$Tumor_Sample_Barcode),
-                              "Sample", "Tumor_Sample_Barcode")
-            granges_cols <- GenomicRanges:::.find_GRanges_cols(names(dm),
-                                               seqnames.field = "Chromosome",
-                                               start.field = "Start_position",
-                                               end.field = "End_position")
-            ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
-            ans_start <- names(dm)[granges_cols[["start"]]]
-            ans_end <- names(dm)[granges_cols[["end"]]]
-            ans_strand <- names(dm)[granges_cols[["strand"]]]
-            dropIdx <- which(tolower(names(dm)) %in%
-                      c("seqnames", "ranges", "seqlevels",
-                        "seqlengths", "isCircular", "start", "end",
-                        "width", "element", "chr"))
-            mygrl <- makeGRangesListFromTCGA(dm[, -dropIdx], primary,
-                                             seqnames.field = ans_seqnames,
-                                             start.field = ans_start,
-                                             end.field = ans_end,
-                                             strand.field = ans_strand,
-                                             keep.extra.columns = FALSE)
-            grIdx <- c(dropIdx, na.omit(granges_cols))
-            metadata(mygrl) <- S4Vectors::split(dm[, -grIdx], dm[[primary]])
-            if(exists("sourceName")) {
-                mygrl@metadata <- c(mygrl@metadata,
-                                    list("fileName" = sourceName[fileNo]))
-            }
-            return(mygrl)
-        }
-        colnames(dm) <- TCGAbarcode(colnames(dm), sample=TRUE, collapse=TRUE)
-        eset <- ExpressionSet(dm)
-        if (exists("annote")) {
-            featureData(eset) <- AnnotatedDataFrame(annote)
-        }
-        return(eset)
+      slotreq <- "ThresholdedByGene"
     }
+    dm <- getElement(object@GISTIC, slotreq)
+  } else {
+    stop(paste("Data type not yet supported or could not be matched."))
+  }
+  if (dim(dm)[1] == 0 | dim(dm)[2] == 0) {
+    stop("There is no data for that data type!")
+  } else {
+    if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
+      annote <- dm[, !grepl("TCGA", names(dm))]
+      isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
+      if (isNumRow) {
+        geneSymbols <- annote[, grep("symbol", names(annote),
+                                     ignore.case = TRUE, value = TRUE)]
+        rNames <- geneSymbols
+      } else {
+        rNames <- rownames(dm)
+      }
+      dm <- apply(dm[grepl("TCGA", names(dm))], 2, as.numeric, as.matrix)
+      rownames(dm) <- rNames
+      filler <- substr(colnames(dm)[1], 5, 5)
+      if (filler != "-") {
+        colnames(dm) <- gsub(paste0("\\", filler), "-", colnames(dm))
+      }
+      newSE <- SummarizedExperiment::SummarizedExperiment(
+        assays = SimpleList(counts = dm), rowData = annote)
+      return(newSE)
+    } else if (slotreq %in% rangeslots) {
+      primary <- ifelse(is.null(dm$Tumor_Sample_Barcode),
+                        "Sample", "Tumor_Sample_Barcode")
+      granges_cols <- GenomicRanges:::.find_GRanges_cols(names(dm),
+                                                         seqnames.field = "Chromosome",
+                                                         start.field = "Start_position",
+                                                         end.field = "End_position")
+      ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
+      ans_start <- names(dm)[granges_cols[["start"]]]
+      ans_end <- names(dm)[granges_cols[["end"]]]
+      ans_strand <- names(dm)[granges_cols[["strand"]]]
+      dropIdx <- which(tolower(names(dm)) %in%
+                         c("seqnames", "ranges", "seqlevels",
+                           "seqlengths", "isCircular", "start", "end",
+                           "width", "element", "chr"))
+      if (length(dropIdx) != 0L) {
+        dm <- dm[, -dropIdx]
+      }
+      mygrl <- makeGRangesListFromTCGA(dm, primary,
+                                       seqnames.field = ans_seqnames,
+                                       start.field = ans_start,
+                                       end.field = ans_end,
+                                       strand.field = ans_strand,
+                                       keep.extra.columns = FALSE)
+      grIdx <- c(dropIdx, na.omit(granges_cols))
+      metadata(mygrl) <- S4Vectors::split(dm[, -grIdx], dm[[primary]])
+      if(exists("sourceName")) {
+        mygrl@metadata <- c(mygrl@metadata,
+                            list("fileName" = sourceName[fileNo]))
+      }
+      return(mygrl)
+    }
+    colnames(dm) <- TCGAbarcode(colnames(dm), sample = TRUE)
+    eset <- ExpressionSet(dm)
+    if (exists("annote")) {
+      featureData(eset) <- AnnotatedDataFrame(annote)
+    }
+    return(eset)
+  }
 }
