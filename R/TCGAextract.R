@@ -152,10 +152,10 @@ TCGAextract <- function(object, type = NULL) {
         } else if (slotreq %in% rangeslots) {
             primary <- ifelse(is.null(dm$Tumor_Sample_Barcode),
                               "Sample", "Tumor_Sample_Barcode")
-            granges_cols <- GenomicRanges:::.find_GRanges_cols(names(dm),
-                                               seqnames.field = "Chromosome",
-                                               start.field = "Start_position",
-                                               end.field = "End_position")
+            granges_cols <- findGRangesCols(names(dm),
+                                            seqnames.field = "Chromosome",
+                                            start.field = "Start_position",
+                                            end.field = "End_position")
             ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
             ans_start <- names(dm)[granges_cols[["start"]]]
             ans_end <- names(dm)[granges_cols[["end"]]]
@@ -169,9 +169,7 @@ TCGAextract <- function(object, type = NULL) {
                                              start.field = ans_start,
                                              end.field = ans_end,
                                              strand.field = ans_strand,
-                                             keep.extra.columns = FALSE)
-            grIdx <- c(dropIdx, na.omit(granges_cols))
-            metadata(mygrl) <- S4Vectors::split(dm[, -grIdx], dm[[primary]])
+                                             keep.extra.columns = TRUE)
             if(exists("sourceName")) {
                 mygrl@metadata <- c(mygrl@metadata,
                                     list("fileName" = sourceName[fileNo]))
