@@ -80,7 +80,7 @@ TCGAextract <- function(object, type = NULL) {
                                          })
                     dimensions <- sapply(lapply(getElement(object, slotreq),
                                                 function(tmp) {
-                                                getElement(tmp, "DataMatrix")
+                                                    getElement(tmp, "DataMatrix")
                                                 }), dim)
                     cat(paste0("[", seq(length(sourceName)), "] ",
                                sourceName, paste0("\n\tNumber of rows: ",
@@ -97,7 +97,7 @@ TCGAextract <- function(object, type = NULL) {
                                    }), ncol)
                         )
                     }
-                message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
+                    message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
                     dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
                 } else {
                     dm <- lapply(getElement(object, slotreq),
@@ -161,9 +161,9 @@ TCGAextract <- function(object, type = NULL) {
             ans_end <- names(dm)[granges_cols[["end"]]]
             ans_strand <- names(dm)[granges_cols[["strand"]]]
             dropIdx <- which(tolower(names(dm)) %in%
-                      c("seqnames", "ranges", "seqlevels",
-                        "seqlengths", "isCircular", "start", "end",
-                        "width", "element", "chr"))
+                                 c("seqnames", "ranges", "seqlevels",
+                                   "seqlengths", "isCircular", "start", "end",
+                                   "width", "element", "chr"))
             mygrl <- makeGRangesListFromTCGA(dm[, -dropIdx], primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
