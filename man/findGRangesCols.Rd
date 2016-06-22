@@ -21,7 +21,7 @@ strand names in the given character vector.
 }
 \examples{
 myDataColNames <- c("Start_position", "End_position", "strand",
-                 "chromo", "num_probes", "segment_mean")
+                 "chromosome", "num_probes", "segment_mean")
 findGRangesCols(myDataColNames)
 
 }
