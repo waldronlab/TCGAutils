@@ -14,13 +14,13 @@
 #'
 #' @export findGRangesCols
 findGRangesCols <- function (df_colnames,
-                               seqnames.field = c("seqnames", "seqname",
-                                                  "chromosome", "chrom", "chr",
-                                                  "chromosome_name", "seqid"),
-                               start.field = "start",
-                               end.field = c("end", "stop"),
-                               strand.field = "strand",
-                               ignore.strand = FALSE) {
+                             seqnames.field = c("seqnames", "seqname",
+                                                "chromosome", "chrom", "chr",
+                                                "chromosome_name", "seqid"),
+                             start.field = "start",
+                             end.field = c("end", "stop"),
+                             strand.field = "strand",
+                             ignore.strand = FALSE) {
     df_colnames0 <- tolower(df_colnames)
     seqnames.field0 <- GenomicRanges:::.normarg_field(seqnames.field, "seqnames")
     start.field0 <- GenomicRanges:::.normarg_field(start.field, "start")

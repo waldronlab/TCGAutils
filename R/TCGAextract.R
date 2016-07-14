@@ -150,20 +150,26 @@ TCGAextract <- function(object, type = NULL) {
                 assays = SimpleList(counts = dm), rowData = annote)
             return(newSE)
         } else if (slotreq %in% rangeslots) {
-            primary <- ifelse(is.null(dm$Tumor_Sample_Barcode),
-                              "Sample", "Tumor_Sample_Barcode")
+            tsb <- "tumor_sample_barcode" %in% tolower(names(dm))
+            if(tsb) {
+                primary <- names(dm)[which(tsb)]
+            } else {
+                primary <- names(dm)[which("sample" %in% tolower(names(dm)))]
+            }
             granges_cols <- findGRangesCols(names(dm),
                                             seqnames.field = "Chromosome",
-                                            start.field = "Start_position",
-                                            end.field = "End_position")
+                                            start.field = c("Start", "Start_position"),
+                                            end.field = c("End", "End_position"))
             ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
             ans_start <- names(dm)[granges_cols[["start"]]]
             ans_end <- names(dm)[granges_cols[["end"]]]
             ans_strand <- names(dm)[granges_cols[["strand"]]]
-            dropIdx <- which(tolower(names(dm)) %in%
-                                 c("seqnames", "ranges", "seqlevels",
+            omitAdditional <- c("seqnames", "ranges", "seqlevels",
                                    "seqlengths", "isCircular", "start", "end",
-                                   "width", "element", "chr"))
+                                   "width", "element", "chr")
+            diffNames <- setdiff(omitAdditional,
+                                 tolower(names(dm)[na.omit(granges_cols)]))
+            dropIdx <- which(tolower(names(dm)) %in% diffNames)
             mygrl <- makeGRangesListFromTCGA(dm[, -dropIdx], primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
