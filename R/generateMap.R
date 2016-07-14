@@ -24,7 +24,7 @@
 #' @export generateMap
 generateMap <- function(exlist, mPheno, idConverter = NULL, ...) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-    exlist <- MultiAssayExperiment::Elist(exlist)
+    exlist <- MultiAssayExperiment::ExperimentList(exlist)
     samps <- as.list(colnames(exlist))
     } else {
     samps <- lapply(exlist, colnames)
@@ -40,7 +40,7 @@ generateMap <- function(exlist, mPheno, idConverter = NULL, ...) {
         matches <- match(idConverter(full_map$assay, ...), rownames(mPheno))
     }
     if (all(is.na(matches))) {
-        stop("no way to map pData to Elist")
+        stop("no way to map pData to ExperimentList")
     }
     primary <- rownames(mPheno)[matches]
     autoMap <- S4Vectors::cbind(DataFrame(primary), full_map)
