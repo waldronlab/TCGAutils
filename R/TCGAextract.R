@@ -170,7 +170,7 @@ TCGAextract <- function(object, type = NULL) {
             diffNames <- setdiff(omitAdditional,
                                  tolower(names(dm)[na.omit(granges_cols)]))
             dropIdx <- which(tolower(names(dm)) %in% diffNames)
-            mygrl <- makeGRangesListFromTCGA(dm[, -dropIdx], primary,
+            mygrl <- makeGRangesListFromTCGA(dm[, -dropIdx], partitioning.field = primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
                                              end.field = ans_end,
