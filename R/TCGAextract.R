@@ -178,7 +178,8 @@ TCGAextract <- function(object, type = NULL) {
             } else {
               ignore.strand <- FALSE
             }
-            mygrl <- makeGRangesListFromTCGA(dm, partitioning.field = primary,
+            mygrl <- makeGRangesListFromTCGA(x = dm, 
+                                             partitioning.field = primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
                                              end.field = ans_end,

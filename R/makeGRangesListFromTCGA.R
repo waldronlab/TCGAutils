@@ -48,12 +48,12 @@ makeGRangesListFromTCGA <-
 
         if (hugo) {
         hugoName <- names(x)[which(names.field %in% tolower(names(x)))]
-        grl <- makeGRangesListFromDataFrame(x,
+        grl <- makeGRangesListFromDataFrame(df = x,
                                             partitioning.field =
                                               partitioning.field,
                                             names.field = hugoName, ...)
         } else {
-          grl <- makeGRangesListFromDataFrame(x, partitioning.field =
+          grl <- makeGRangesListFromDataFrame(df = x, partitioning.field =
                                                 partitioning.field, ...)
         }
 
