@@ -22,9 +22,9 @@
 #'
 #' @param x A \code{data.frame} or \code{DataFrame} class object. \code{list}
 #' class objects are coerced to data.frame or DataFrame.
-#' @param primary A \code{character} vector of length one indicating the
+#' @param partitioning.field A \code{character} vector of length one indicating the
 #' column to be used as sample identifiers
-#' @param feature.field A \code{character} vector of length one indicating the
+#' @param names.field A \code{character} vector of length one indicating the
 #' column to be used as names for each of the ranges in the data
 #' @param ... Additional arguments to pass on to
 #' \link{makeGRangesListFromDataFrame}
@@ -33,23 +33,23 @@
 #'
 #' @export makeGRangesListFromTCGA
 makeGRangesListFromTCGA <-
-    function(x, primary,
-             feature.field = "hugo_symbol", ...)
+    function(x, partitioning.field,
+             names.field = "hugo_symbol", ...)
     {
         if (is.list(x) && !inherits(x, "data.frame"))
             x <- do.call(rbind, x)
 
-        if (!S4Vectors::isSingleString(primary))
-            stop("'primary' must be a single sting")
+        if (!S4Vectors::isSingleString(partitioning.field))
+            stop("'partitioning.field' must be a single sting")
 
         twoMeta <- all(c("num_probes", "segment_mean") %in% tolower(names(x)))
-        hugo <- feature.field %in% tolower(names(x))
+        hugo <- names.field %in% tolower(names(x))
         ncbi <- "ncbi_build" %in% tolower(names(x))
 
-        grl <- makeGRangesListFromDataFrame(x, primary, ...)
+        grl <- makeGRangesListFromDataFrame(x, partitioning.field = partitioning.field, ...)
 
         if (hugo) {
-            hugoName <- names(x)[which(feature.field %in% tolower(names(x)))]
+            hugoName <- names(x)[which(names.field %in% tolower(names(x)))]
             tempGRL <- BiocGenerics::unlist(grl)
             names(tempGRL) <- x[[hugoName]]
             grl <- BiocGenerics::relist(tempGRL, grl)
