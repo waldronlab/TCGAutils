@@ -22,8 +22,8 @@
 #'
 #' @param x A \code{data.frame} or \code{DataFrame} class object. \code{list}
 #' class objects are coerced to data.frame or DataFrame.
-#' @param partitioning.field A \code{character} vector of length one indicating the
-#' column to be used as sample identifiers
+#' @param partitioning.field A \code{character} vector of length one indicating
+#' the column to be used as sample identifiers
 #' @param names.field A \code{character} vector of length one indicating the
 #' column to be used as names for each of the ranges in the data
 #' @param ... Additional arguments to pass on to
@@ -46,13 +46,15 @@ makeGRangesListFromTCGA <-
         hugo <- names.field %in% tolower(names(x))
         ncbi <- "ncbi_build" %in% tolower(names(x))
 
-        grl <- makeGRangesListFromDataFrame(x, partitioning.field = partitioning.field, ...)
-
         if (hugo) {
-            hugoName <- names(x)[which(names.field %in% tolower(names(x)))]
-            tempGRL <- BiocGenerics::unlist(grl)
-            names(tempGRL) <- x[[hugoName]]
-            grl <- BiocGenerics::relist(tempGRL, grl)
+        hugoName <- names(x)[which(names.field %in% tolower(names(x)))]
+        grl <- makeGRangesListFromDataFrame(x,
+                                            partitioning.field =
+                                              partitioning.field,
+                                            names.field = hugoName, ...)
+        } else {
+          grl <- makeGRangesListFromDataFrame(x, partitioning.field =
+                                                partitioning.field, ...)
         }
 
         if (twoMeta) {
