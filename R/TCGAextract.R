@@ -151,7 +151,7 @@ TCGAextract <- function(object, type = NULL) {
             return(newSE)
         } else if (slotreq %in% rangeslots) {
             tsb <- "tumor_sample_barcode" %in% tolower(names(dm))
-            if(tsb) {
+            if (tsb) {
                 primary <- names(dm)[which(tsb)]
             } else {
                 primary <- names(dm)[which("sample" %in% tolower(names(dm)))]
@@ -173,12 +173,18 @@ TCGAextract <- function(object, type = NULL) {
             if (length(dropIdx)) {
               dm <- dm[, -dropIdx]
             }
+            if (is.na(ans_strand)) {
+             ignore.strand <- TRUE 
+            } else {
+              ignore.strand <- FALSE
+            }
             mygrl <- makeGRangesListFromTCGA(dm, partitioning.field = primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
                                              end.field = ans_end,
                                              strand.field = ans_strand,
-                                             keep.extra.columns = TRUE)
+                                             keep.extra.columns = TRUE,
+                                             ignore.strand = ignore.strand)
             if(exists("sourceName")) {
                 mygrl@metadata <- c(mygrl@metadata,
                                     list("fileName" = sourceName[fileNo]))
