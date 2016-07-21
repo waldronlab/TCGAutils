@@ -150,11 +150,11 @@ TCGAextract <- function(object, type = NULL) {
                 assays = SimpleList(counts = dm), rowData = annote)
             return(newSE)
         } else if (slotreq %in% rangeslots) {
-            tsb <- "tumor_sample_barcode" %in% tolower(names(dm))
-            if (tsb) {
+            tsb <- tolower(names(dm)) %in% "tumor_sample_barcode"
+            if (sum(tsb) == 1L) {
                 primary <- names(dm)[which(tsb)]
             } else {
-                primary <- names(dm)[which("sample" %in% tolower(names(dm)))]
+                primary <- names(dm)[which(tolower(names(dm)) %in% "sample")]
             }
             granges_cols <- findGRangesCols(names(dm),
                                             seqnames.field = "Chromosome",
