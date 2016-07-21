@@ -4,11 +4,12 @@
 \alias{makeGRangesListFromDataFrame}
 \title{Make a GRangesList object from a data.frame or DataFrame}
 \usage{
-makeGRangesListFromDataFrame(df, partitioning.field, names.field = NULL,
+makeGRangesListFromDataFrame(df, partitioning.field,
   keep.extra.columns = FALSE, ignore.strand = FALSE, seqinfo = NULL,
   seqnames.field = c("seqnames", "seqname", "chromosome", "chrom", "chr",
   "chromosome_name", "seqid"), start.field = "start", end.field = c("end",
-  "stop"), strand.field = "strand", starts.in.df.are.0based = FALSE)
+  "stop"), strand.field = "strand", names.field = NULL,
+  starts.in.df.are.0based = FALSE)
 }
 \arguments{
 \item{df}{A \code{DataFrame} class object}
@@ -72,6 +73,9 @@ grouping order of the \code{DataFrame} rows}
     then the strand of the returned \link{GRanges} object is
     set to \code{"*"}.
   }
+
+\item{names.field}{A \code{character} vector designating the names for all
+the ranges in the resulting \link{GRangesList}}
 
 \item{starts.in.df.are.0based}{
     \code{TRUE} or \code{FALSE} (the default).

@@ -154,7 +154,7 @@ TCGAextract <- function(object, type = NULL) {
         } else if (slotreq %in% rangeslots) {
             tsb <- match("tumor_sample_barcode", tolower(names(dm)))
             if (length(tsb) == 1L) {
-                primary <- names(dm)[which(tsb)]
+                primary <- names(dm)[tsb]
             } else if (length(tsb) == 0L) {
                 primary <- names(dm)[which(tolower(names(dm)) %in% "sample")]
             } else {

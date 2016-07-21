@@ -7,6 +7,8 @@
 #' @param df A \code{DataFrame} class object
 #' @param partitioning.field Typically a \code{factor} vector that defines the
 #' grouping order of the \code{DataFrame} rows
+#' @param names.field A \code{character} vector designating the names for all
+#' the ranges in the resulting \link{GRangesList}
 #' @inheritParams GenomicRanges::makeGRangesFromDataFrame
 #'
 #' @section Value:
@@ -30,7 +32,6 @@
 #' @export makeGRangesListFromDataFrame
 makeGRangesListFromDataFrame <-
     function(df, partitioning.field,
-             names.field = NULL,
              keep.extra.columns = FALSE,
              ignore.strand = FALSE,
              seqinfo = NULL,
@@ -40,6 +41,7 @@ makeGRangesListFromDataFrame <-
              start.field = "start",
              end.field = c("end", "stop"),
              strand.field = "strand",
+             names.field = NULL,
              starts.in.df.are.0based = FALSE)
     {
         if (!S4Vectors::isSingleString(partitioning.field))

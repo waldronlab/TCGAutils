@@ -4,13 +4,13 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(exlist, mPheno, idConverter = NULL, ...)
+generateMap(experiments, pData, idConverter = NULL, ...)
 }
 \arguments{
-\item{exlist}{A named \code{list} of experiments compatible with the
+\item{experiments}{A named \code{list} of experiments compatible with the
 MultiAssayExperiment API}
 
-\item{mPheno}{A \code{data.frame} of clinical data with patient identifiers
+\item{pData}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}
 
 \item{idConverter}{A function to be used against the sample or specimen
