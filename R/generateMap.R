@@ -31,19 +31,21 @@ generateMap <- function(exlist, mPheno, idConverter = NULL, ...) {
     warning("attempting to use colnames on each experiment")
     }
     listM <- lapply(seq_along(samps), function(i, x) {
-        S4Vectors::DataFrame(assay = x[[i]], assayname = names(x)[i])
+        S4Vectors::DataFrame(colname = x[[i]], assay = names(x)[i])
     }, x = samps)
     full_map <- do.call(S4Vectors::rbind, listM)
     if (is.null(idConverter)) {
-        matches <- match(full_map$assay, rownames(mPheno))
+        matches <- match(full_map$colname, rownames(mPheno))
     } else {
-        matches <- match(idConverter(full_map$assay, ...), rownames(mPheno))
+        matches <- match(idConverter(full_map$colname, ...), rownames(mPheno))
     }
     if (all(is.na(matches))) {
         stop("no way to map pData to ExperimentList")
     }
+    assay <- full_map$assay
     primary <- rownames(mPheno)[matches]
-    autoMap <- S4Vectors::cbind(DataFrame(primary), full_map)
+    colname <- full_map$colname
+    autoMap <- S4Vectors::DataFrame(assay, primary, colname)
     if (any(is.na(autoMap$primary))) {
         notFound <- autoMap[is.na(autoMap$primary), ]
         warning("Data dropped from rows:",
