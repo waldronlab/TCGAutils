@@ -156,7 +156,7 @@ TCGAextract <- function(object, type = NULL) {
             if (length(tsb) == 1L) {
                 primary <- names(dm)[tsb]
             } else if (length(tsb) == 0L) {
-                primary <- names(dm)[which(tolower(names(dm)) %in% "sample")]
+                primary <- names(dm)[tolower(names(dm)) == "sample"]
             } else {
                 stop("'partitioning.field' could not be found")
             }
