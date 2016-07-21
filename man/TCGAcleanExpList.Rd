@@ -4,17 +4,18 @@
 \alias{TCGAcleanExpList}
 \title{Remove unmatched samples from a list of experiments}
 \usage{
-TCGAcleanExpList(exlist, mPheno)
+TCGAcleanExpList(experiments, pData)
 }
 \arguments{
-\item{exlist}{A named \code{\link[MultiAssayExperiment]{Elist}} of
-experiments compatible with the \code{MultiAssayExperiment} API}
+\item{experiments}{A named \code{\link[MultiAssayExperiment]{ExperimentList}}
+of experiments compatible with the \code{MultiAssayExperiment} API}
 
-\item{mPheno}{A \code{data.frame} of clinical data with patient identifiers
+\item{pData}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}
 }
 \value{
-A named \code{list} of experiments
+A named \code{list} or \link{ExperimentList} if the
+\code{MultiAssayExperiment} package is available
 }
 \description{
 This function is intended to drop any unmatched samples from all of the

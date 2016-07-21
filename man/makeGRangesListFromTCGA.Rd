@@ -4,16 +4,17 @@
 \alias{makeGRangesListFromTCGA}
 \title{Make a GRangesList from TCGA data}
 \usage{
-makeGRangesListFromTCGA(x, primary, feature.field = "hugo_symbol", ...)
+makeGRangesListFromTCGA(df, partitioning.field, names.field = "Hugo_Symbol",
+  ...)
 }
 \arguments{
-\item{x}{A \code{data.frame} or \code{DataFrame} class object. \code{list}
+\item{df}{A \code{data.frame} or \code{DataFrame} class object. \code{list}
 class objects are coerced to data.frame or DataFrame.}
 
-\item{primary}{A \code{character} vector of length one indicating the
-column to be used as sample identifiers}
+\item{partitioning.field}{A \code{character} vector of length one indicating
+the column to be used as sample identifiers}
 
-\item{feature.field}{A \code{character} vector of length one indicating the
+\item{names.field}{A \code{character} vector of length one indicating the
 column to be used as names for each of the ranges in the data}
 
 \item{...}{Additional arguments to pass on to

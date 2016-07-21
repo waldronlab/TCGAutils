@@ -20,7 +20,7 @@
 #' features specific to TCGA data such as, hugo symbols, probe numbers,
 #' segment means, and ucsc build (if available).
 #'
-#' @param x A \code{data.frame} or \code{DataFrame} class object. \code{list}
+#' @param df A \code{data.frame} or \code{DataFrame} class object. \code{list}
 #' class objects are coerced to data.frame or DataFrame.
 #' @param partitioning.field A \code{character} vector of length one indicating
 #' the column to be used as sample identifiers
@@ -33,39 +33,39 @@
 #'
 #' @export makeGRangesListFromTCGA
 makeGRangesListFromTCGA <-
-    function(x, partitioning.field,
+    function(df, partitioning.field,
              names.field = "Hugo_Symbol", ...)
     {
-        if (is.list(x) && !inherits(x, "data.frame"))
-            x <- do.call(rbind, x)
+        if (is.list(df) && !inherits(df, "data.frame"))
+            df <- do.call(rbind, df)
 
         if (!S4Vectors::isSingleString(partitioning.field))
             stop("'partitioning.field' must be a single sting")
 
-        twoMeta <- all(c("num_probes", "segment_mean") %in% tolower(names(x)))
-        hugo <- tolower(names.field) %in% tolower(names(x))
-        ncbi <- "ncbi_build" %in% tolower(names(x))
+        twoMeta <- all(c("num_probes", "segment_mean") %in% tolower(names(df)))
+        hugo <- tolower(names.field) %in% tolower(names(df))
+        ncbi <- "ncbi_build" %in% tolower(names(df))
 
         if (hugo) {
-            hugoName <- names(x)[match(tolower(names.field), tolower(names(x)))]
-            grl <- makeGRangesListFromDataFrame(df = x,
+            hugoName <- names(df)[match(tolower(names.field), tolower(names(df)))]
+            grl <- makeGRangesListFromDataFrame(df = df,
                                                 partitioning.field =
                                                     partitioning.field,
                                                 names.field = hugoName, ...)
         } else {
-            grl <- makeGRangesListFromDataFrame(df = x, partitioning.field =
+            grl <- makeGRangesListFromDataFrame(df = df, partitioning.field =
                                                     partitioning.field, ...)
         }
 
         if (twoMeta) {
-            numProb <- names(x)[match("num_probes", tolower(names(x)))]
-            segMean <- names(x)[match("segment_mean", tolower(names(x)))]
+            numProb <- names(df)[match("num_probes", tolower(names(df)))]
+            segMean <- names(df)[match("segment_mean", tolower(names(df)))]
             mcols(grl) <- cbind(mcols(grl), DataFrame(num_probes = numProb,
                                                       segment_mean = segMean))
         }
         if (ncbi) {
-            ncbi_build <- names(x)[match("ncbi_build", tolower(names(x)))]
-            build_name <- unique(x[[ncbi_build]])
+            ncbi_build <- names(df)[match("ncbi_build", tolower(names(df)))]
+            build_name <- unique(df[[ncbi_build]])
             if (length(build_name) != 1L) {
                 warning("inconsistent ncbi_build values in data")
             } else {

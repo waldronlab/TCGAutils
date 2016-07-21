@@ -3,24 +3,25 @@
 #' This function is intended to drop any unmatched samples from all of the
 #' listed experiments that are not present in the rownames of the pheno data.
 #'
-#' @param exlist A named \code{\link[MultiAssayExperiment]{ExperimentList}} of
-#' experiments compatible with the \code{MultiAssayExperiment} API
-#' @param mPheno A \code{data.frame} of clinical data with patient identifiers
+#' @param experiments A named \code{\link[MultiAssayExperiment]{ExperimentList}}
+#' of experiments compatible with the \code{MultiAssayExperiment} API
+#' @param pData A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
-#' @return A named \code{list} of experiments
+#' @return A named \code{list} or \link{ExperimentList} if the
+#' \code{MultiAssayExperiment} package is available
 #'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
 #' @export TCGAcleanExpList
-TCGAcleanExpList <- function(exlist, mPheno) {
+TCGAcleanExpList <- function(experiments, pData) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-    exlist <- MultiAssayExperiment::ExperimentList(exlist)
-    sampNames <- as.list(colnames(exlist))
+    experiments <- MultiAssayExperiment::ExperimentList(experiments)
+    sampNames <- as.list(colnames(experiments))
     } else {
-    sampNames <- lapply(exlist, colnames)
+    sampNames <- lapply(experiments, colnames)
     warning("attempting to use colnames on each experiment")
     }
-    patientIDS <- rownames(mPheno)
+    patientIDS <- rownames(pData)
     filler <- substr(patientIDS[1], 5, 5)
     if (filler != "-") {
         patientIDS <- gsub(paste0("\\", filler), "-", patientIDS)
@@ -28,8 +29,10 @@ TCGAcleanExpList <- function(exlist, mPheno) {
     logicSub <- lapply(sampNames, function(assay) {
         TCGAbarcode(assay) %in% patientIDS
     })
-    newElist <- mapply(function(x, y) {x[, y]}, x = exlist, y = logicSub,
-                       SIMPLIFY = FALSE)
+    newElist <- mapply(function(x, y) {
+        x[, y, drop = FALSE]
+    },
+    x = experiments, y = logicSub, SIMPLIFY = FALSE)
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     newElist <- MultiAssayExperiment::ExperimentList(newElist)
     }
