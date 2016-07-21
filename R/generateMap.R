@@ -3,9 +3,9 @@
 #' This function helps create a sampleMap in preparation of a
 #' \code{MultiAssayExperiment} object
 #'
-#' @param exlist A named \code{list} of experiments compatible with the
+#' @param experiments A named \code{list} of experiments compatible with the
 #' MultiAssayExperiment API
-#' @param mPheno A \code{data.frame} of clinical data with patient identifiers
+#' @param pData A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
 #' @param idConverter A function to be used against the sample or specimen
 #' identifiers to match those in the rownames of the \code{pData} (default NULL)
@@ -22,12 +22,12 @@
 #' }
 #'
 #' @export generateMap
-generateMap <- function(exlist, mPheno, idConverter = NULL, ...) {
+generateMap <- function(experiments, pData, idConverter = NULL, ...) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-    exlist <- MultiAssayExperiment::ExperimentList(exlist)
-    samps <- as.list(colnames(exlist))
+    experiments <- MultiAssayExperiment::ExperimentList(experiments)
+    samps <- as.list(colnames(experiments))
     } else {
-    samps <- lapply(exlist, colnames)
+    samps <- lapply(experiments, colnames)
     warning("attempting to use colnames on each experiment")
     }
     listM <- lapply(seq_along(samps), function(i, x) {
@@ -35,15 +35,15 @@ generateMap <- function(exlist, mPheno, idConverter = NULL, ...) {
     }, x = samps)
     full_map <- do.call(S4Vectors::rbind, listM)
     if (is.null(idConverter)) {
-        matches <- match(full_map$colname, rownames(mPheno))
+        matches <- match(full_map$colname, rownames(pData))
     } else {
-        matches <- match(idConverter(full_map$colname, ...), rownames(mPheno))
+        matches <- match(idConverter(full_map$colname, ...), rownames(pData))
     }
     if (all(is.na(matches))) {
         stop("no way to map pData to ExperimentList")
     }
     assay <- full_map$assay
-    primary <- rownames(mPheno)[matches]
+    primary <- rownames(pData)[matches]
     colname <- full_map$colname
     autoMap <- S4Vectors::DataFrame(assay, primary, colname)
     if (any(is.na(autoMap$primary))) {
