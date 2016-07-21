@@ -34,7 +34,7 @@
 #' @export makeGRangesListFromTCGA
 makeGRangesListFromTCGA <-
     function(x, partitioning.field,
-             names.field = "hugo_symbol", ...)
+             names.field = "Hugo_Symbol", ...)
     {
         if (is.list(x) && !inherits(x, "data.frame"))
             x <- do.call(rbind, x)
@@ -43,18 +43,18 @@ makeGRangesListFromTCGA <-
             stop("'partitioning.field' must be a single sting")
 
         twoMeta <- all(c("num_probes", "segment_mean") %in% tolower(names(x)))
-        hugo <- names.field %in% tolower(names(x))
+        hugo <- tolower(names.field) %in% tolower(names(x))
         ncbi <- "ncbi_build" %in% tolower(names(x))
 
         if (hugo) {
-        hugoName <- names(x)[which(names.field %in% tolower(names(x)))]
-        grl <- makeGRangesListFromDataFrame(df = x,
-                                            partitioning.field =
-                                              partitioning.field,
-                                            names.field = hugoName, ...)
+            hugoName <- names(x)[match(tolower(names.field), tolower(names(x)))]
+            grl <- makeGRangesListFromDataFrame(df = x,
+                                                partitioning.field =
+                                                    partitioning.field,
+                                                names.field = hugoName, ...)
         } else {
-          grl <- makeGRangesListFromDataFrame(df = x, partitioning.field =
-                                                partitioning.field, ...)
+            grl <- makeGRangesListFromDataFrame(df = x, partitioning.field =
+                                                    partitioning.field, ...)
         }
 
         if (twoMeta) {
