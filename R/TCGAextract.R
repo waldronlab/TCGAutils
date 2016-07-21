@@ -80,7 +80,8 @@ TCGAextract <- function(object, type = NULL) {
                                          })
                     dimensions <- sapply(lapply(getElement(object, slotreq),
                                                 function(tmp) {
-                                                    getElement(tmp, "DataMatrix")
+                                                    getElement(tmp,
+                                                               "DataMatrix")
                                                 }), dim)
                     cat(paste0("[", seq(length(sourceName)), "] ",
                                sourceName, paste0("\n\tNumber of rows: ",
@@ -97,7 +98,8 @@ TCGAextract <- function(object, type = NULL) {
                                    }), ncol)
                         )
                     }
-                    message("Selecting file: [", fileNo, "] ", sourceName[fileNo])
+                    message("Selecting file: [", fileNo, "] ",
+                            sourceName[fileNo])
                     dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
                 } else {
                     dm <- lapply(getElement(object, slotreq),
@@ -147,38 +149,37 @@ TCGAextract <- function(object, type = NULL) {
                 colnames(dm) <- gsub(paste0("\\", filler), "-", colnames(dm))
             }
             newSE <- SummarizedExperiment::SummarizedExperiment(
-                assays = SimpleList(counts = dm), rowData = annote)
+                assays = SimpleList(dm), rowData = annote)
             return(newSE)
         } else if (slotreq %in% rangeslots) {
-            tsb <- tolower(names(dm)) %in% "tumor_sample_barcode"
-            if (sum(tsb) == 1L) {
+            tsb <- match("tumor_sample_barcode", tolower(names(dm)))
+            if (length(tsb) == 1L) {
                 primary <- names(dm)[which(tsb)]
-            } else {
+            } else if (length(tsb) == 0L) {
                 primary <- names(dm)[which(tolower(names(dm)) %in% "sample")]
+            } else {
+                stop("'partitioning.field' could not be found")
             }
-            granges_cols <- findGRangesCols(names(dm),
-                                            seqnames.field = "Chromosome",
-                                            start.field = c("Start", "Start_position"),
-                                            end.field = c("End", "End_position"))
+            granges_cols <-
+                findGRangesCols(names(dm),
+                                seqnames.field = "Chromosome",
+                                start.field = c("Start", "Start_position"),
+                                end.field = c("End", "End_position"))
             ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
             ans_start <- names(dm)[granges_cols[["start"]]]
             ans_end <- names(dm)[granges_cols[["end"]]]
             ans_strand <- names(dm)[granges_cols[["strand"]]]
             omitAdditional <- c("seqnames", "ranges", "seqlevels",
-                                   "seqlengths", "isCircular", "start", "end",
-                                   "width", "element", "chr")
+                                "seqlengths", "iscircular", "start", "end",
+                                "width", "element", "chr")
             diffNames <- setdiff(omitAdditional,
                                  tolower(names(dm)[na.omit(granges_cols)]))
             dropIdx <- which(tolower(names(dm)) %in% diffNames)
             if (length(dropIdx)) {
-              dm <- dm[, -dropIdx]
+                dm <- dm[, -dropIdx]
             }
-            if (is.na(ans_strand)) {
-             ignore.strand <- TRUE 
-            } else {
-              ignore.strand <- FALSE
-            }
-            mygrl <- makeGRangesListFromTCGA(x = dm, 
+            ignore.strand <- ifelse(is.na(ans_strand), TRUE, FALSE)
+            mygrl <- makeGRangesListFromTCGA(x = dm,
                                              partitioning.field = primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
