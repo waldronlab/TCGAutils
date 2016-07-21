@@ -153,9 +153,9 @@ TCGAextract <- function(object, type = NULL) {
             return(newSE)
         } else if (slotreq %in% rangeslots) {
             tsb <- match("tumor_sample_barcode", tolower(names(dm)))
-            if (length(tsb) == 1L) {
+            if (length(tsb) == 1L && !is.na(tsb)) {
                 primary <- names(dm)[tsb]
-            } else if (length(tsb) == 0L) {
+            } else if (is.na(tsb)) {
                 primary <- names(dm)[tolower(names(dm)) == "sample"]
             } else {
                 stop("'partitioning.field' could not be found")
