@@ -130,7 +130,7 @@ TCGAextract <- function(object, type = NULL) {
         stop(paste("Data type not yet supported or could not be matched."))
     }
     if (dim(dm)[1] == 0 | dim(dm)[2] == 0) {
-        stop("There is no data for that data type!")
+        stop(type, " does not contain any data!")
     } else {
         if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
             annote <- dm[, !grepl("TCGA", names(dm))]
