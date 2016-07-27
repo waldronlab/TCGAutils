@@ -11,7 +11,6 @@
     {
         plinks = plinks[grepl(paste0("*.",datasetLink,keyWord2),plinks)]
     }
-    message(plinks)
     return(plinks)
 }
 
@@ -78,7 +77,7 @@ getFileNames <- function(disease, runDate,
                             disease, doc)
 
     if(S4Vectors::isSingleString(plinks)) {
-        return(plinks)
+        return(unname(plinks))
     } else {
         return(NULL)
     }
