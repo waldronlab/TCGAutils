@@ -1,15 +1,17 @@
-.getLinks <- function(keyWord1,keyWord2,datasetLink=NULL,doc)
+.getLinks <- function(keyWord1, keyWord2, datasetLink = NULL, doc)
 {
-    keyWord = keyWord1#paste0(dataset,keyWord1)
-    keyWord = paste0("//a[contains(@href, '",keyWord,"')]")
-    plinks = XML::xpathSApply(doc, keyWord, XML::xmlAttrs)
+    keyWord <- keyWord1
+    keyWord <- paste0("//a[contains(@href, '",keyWord,"')]")
+    plinks <- rvest::html_nodes(doc, xpath = keyWord)
+    plinks <- rvest::html_attr(plinks, "href")
+    # plinks <- XML::xpathSApply(doc, keyWord, XML::xmlAttrs)
     if(is.null(datasetLink))
     {
-        plinks = plinks[grepl(keyWord2,plinks)]
+        plinks <- plinks[grepl(keyWord2,plinks)]
     }
     else
     {
-        plinks = plinks[grepl(paste0("*.",datasetLink,keyWord2),plinks)]
+        plinks <- plinks[grepl(paste0("*.",datasetLink,keyWord2),plinks)]
     }
     return(plinks)
 }
@@ -48,7 +50,8 @@ getFileNames <- function(disease, runDate,
                      substr(runDate,5,6), "_",
                      substr(runDate,7,8), "/data/")
     fh_url <- paste0(fh_url, disease, "/", runDate, "/")
-    doc = XML::htmlTreeParse(fh_url, useInternalNodes = TRUE)
+    # doc <- XML::htmlTreeParse(fh_url, useInternalNodes = TRUE)
+    doc <- xml2::read_html(fh_url)
 
     plinks <- vector(mode = "character", length = 1L)
     names(plinks) <- disease
