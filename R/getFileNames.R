@@ -54,24 +54,24 @@ getFileNames <- function(disease, runDate,
     plinks <- vector(mode = "character", length = 1L)
     names(plinks) <- disease
 
-    if (CNASNP)
+    if (CNA_SNP)
         plinks <- .getLinks(
             "Level_3__segmented_scna_hg19__seg.Level_3",
             paste0("[.]Merge_snp__.*.__Level_3__segmented",
                    "_scna_hg19__seg.Level_3.*.tar[.]gz$"),
             disease, doc)
-    if (CNVSNP)
+    if (CNV_SNP)
         plinks <- .getLinks(
             "Level_3__segmented_scna_minus_germline_cnv_hg19__seg.Level_3",
             paste0("[.]Merge_snp__.*.__Level_3__segmented_scna_",
                    "minus_germline_cnv_hg19__seg.Level_3.*.tar[.]gz$"),
             disease, doc)
-    if (CNASeq)
+    if (CNA_Seq)
         plinks <- .getLinks("__Level_3__segmentation__seg.Level_3",
                             paste0("[.]Merge_cna__.*.dnaseq.*.__Level_3__",
                                    "segmentation__seg.Level_3.*.tar[.]gz$"),
                             disease, doc)
-    if (CNACGH)
+    if (CNA_CGH)
         plinks <- .getLinks("__Level_3__segmentation__seg.Level_3",
                             paste0("[.]Merge_cna__.*.cgh.*.__Level_3__",
                                    "segmentation__seg.Level_3.*.tar[.]gz$"),
