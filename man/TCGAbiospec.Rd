@@ -18,11 +18,6 @@ This function uses the full TCGA barcode to return a data frame of the
 data pertinent to laboratory variables such as vials, portions, analytes,
 plates and the center.
 }
-\examples{
-example("TCGAbarcode")
-right_bctable <- TCGAbiospec(barcodes)
-
-}
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
 }

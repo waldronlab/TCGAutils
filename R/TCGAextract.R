@@ -68,9 +68,9 @@ TCGAextract <- function(object, type = NULL) {
                "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array")))
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     if (type %in% choices) {
-        slotreq <- grep(paste0("^", type) , slotNames(object),
+        slotreq <- grep(paste0("^", type) , methods::slotNames(object),
                         ignore.case=TRUE, perl=TRUE, value=TRUE)
-        if (is(getElement(object, slotreq), "list")) {
+        if (methods::is(getElement(object, slotreq), "list")) {
             elemlength <- length(getElement(object, slotreq))
             if (elemlength > 1L) {
                 if (interactive()) {

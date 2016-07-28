@@ -5,10 +5,10 @@
 #'
 #' @param identifier A \code{character} vector of either TCGA
 #' barcodes or UUID identifiers
+#' @return A \code{data.frame} of original and translated identifiers
 #'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
-#' @return A \code{data.frame} of original and translated identifiers
 #' @export TCGAtranslateID
 #' @importFrom httr POST content_type
 TCGAtranslateID <- function(identifier) {
@@ -29,6 +29,7 @@ TCGAtranslateID <- function(identifier) {
                             lapply(
                                 httr::content(id_table,
                                               "parsed")$uuidMapping, unlist))
+    browser()
     if (dim(id_table)[2] == 1L) {id_table <- t(id_table)}
     id_table <- as.data.frame(id_table, stringsAsFactors = FALSE)
     return(id_table)

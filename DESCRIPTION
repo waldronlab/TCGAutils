@@ -17,6 +17,7 @@ Suggests:
     MultiAssayExperiment,
     TCGAbiolinks
 Imports:
+    methods,
     RTCGAToolbox,
     GenomicRanges,
     S4Vectors,

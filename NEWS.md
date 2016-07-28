@@ -1,3 +1,21 @@
+# BiocInterfaces 0.0.70
+
+## New features
+
+* `makeGRangesListFromDataFrame` now moved to `GenomicRanges`
+* `makeSummarizedExperimentFromDataFrame` now moved to `SummarizedExperiment`
+* `getFileNames` function will obtain filenames used in `RTCGAToolbox`
+* Improved `getFileNames` with `xml2` and `rvest` dependencies and removes the
+`XML` dependency
+
+## Minor changes and bug fixes
+
+* `TCGAextract` now uses the `findGRangesCols` to automatically detect ranged
+data columns
+* Arguments in functions `TCGA*` now renamed to match `MultiAssayExperiment`
+conventions
+* Informative errors in `TCGAextract`
+
 # BiocInterfaces 0.0.60
 
 * `makeGRangesListFromTCGA` data builds on `makeGRangesListFromDataFrame`

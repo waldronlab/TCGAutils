@@ -18,13 +18,13 @@ TCGAexonToGRangesList <- function(filepaths) {
   fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
   bcodes <- TCGAtranslateID(fileuuids)
   extraInfo <- TCGAbiospec(bcodes$barcode)
-  sampNames <- TCGAbarcode(bcodes$barcode, sample = TRUE, collapse = TRUE)
+  sampNames <- TCGAbarcode(bcodes$barcode, sample = TRUE)
   btData <- lapply(filepaths, function(file) {
     readr::read_delim(file, delim = "\t")
     })
   names(btData) <- sampNames
   newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
-    newGRanges <- as(as.character(range[, "exon"]), "GRanges")
+    newGRanges <- methods::as(as.character(range[, "exon"]), "GRanges")
     mcols(newGRanges) <- range[, -(which(names(range) == "exon"))]
     newGRanges
   }))

@@ -32,13 +32,6 @@ A character vector or data matrix of TCGA barcode information
 This function returns the specified snippet of information obtained from
 the TCGA barcode.
 }
-\examples{
-library(TCGAbiolinks)
-query <- TCGAquery(tumor = "OV", level = 3)
-barcodes <- unlist(strsplit(query$barcode[1], ","))
-TCGAsamplebc <- TCGAbarcode(barcodes)
-
-}
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
 }

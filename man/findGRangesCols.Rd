@@ -10,14 +10,29 @@ findGRangesCols(df_colnames, seqnames.field = c("seqnames", "seqname",
   strand.field = "strand", ignore.strand = FALSE)
 }
 \arguments{
-\item{namesVector}{A \code{character} vector or names in a dataset}
+\item{df_colnames}{A \code{character} vector of names in a dataset}
+
+\item{seqnames.field}{A \code{character} vector of the chromosome name}
+
+\item{start.field}{A \code{character} vector that indicates the column name
+of the start positions of ranged data}
+
+\item{end.field}{A \code{character} vector that indicates the end position
+of ranged data}
+
+\item{strand.field}{A \code{character} vector of the column name that
+indicates the strand type}
+
+\item{ignore.strand}{logical (default FALSE) whether to ignore the strand
+field in the data}
 }
 \value{
 Index positions vector indicating columns with appropriate names
 }
 \description{
 This function attempts to match chromosome, start position, end position and
-strand names in the given character vector.
+strand names in the given character vector. Modified helper from the
+\code{GenomicRanges} package.
 }
 \examples{
 myDataColNames <- c("Start_position", "End_position", "strand",

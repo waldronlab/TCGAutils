@@ -10,10 +10,6 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @examples
-#' example("TCGAbarcode")
-#' right_bctable <- TCGAbiospec(barcodes)
-#'
 #' @export TCGAbiospec
 TCGAbiospec <- function(barcodes) {
     if (!all(nchar(barcodes) == 28L)) {

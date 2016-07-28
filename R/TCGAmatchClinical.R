@@ -17,7 +17,7 @@
 #'
 #' @export TCGAmatchClinical
 TCGAmatchClinical <- function (expData, phenoDat) {
-    if (is(expData, "list")) {
+    if (methods::is(expData, "list")) {
         filler <- substr(names(expData)[1], 5, 5)
         if (filler != "-") {
             names(expData) <- gsub(paste0("\\", filler),

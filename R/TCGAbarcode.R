@@ -23,12 +23,6 @@ NULL
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
-#' @examples
-#' library(TCGAbiolinks)
-#' query <- TCGAquery(tumor = "OV", level = 3)
-#' barcodes <- unlist(strsplit(query$barcode[1], ","))
-#' TCGAsamplebc <- TCGAbarcode(barcodes)
-#'
 #' @export TCGAbarcode
 TCGAbarcode <- function(barcodes, participant = TRUE,
                         sample = FALSE, portion = FALSE,
