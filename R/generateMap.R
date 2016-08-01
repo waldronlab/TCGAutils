@@ -14,7 +14,7 @@
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
+#' @author Marcel Ramos \email{mramos09@gmail.com}, Lucas Schiffer
 #'
 #' @examples \dontrun{
 #' ## For TCGA data
@@ -23,35 +23,34 @@
 #'
 #' @export generateMap
 generateMap <- function(experiments, pData, idConverter = NULL, ...) {
-    if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-    experiments <- MultiAssayExperiment::ExperimentList(experiments)
-    samps <- as.list(colnames(experiments))
-    } else {
+  if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
+    if(class(experiments) != "ExperimentList") {
+      experiments <- MultiAssayExperiment::ExperimentList(experiments)
+    }
+    samps <- colnames(experiments)
+  } else {
     samps <- lapply(experiments, colnames)
     warning("attempting to use colnames on each experiment")
-    }
-    listM <- lapply(seq_along(samps), function(i, x) {
-        S4Vectors::DataFrame(colname = x[[i]], assay = names(x)[i])
-    }, x = samps)
-    full_map <- do.call(S4Vectors::rbind, listM)
-    if (is.null(idConverter)) {
-        matches <- match(full_map$colname, rownames(pData))
-    } else {
-        matches <- match(idConverter(full_map$colname, ...), rownames(pData))
-    }
-    if (all(is.na(matches))) {
-        stop("no way to map pData to ExperimentList")
-    }
-    assay <- full_map$assay
-    primary <- rownames(pData)[matches]
-    colname <- full_map$colname
-    autoMap <- S4Vectors::DataFrame(assay, primary, colname)
-    if (any(is.na(autoMap$primary))) {
-        notFound <- autoMap[is.na(autoMap$primary), ]
-        warning("Data dropped from rows:",
-                sprintf("\n %s - %s", notFound[, 2], notFound[, 3]),
-                "\ndue to missing phenotype data")
-    }
+  }
+  assay <- factor(rep(names(samps), lengths(samps)), levels=names(samps))
+  colname <- unlist(samps, use.names=FALSE)
+  if (is.null(idConverter)) {
+    matches <- match(colname, rownames(pData))
+  } else {
+    matches <- match(idConverter(colname, ...), rownames(pData))
+  }
+  if (length(matches) && all(is.na(matches)))
+    stop("no way to map pData to ExperimentList")
+  primary <- rownames(pData)[matches]
+  autoMap <- S4Vectors::DataFrame(
+    assay=assay, primary=primary, colname=colname)
+  
+  if (nrow(autoMap) && any(is.na(autoMap$primary))) {
+    notFound <- autoMap[is.na(autoMap$primary), ]
+    warning("Data from rows:",
+            sprintf("\n %s - %s", notFound[, 2], notFound[, 3]),
+            "\ndropped due to missing phenotype data")
     autoMap <- autoMap[!is.na(autoMap$primary), ]
-    return(autoMap)
+  }
+  autoMap
 }

@@ -34,6 +34,6 @@ newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
 
 }
 \author{
-Marcel Ramos \email{mramos09@gmail.com}
+Marcel Ramos \email{mramos09@gmail.com}, Lucas Schiffer
 }
 
