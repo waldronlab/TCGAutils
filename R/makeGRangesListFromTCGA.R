@@ -47,7 +47,8 @@ makeGRangesListFromTCGA <-
         ncbi <- "ncbi_build" %in% tolower(names(df))
 
         if (hugo) {
-            hugoName <- names(df)[match(tolower(names.field), tolower(names(df)))]
+            hugoName <-
+                names(df)[match(tolower(names.field), tolower(names(df)))]
             grl <- makeGRangesListFromDataFrame(df = df,
                                                 partitioning.field =
                                                     partitioning.field,
