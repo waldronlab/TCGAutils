@@ -193,7 +193,6 @@ TCGAextract <- function(object, type = NULL) {
             }
             return(mygrl)
         }
-        colnames(dm) <- TCGAbarcode(colnames(dm), sample=TRUE)
         eset <- ExpressionSet(dm)
         if (exists("annote")) {
             featureData(eset) <- AnnotatedDataFrame(annote)
