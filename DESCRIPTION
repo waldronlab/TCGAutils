@@ -1,6 +1,6 @@
 Package: BiocInterfaces
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA data
-Version: 0.0.70
+Version: 0.1.00
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "aut"),
@@ -8,7 +8,7 @@ Authors@R: c(
   )
 Description: A suite of functions aimed at simplifying and making the use of TCGA data manageable.
 Depends:
-    R (>= 3.2.0)
+    R (>= 3.3.0)
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -31,3 +31,4 @@ Imports:
     rvest,
     xml2
 RoxygenNote: 5.0.1
+biocViews: Software, WorkflowStep, Preprocessing

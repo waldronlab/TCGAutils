@@ -15,6 +15,9 @@
 \usage{
 diseaseCodes
 }
+\value{
+The TCGA `diseaseCodes` table
+}
 \description{
 A dataset for obtaining the cancer codes in TCGA for about 13 different
 types of cancers.

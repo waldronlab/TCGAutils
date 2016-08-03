@@ -1,8 +1,3 @@
-#' @import S4Vectors Biobase GenomicRanges
-#' @importFrom plyr mapvalues
-#' @importFrom readr read_delim
-NULL
-
 #' Parse data from TCGA barcode
 #'
 #' This function returns the specified snippet of information obtained from

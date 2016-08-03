@@ -1,10 +1,10 @@
 .getLinks <- function(keyWord1, keyWord2, datasetLink = NULL, doc)
 {
+    # Function from RTCGAToolbox
     keyWord <- keyWord1
     keyWord <- paste0("//a[contains(@href, '",keyWord,"')]")
     plinks <- rvest::html_nodes(doc, xpath = keyWord)
     plinks <- rvest::html_attr(plinks, "href")
-    # plinks <- XML::xpathSApply(doc, keyWord, XML::xmlAttrs)
     if(is.null(datasetLink))
     {
         plinks <- plinks[grepl(keyWord2,plinks)]
@@ -37,6 +37,8 @@
 #'
 #' @return A \code{character} vector of length one indicating the file name
 #' @export getFileNames
+#' @importFrom xml2 read_html
+#' @importFrom rvest html_nodes html_attr
 getFileNames <- function(disease, runDate,
                          CNA_SNP = FALSE,
                          CNV_SNP = FALSE,
@@ -50,7 +52,6 @@ getFileNames <- function(disease, runDate,
                      substr(runDate,5,6), "_",
                      substr(runDate,7,8), "/data/")
     fh_url <- paste0(fh_url, disease, "/", runDate, "/")
-    # doc <- XML::htmlTreeParse(fh_url, useInternalNodes = TRUE)
     doc <- xml2::read_html(fh_url)
 
     plinks <- vector(mode = "character", length = 1L)

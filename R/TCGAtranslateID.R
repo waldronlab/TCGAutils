@@ -29,7 +29,6 @@ TCGAtranslateID <- function(identifier) {
                             lapply(
                                 httr::content(id_table,
                                               "parsed")$uuidMapping, unlist))
-    browser()
     if (dim(id_table)[2] == 1L) {id_table <- t(id_table)}
     id_table <- as.data.frame(id_table, stringsAsFactors = FALSE)
     return(id_table)
