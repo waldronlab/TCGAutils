@@ -1,4 +1,4 @@
-.build_json_request <- function(UUID, size = 100000) {
+.build_json_request <- function(UUID, size = 100) {
     options(scipen = 999)
     request <- jsonlite::toJSON(structure(
         list(filters = structure(
@@ -9,8 +9,9 @@
                          value = UUID),
                      .Names = c("field", "value"))),
             .Names = c("op", "content")), format = "TSV",
-            fields =
+            fields = paste("file_id", "file_name",
                 "cases.samples.portions.analytes.aliquots.submitter_id",
+                sep = ","),
             size = as.character(size)),
         .Names = c("filters", "format", "fields",
                    "size")), pretty = TRUE, auto_unbox = TRUE)
@@ -38,8 +39,9 @@
 TCGAtranslateUUID <- function(ids) {
     newRequest <- .build_json_request(ids)
     response <- httr::POST("https://gdc-api.nci.nih.gov/files",
-                     body = newRequest,
-                     encode = "json", httr::content_type("application/json"))
+                           body = newRequest,
+                           encode = "json",
+                           httr::content_type("application/json"))
     result <- httr::content(response,
                             type = "text/tab-separated-values",
                             encoding = "UTF-8")

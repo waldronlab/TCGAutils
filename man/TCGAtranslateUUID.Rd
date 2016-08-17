@@ -25,6 +25,6 @@ TCGAtranslateUUID(uuids)
 
 }
 \author{
-MRamos
+Marcel Ramos \email{mramos09@gmail.com}
 }
 
