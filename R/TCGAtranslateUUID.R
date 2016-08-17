@@ -26,11 +26,13 @@
 #' @param ids A character vector of UUIDs
 #' @return A \code{character} vector of TCGA Barcode Identifiers
 #'
-#' @example
+#' @examples
 #' uuids <- c("0004d251-3f70-4395-b175-c94c2f5b1b81",
 #' "000d566c-96c7-4f1c-b36e-fa2222467983",
 #' "0011a67b-1ba9-4a32-a6b8-7850759a38cf")
 #' TCGAtranslateUUID(uuids)
+#'
+#' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @export TCGAtranslateUUID
 TCGAtranslateUUID <- function(ids) {
