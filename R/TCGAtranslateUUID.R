@@ -28,23 +28,24 @@
 #' @return A \code{character} vector of TCGA Barcode Identifiers
 #'
 #' @examples
-#' uuids <- c("0004d251-3f70-4395-b175-c94c2f5b1b81",
-#' "000d566c-96c7-4f1c-b36e-fa2222467983",
-#' "0011a67b-1ba9-4a32-a6b8-7850759a38cf")
+#' uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
+#' "002c67f2-ff52-4246-9d65-a3f69df6789e",
+#' "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 #' TCGAtranslateUUID(uuids)
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @export TCGAtranslateUUID
 TCGAtranslateUUID <- function(ids) {
+    stopifnot(is(ids, "character"))
     newRequest <- .build_json_request(ids)
     response <- httr::POST("https://gdc-api.nci.nih.gov/files",
                            body = newRequest,
                            encode = "json",
-                           httr::content_type("application/json"))
-    result <- httr::content(response,
+                           httr::content_type_json())
+    result <- suppressMessages(httr::content(response,
                             type = "text/tab-separated-values",
-                            encoding = "UTF-8")
+                            encoding = "UTF-8"))
     result <- as.data.frame(result, stringsAsFactors = FALSE)
-    result[[1L]]
+    result[[2L]]
 }

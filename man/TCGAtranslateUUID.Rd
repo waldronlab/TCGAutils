@@ -18,9 +18,9 @@ This function will use the GDC API to get metadata from Universally Unique
 Identifiers (UUID)
 }
 \examples{
-uuids <- c("0004d251-3f70-4395-b175-c94c2f5b1b81",
-"000d566c-96c7-4f1c-b36e-fa2222467983",
-"0011a67b-1ba9-4a32-a6b8-7850759a38cf")
+uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
+"002c67f2-ff52-4246-9d65-a3f69df6789e",
+"003143c8-bbbf-46b9-a96f-f58530f4bb82")
 TCGAtranslateUUID(uuids)
 
 }
