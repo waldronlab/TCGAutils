@@ -30,6 +30,7 @@ Imports:
     SummarizedExperiment,
     GenomeInfoDb,
     httr,
+    jsonlite,
     rvest,
     xml2
 RoxygenNote: 5.0.1.9000

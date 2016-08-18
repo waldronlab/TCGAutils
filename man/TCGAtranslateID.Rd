@@ -3,20 +3,36 @@
 % R/TCGAtranslateID.R
 \name{TCGAtranslateID}
 \alias{TCGAtranslateID}
-\title{Translate TCGA Barcode to Universally Unique Identifiers and vice versa}
+\title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
 TCGAtranslateID(identifier)
 }
 \arguments{
-\item{identifier}{A \code{character} vector of either TCGA
-barcodes or UUID identifiers}
+\item{identifier}{A \code{character} vector of identifiers}
 }
 \value{
-A \code{data.frame} of original and translated identifiers
+A \code{character} vector of alternate identifiers
 }
 \description{
 This function allows the user to enter a character vector of identifiers
-to translate from barcodes to UUIDs and vice versa.
+and use the GDC API to translate from TCGA barcodes to Universally Unique
+Identifiers (UUID) and vice versa.
+}
+\examples{
+## Translate UUIDs <--> TCGA Barcode
+uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
+"002c67f2-ff52-4246-9d65-a3f69df6789e",
+"003143c8-bbbf-46b9-a96f-f58530f4bb82")
+
+TCGAtranslateID(uuids)
+
+## Translate TCGA Barcode <--> UUIDs
+barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+"TCGA-B0-5094-11A-01D-1421-08",
+"TCGA-E9-A295-10A-01D-A16D-09")
+
+TCGAtranslateID(barcodes)
+
 }
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
