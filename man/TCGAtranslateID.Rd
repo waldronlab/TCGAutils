@@ -30,8 +30,8 @@ TCGAtranslateID(uuids)
 barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
 "TCGA-B0-5094-11A-01D-1421-08",
 "TCGA-E9-A295-10A-01D-A16D-09")
-
-TCGAtranslateID(barcodes)
+pt_identifiers <- TCGAbarcode(barcodes)
+TCGAtranslateID(pt_identifiers)
 
 }
 \author{

@@ -3,12 +3,12 @@
 #' This function is intended to drop any unmatched samples from all of the
 #' listed experiments that are not present in the rownames of the pheno data.
 #'
-#' @param experiments A named \code{\link[MultiAssayExperiment]{ExperimentList}}
+#' @param experiments A named \link[MultiAssayExperiment]{ExperimentList}
 #' of experiments compatible with the \code{MultiAssayExperiment} API
 #' @param pData A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
-#' @return A named \code{list} or \link{ExperimentList} if the
-#' \code{MultiAssayExperiment} package is available
+#' @return A named \code{list} or \link[MultiAssayExperiment]{ExperimentList}
+#' if the \code{MultiAssayExperiment} package is available
 #'
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'

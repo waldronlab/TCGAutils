@@ -33,6 +33,18 @@ A character vector or data matrix of TCGA barcode information
 This function returns the specified snippet of information obtained from
 the TCGA barcode.
 }
+\examples{
+barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+"TCGA-B0-5094-11A-01D-1421-08",
+"TCGA-E9-A295-10A-01D-A16D-09")
+
+## Patient identifiers
+TCGAbarcode(barcodes)
+
+## Sample identifiers
+TCGAbarcode(barcodes, sample = TRUE)
+
+}
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
 }

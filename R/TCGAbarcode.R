@@ -18,6 +18,17 @@
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
+#' @examples
+#' barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+#' "TCGA-B0-5094-11A-01D-1421-08",
+#' "TCGA-E9-A295-10A-01D-A16D-09")
+#'
+#' ## Patient identifiers
+#' TCGAbarcode(barcodes)
+#'
+#' ## Sample identifiers
+#' TCGAbarcode(barcodes, sample = TRUE)
+#'
 #' @export TCGAbarcode
 TCGAbarcode <- function(barcodes, participant = TRUE,
                         sample = FALSE, portion = FALSE,

@@ -43,13 +43,13 @@
 #' barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
 #' "TCGA-B0-5094-11A-01D-1421-08",
 #' "TCGA-E9-A295-10A-01D-A16D-09")
-#'
-#' TCGAtranslateID(barcodes)
+#' pt_identifiers <- TCGAbarcode(barcodes)
+#' TCGAtranslateID(pt_identifiers)
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @export TCGAtranslateID
-#' @importFrom httr POST content_type_json
+#' @importFrom httr POST content_type_json http_status
 #' @importFrom jsonlite toJSON
 TCGAtranslateID <- function(identifier) {
     stopifnot(is(identifier, "character"))
@@ -60,7 +60,7 @@ TCGAtranslateID <- function(identifier) {
                            body = resultingList[["request"]],
                            encode = "json",
                            httr::content_type_json())
-    if (http_status(response)$category != "Success")
+    if (httr::http_status(response)$category != "Success")
         stop("Unsuccessful request")
     result <- suppressMessages(httr::content(response,
                             type = "text/tab-separated-values",

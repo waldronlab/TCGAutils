@@ -1,7 +1,7 @@
 Package: BiocInterfaces
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
     data
-Version: 0.1.00
+Version: 0.1.01
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "aut"),
@@ -17,7 +17,6 @@ LazyData: true
 Suggests:
     testthat,
     MultiAssayExperiment,
-    TCGAbiolinks
 Imports:
     methods,
     RTCGAToolbox,

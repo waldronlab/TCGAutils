@@ -8,15 +8,15 @@
 TCGAcleanExpList(experiments, pData)
 }
 \arguments{
-\item{experiments}{A named \code{\link[MultiAssayExperiment]{ExperimentList}}
+\item{experiments}{A named \link[MultiAssayExperiment]{ExperimentList}
 of experiments compatible with the \code{MultiAssayExperiment} API}
 
 \item{pData}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}
 }
 \value{
-A named \code{list} or \link{ExperimentList} if the
-\code{MultiAssayExperiment} package is available
+A named \code{list} or \link[MultiAssayExperiment]{ExperimentList}
+if the \code{MultiAssayExperiment} package is available
 }
 \description{
 This function is intended to drop any unmatched samples from all of the
