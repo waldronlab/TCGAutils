@@ -22,7 +22,6 @@ Imports:
     RTCGAToolbox,
     GenomicRanges,
     S4Vectors,
-    plyr,
     readr,
     Biobase,
     BiocGenerics,
