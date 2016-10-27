@@ -14,20 +14,20 @@
 #'
 #' @export TCGAexonToGRangesList
 TCGAexonToGRangesList <- function(filepaths) {
-    fileNames <- basename(filepaths)
-    fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
-    bcodes <- TCGAtranslateID(fileuuids)
-    extraInfo <- TCGAbiospec(bcodes$barcode)
-    sampNames <- TCGAbarcode(bcodes$barcode, sample = TRUE)
+    # fileNames <- basename(filepaths)
+    # fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
+    # bcodes <- TCGAtranslateID(fileuuids)
+    # extraInfo <- TCGAbiospec(bcodes$barcode)
+    # sampNames <- TCGAbarcode(bcodes$barcode, sample = TRUE)
     btData <- lapply(filepaths, function(file) {
         readr::read_delim(file, delim = "\t")
     })
-    names(btData) <- sampNames
+    # names(btData) <- sampNames
     newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
         newGRanges <- methods::as(as.character(range[, "exon"]), "GRanges")
         mcols(newGRanges) <- range[, -(which(names(range) == "exon"))]
         newGRanges
     }))
-    mcols(newGRL) <- extraInfo
+    # mcols(newGRL) <- extraInfo
     return(newGRL)
 }
