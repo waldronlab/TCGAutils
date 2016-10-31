@@ -31,5 +31,5 @@ Imports:
     jsonlite,
     rvest,
     xml2
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1
 biocViews: Software, WorkflowStep, Preprocessing
