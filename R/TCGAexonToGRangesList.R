@@ -1,3 +1,12 @@
+.parseFileNames <- function(filepaths) {
+    fileuuids <- basename(dirname(filepaths))
+    # fileNames <- basename(filepaths)
+    # fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
+    bcodes <- TCGAtranslateID(fileuuids)
+    # extraInfo <- TCGAbiospec(bcodes$barcode)
+    bcodes
+}
+
 #' Read Exon level files and create a GRangesList
 #'
 #' This function serves to read exon level data from a vector of file paths
@@ -8,26 +17,26 @@
 #' ranged information should be named "exon."
 #'
 #' @param filepaths A vector of valid exon data file paths
+#' @param filenames logical (default FALSE) whether to attempt to parse and
+#' translate the file names from exon files
 #' @return A \linkS4class{GRangesList} object
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @export TCGAexonToGRangesList
-TCGAexonToGRangesList <- function(filepaths) {
-    # fileNames <- basename(filepaths)
-    # fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
-    # bcodes <- TCGAtranslateID(fileuuids)
-    # extraInfo <- TCGAbiospec(bcodes$barcode)
-    # sampNames <- TCGAbarcode(bcodes$barcode, sample = TRUE)
+TCGAexonToGRangesList <- function(filepaths, filenames=FALSE) {
     btData <- lapply(filepaths, function(file) {
         readr::read_delim(file, delim = "\t")
     })
-    # names(btData) <- sampNames
+    if (filenames) {
+    sampNames <- try(.parseFileNames(filepaths))
+    if (!is(sampNames, "try-error"))
+        names(btData) <- sampNames
+    }
     newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
         newGRanges <- methods::as(as.character(range[, "exon"]), "GRanges")
         mcols(newGRanges) <- range[, -(which(names(range) == "exon"))]
         newGRanges
     }))
-    # mcols(newGRL) <- extraInfo
     return(newGRL)
 }
