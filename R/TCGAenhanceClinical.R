@@ -14,9 +14,11 @@ enhanceClinical <- function(MultiAssayExperiment = MultiAssayExperiment(),
     stopifnot(file.exists(file.path(pkgLocation, "MultiAssayExperiment-TCGA")))
 
     clinicalDF <- pData(MultiAssayExperiment)
-    curatedSubtypes <-
+    enhancedDataset <-
         readr::read_csv(
             file.path(pkgLocation, "MultiAssayExperiment-TCGA",
-                      "inst/extdata/curatedSubtypes/",
-                      paste0(toupper(cancerCode), "_clinical.csv")))
+                      "inst/extdata/Clinical/enhanced/",
+                      paste0(toupper(cancerCode), ".csv")))
+    merge(clinicalDF, enhancedDataset, by.x = rownames(clinicalDF),
+          by.y = "patientID")
 }
