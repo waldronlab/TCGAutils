@@ -34,7 +34,7 @@ TCGAexonToGRangesList <- function(filepaths, filenames=FALSE) {
         names(btData) <- sampNames
     }
     newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
-        newGRanges <- methods::as(as.character(range[, "exon"]), "GRanges")
+        newGRanges <- GenomicRanges::GRanges(as.character(range[["exon"]]))
         mcols(newGRanges) <- range[, -(which(names(range) == "exon"))]
         newGRanges
     }))
