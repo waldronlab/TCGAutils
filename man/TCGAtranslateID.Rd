@@ -4,10 +4,17 @@
 \alias{TCGAtranslateID}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
-TCGAtranslateID(identifier)
+TCGAtranslateID(identifier, type = "file_id", dataType = NULL)
 }
 \arguments{
 \item{identifier}{A \code{character} vector of identifiers}
+
+\item{type}{A single \code{character} string indicating identifier type,
+can use "file_id" (default) or "file_name" ignored if translating TCGA
+barcodes}
+
+\item{dataType}{A single \code{character} string indicating data type
+used for searching (e.g., "Gene Expression Quantification")}
 }
 \value{
 A \code{character} vector of alternate identifiers
@@ -30,7 +37,15 @@ barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
 "TCGA-B0-5094-11A-01D-1421-08",
 "TCGA-E9-A295-10A-01D-A16D-09")
 pt_identifiers <- TCGAbarcode(barcodes)
-TCGAtranslateID(pt_identifiers)
+TCGAtranslateID(pt_identifiers, type="file_id")
+
+## Complex Example
+exampleCodes <- c("TCGA-CK-4948",
+"TCGA-D1-A17N",
+"TCGA-4V-A9QX",
+"TCGA-4V-A9QM")
+exampleType <- "Gene Expression Quantification"
+TCGAtranslateID(exampleCodes, dataType = exampleType)
 
 }
 \author{
