@@ -47,10 +47,10 @@ cm <- TCGAextract(coadmut, "mutations")
 }
 
 }
-\author{
-Marcel Ramos \email{mramos09@gmail.com}
-}
 \seealso{
 makeGRangesListFromTCGA()
+}
+\author{
+Marcel Ramos \email{mramos09@gmail.com}
 }
 

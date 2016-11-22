@@ -4,13 +4,12 @@
 \alias{TCGAexonToGRangesList}
 \title{Read Exon level files and create a GRangesList}
 \usage{
-TCGAexonToGRangesList(filepaths, filenames = FALSE)
+TCGAexonToGRangesList(filepaths, sampleNames = NULL)
 }
 \arguments{
 \item{filepaths}{A vector of valid exon data file paths}
 
-\item{filenames}{logical (default FALSE) whether to attempt to parse and
-translate the file names from exon files}
+\item{sampleNames}{A vector of TCGA barcodes}
 }
 \value{
 A \linkS4class{GRangesList} object

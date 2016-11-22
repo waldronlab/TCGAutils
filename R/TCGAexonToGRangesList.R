@@ -17,21 +17,19 @@
 #' ranged information should be named "exon."
 #'
 #' @param filepaths A vector of valid exon data file paths
-#' @param filenames logical (default FALSE) whether to attempt to parse and
-#' translate the file names from exon files
+#' @param sampleNames A vector of TCGA barcodes
 #' @return A \linkS4class{GRangesList} object
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @export TCGAexonToGRangesList
-TCGAexonToGRangesList <- function(filepaths, filenames=FALSE) {
+TCGAexonToGRangesList <- function(filepaths, sampleNames=NULL) {
     btData <- lapply(filepaths, function(file) {
         readr::read_delim(file, delim = "\t")
     })
-    if (filenames) {
-    sampNames <- try(.parseFileNames(filepaths))
-    if (!is(sampNames, "try-error"))
-        names(btData) <- sampNames
+    if (!is.null(filenames)) {
+        stopifnot(length(filepaths) == length(sampleNames))
+        names(btData) <- sampleNames
     }
     newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
         newGRanges <- GenomicRanges::GRanges(as.character(range[["exon"]]))
