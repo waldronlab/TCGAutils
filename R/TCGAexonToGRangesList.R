@@ -27,7 +27,7 @@ TCGAexonToGRangesList <- function(filepaths, sampleNames=NULL) {
     btData <- lapply(filepaths, function(file) {
         readr::read_delim(file, delim = "\t")
     })
-    if (!is.null(filenames)) {
+    if (!is.null(sampleNames)) {
         stopifnot(length(filepaths) == length(sampleNames))
         names(btData) <- sampleNames
     }
