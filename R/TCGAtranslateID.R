@@ -1,23 +1,37 @@
-.build_json_request <- function(identifier, size = 1000000) {
+.build_json_request <- function(identifier, type="file_id",
+                                dataType = NULL,
+                                size = 1000000) {
     options(scipen = 999)
-    field <- ifelse(grepl("^TCGA", identifier[1], ignore.case = TRUE),
-               "cases.submitter_id",
-               "files.file_id")
-    request <- jsonlite::toJSON(structure(
-        list(filters = structure(
-            list(op = "in",
-                 content = structure(
-                     list(
-                         field = field,
-                         value = identifier),
-                     .Names = c("field", "value"))),
-            .Names = c("op", "content")), format = "TSV",
-            fields = paste("file_id", "file_name",
-                "cases.samples.portions.analytes.aliquots.submitter_id",
-                sep = ","),
-            size = as.character(size)),
-        .Names = c("filters", "format", "fields",
-                   "size")), pretty = TRUE, auto_unbox = TRUE)
+    if (grepl("^TCGA", sample(identifier, 1L), ignore.case = TRUE))
+        field <- "cases.submitter_id"
+    else
+        field <- switch(type, file_id = "files.file_id",
+                        file_name = "files.file_name",
+                        entity_id = "entity_id")
+    if (!is.null(dataType)) {
+        internalList <- structure(list(
+            op = "and",
+            content = structure(list(
+                op = c("in", "="),
+                content = structure(list(
+                    field = c(field, "files.data_type"),
+                    value = list(identifier, dataType)),
+                    .Names = c("field", "value"),
+                    class = "data.frame", row.names = 1:2)),
+                .Names = c("op", "content"),
+                class = "data.frame", row.names = 1:2)),
+            .Names = c("op", "content"))
+    } else {
+        internalList <- list(op = "in", content = list(field = field, value = identifier))
+    }
+    requestList <- list(filters = internalList, format = "TSV",
+                        fields = paste("file_id", "file_name",
+                                       "cases.samples.portions.analytes.aliquots.submitter_id",
+                                       sep = ","),
+                        size = as.character(size))
+    request <- jsonlite::toJSON(
+        requestList,
+        pretty = TRUE, auto_unbox = TRUE)
     options(scipen = 0)
     list(request = request, field = field)
 }
@@ -29,6 +43,11 @@
 #' Identifiers (UUID) and vice versa.
 #'
 #' @param identifier A \code{character} vector of identifiers
+#' @param type A single \code{character} string indicating identifier type,
+#' can use "file_id" (default) or "file_name" ignored if translating TCGA
+#' barcodes
+#' @param dataType A single \code{character} string indicating data type
+#' used for searching (e.g., "Gene Expression Quantification")
 #' @return A \code{character} vector of alternate identifiers
 #'
 #' @examples
@@ -44,17 +63,29 @@
 #' "TCGA-B0-5094-11A-01D-1421-08",
 #' "TCGA-E9-A295-10A-01D-A16D-09")
 #' pt_identifiers <- TCGAbarcode(barcodes)
-#' TCGAtranslateID(pt_identifiers)
+#' TCGAtranslateID(pt_identifiers, type="file_id")
+#'
+#' ## Complex Example
+#' exampleCodes <- c("TCGA-CK-4948",
+#' "TCGA-D1-A17N",
+#' "TCGA-4V-A9QX",
+#' "TCGA-4V-A9QM")
+#' exampleType <- "Gene Expression Quantification"
+#' TCGAtranslateID(exampleCodes, dataType = exampleType)
 #'
 #' @author Marcel Ramos \email{mramos09@gmail.com}
 #'
 #' @export TCGAtranslateID
 #' @importFrom httr POST content_type_json http_status
 #' @importFrom jsonlite toJSON
-TCGAtranslateID <- function(identifier) {
+TCGAtranslateID <- function(identifier, type="file_id",
+                            dataType = NULL) {
     stopifnot(is(identifier, "character"))
-    resultingList <- .build_json_request(identifier)
+    resultingList <- .build_json_request(identifier, type=type,
+                                         dataType = dataType)
     urlEndpoint <- strsplit(resultingList[["field"]], "\\.")[[1L]][1]
+    if (resultingList[["field"]] == "entity_id")
+        urlEndpoint <- "annotations"
     response <- httr::POST(paste0("https://gdc-api.nci.nih.gov/",
                                   urlEndpoint),
                            body = resultingList[["request"]],
