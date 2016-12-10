@@ -10,7 +10,7 @@
      \item{Study.Name}{The full length study name (i.e., type of cancer)}
 }}
 \source{
-\url{https://tcga-data.nci.nih.gov/datareports/codeTablesReport.htm}
+\url{https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations}
 }
 \usage{
 diseaseCodes

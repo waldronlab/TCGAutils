@@ -52,3 +52,4 @@ TCGAbarcode <- function(barcodes, participant = TRUE,
     }
     apply(barcodeMat[, index, drop = FALSE], 1, paste, collapse = filler)
 }
+
