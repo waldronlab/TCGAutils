@@ -1,7 +1,7 @@
 Package: BiocInterfaces
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
     data
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "ctb"),
@@ -14,22 +14,23 @@ Depends:
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-Suggests:
-    testthat,
-    MultiAssayExperiment,
 Imports:
-    methods,
-    RTCGAToolbox,
-    GenomicRanges,
-    S4Vectors,
-    readr,
     Biobase,
     BiocGenerics,
-    SummarizedExperiment,
     GenomeInfoDb,
+    GenomicRanges,
     httr,
     jsonlite,
+    methods,
+    MultiAssayExperiment,
+    readr,
+    RTCGAToolbox,
     rvest,
+    S4Vectors,
+    SummarizedExperiment,
     xml2
-RoxygenNote: 5.0.1.9000
+Suggests:
+    testthat,
+BugReports: https://github.com/waldronlab/BiocInterfaces/issues
 biocViews: Software, WorkflowStep, Preprocessing
+RoxygenNote: 5.0.1.9000
