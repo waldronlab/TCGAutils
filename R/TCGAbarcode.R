@@ -39,17 +39,17 @@ TCGAbarcode <- function(barcodes, participant = TRUE,
     }
     stopifnot(all(startsWith(toupper(barcodes), "TCGA")))
 
-    filler <- unique(substr(barcodes, 5, 5))
+    filler <- unique(substr(barcodes, 5L, 5L))
     if (length(filler) != 1L)  stop("barcode delimiters not consistent")
 
     barcodeMat <- do.call(rbind, strsplit(barcodes, "-"))
     if (is.null(index)) {
-        if (participant) index <- c(index, 1:3)
-        if (sample) index <- c(index, 4)
-        if (portion) index <- c(index, 5)
-        if (plate) index <- c(index, 6)
-        if (center) index <- c(index, 7)
+        if (participant) index <- c(index, 1L:3L)
+        if (sample) index <- c(index, 4L)
+        if (portion) index <- c(index, 5L)
+        if (plate) index <- c(index, 6L)
+        if (center) index <- c(index, 7L)
     }
-    apply(barcodeMat[, index, drop = FALSE], 1, paste, collapse = filler)
+    apply(barcodeMat[, index, drop = FALSE], 1L, paste, collapse = filler)
 }
 
