@@ -24,7 +24,7 @@
 #' @export generateMap
 generateMap <- function(experiments, pData, idConverter = NULL, ...) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-        if (!inherits(experiments, "ExperimentsList")) {
+        if (!is(experiments, "ExperimentList")) {
             experiments <- MultiAssayExperiment::ExperimentList(experiments)
         }
         samps <- colnames(experiments)
@@ -54,3 +54,4 @@ generateMap <- function(experiments, pData, idConverter = NULL, ...) {
     }
     autoMap
 }
+

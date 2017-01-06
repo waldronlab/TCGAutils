@@ -48,7 +48,6 @@
 #' cm <- TCGAextract(coadmut, "mutations")
 #' }
 #'
-#' @seealso makeGRangesListFromTCGA()
 #' @export TCGAextract
 TCGAextract <- function(object, type = NULL) {
     if (!is.null(type)) {
@@ -200,3 +199,4 @@ TCGAextract <- function(object, type = NULL) {
         return(eset)
     }
 }
+
