@@ -22,7 +22,7 @@
 #'
 #' @param df A \code{data.frame} or \code{DataFrame} class object. \code{list}
 #' class objects are coerced to data.frame or DataFrame.
-#' @param partitioning.field A \code{character} vector of length one indicating
+#' @param split.field A \code{character} vector of length one indicating
 #' the column to be used as sample identifiers
 #' @param names.field A \code{character} vector of length one indicating the
 #' column to be used as names for each of the ranges in the data
@@ -33,14 +33,14 @@
 #'
 #' @export makeGRangesListFromTCGA
 makeGRangesListFromTCGA <-
-    function(df, partitioning.field,
+    function(df, split.field,
              names.field = "Hugo_Symbol", ...)
     {
         if (is.list(df) && !inherits(df, "data.frame"))
             df <- do.call(rbind, df)
 
-        if (!S4Vectors::isSingleString(partitioning.field))
-            stop("'partitioning.field' must be a single sting")
+        if (!S4Vectors::isSingleString(split.field))
+            stop("'split.field' must be a single sting")
 
         twoMeta <- all(c("num_probes", "segment_mean") %in% tolower(names(df)))
         hugo <- tolower(names.field) %in% tolower(names(df))
@@ -50,12 +50,12 @@ makeGRangesListFromTCGA <-
             hugoName <-
                 names(df)[match(tolower(names.field), tolower(names(df)))]
             grl <- makeGRangesListFromDataFrame(df = df,
-                                                partitioning.field =
-                                                    partitioning.field,
+                                                split.field =
+                                                    split.field,
                                                 names.field = hugoName, ...)
         } else {
-            grl <- makeGRangesListFromDataFrame(df = df, partitioning.field =
-                                                    partitioning.field, ...)
+            grl <- makeGRangesListFromDataFrame(df = df, split.field =
+                                                    split.field, ...)
         }
 
         if (twoMeta) {

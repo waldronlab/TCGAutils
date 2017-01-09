@@ -4,14 +4,13 @@
 \alias{makeGRangesListFromTCGA}
 \title{Make a GRangesList from TCGA data}
 \usage{
-makeGRangesListFromTCGA(df, partitioning.field, names.field = "Hugo_Symbol",
-  ...)
+makeGRangesListFromTCGA(df, split.field, names.field = "Hugo_Symbol", ...)
 }
 \arguments{
 \item{df}{A \code{data.frame} or \code{DataFrame} class object. \code{list}
 class objects are coerced to data.frame or DataFrame.}
 
-\item{partitioning.field}{A \code{character} vector of length one indicating
+\item{split.field}{A \code{character} vector of length one indicating
 the column to be used as sample identifiers}
 
 \item{names.field}{A \code{character} vector of length one indicating the
