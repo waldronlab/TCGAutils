@@ -157,7 +157,7 @@ TCGAextract <- function(object, type = NULL) {
             } else if (is.na(tsb)) {
                 primary <- names(dm)[tolower(names(dm)) == "sample"]
             } else {
-                stop("'partitioning.field' could not be found")
+                stop("'split.field' could not be found")
             }
             granges_cols <-
                 findGRangesCols(names(dm),
@@ -179,7 +179,7 @@ TCGAextract <- function(object, type = NULL) {
             }
             ignore.strand <- ifelse(is.na(ans_strand), TRUE, FALSE)
             mygrl <- makeGRangesListFromTCGA(df = dm,
-                                             partitioning.field = primary,
+                                             split.field = primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
                                              end.field = ans_end,
