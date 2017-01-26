@@ -1,6 +1,6 @@
-# BiocInterfaces 
+# TCGAutils 
 
-The `BiocInterfaces` package provides a suite of helper functions that aid in
+The `TCGAutils` package provides a suite of helper functions that aid in
 the creation of several conventional Bioconductor classes such as,
 `GRangesList`, `ExpressionSet`, and `MultiAssayExperiment`. Many of the
 functions contained herein work on raw and derived data objects from The
@@ -14,5 +14,5 @@ or download it from `bioc-devel`.
 
 Please feel free to report bugs at our [github issue page][]
 
-[github issue page]: https://github.com/waldronlab/BiocInterfaces
+[github issue page]: https://github.com/waldronlab/TCGAutils
 [github repo]: https://github.com/vjcitn/MultiAssayExperiment
