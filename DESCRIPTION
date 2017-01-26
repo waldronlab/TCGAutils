@@ -1,7 +1,7 @@
-Package: BiocInterfaces
+Package: TCGAutils
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
     data
-Version: 0.1.3
+Version: 0.2.0
 Authors@R: c(
   person("Marcel", "Ramos", email ="mramos09@gmail.com", role = c("aut", "cre")),
   person("Lucas", "Schiffer", role = "ctb"),
@@ -31,6 +31,6 @@ Imports:
     xml2
 Suggests:
     testthat,
-BugReports: https://github.com/waldronlab/BiocInterfaces/issues
+BugReports: https://github.com/waldronlab/TCGAutils/issues
 biocViews: Software, WorkflowStep, Preprocessing
 RoxygenNote: 5.0.1.9000

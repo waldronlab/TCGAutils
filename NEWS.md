@@ -1,4 +1,10 @@
-# BiocInterfaces 0.1.00
+# TCGAutils 0.2.0
+
+## New features
+
+* Package renamed to `TCGAutils` for working with TCGA data
+
+# BiocInterfaces 0.1.0
 
 ## New features
 
