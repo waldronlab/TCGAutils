@@ -14,7 +14,7 @@
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}, Lucas Schiffer
+#' @author Marcel Ramos \email{mramos09@gmail.com}, Martin Morgan, Lucas Schiffer
 #'
 #' @examples \dontrun{
 #' ## For TCGA data
@@ -23,15 +23,10 @@
 #'
 #' @export generateMap
 generateMap <- function(experiments, pData, idConverter = NULL, ...) {
-    if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-        if (!is(experiments, "ExperimentList")) {
-            experiments <- MultiAssayExperiment::ExperimentList(experiments)
-        }
-        samps <- colnames(experiments)
-    } else {
-        samps <- lapply(experiments, colnames)
-        warning("attempting to use colnames on each experiment")
+    if (!is(experiments, "ExperimentList")) {
+        experiments <- ExperimentList(experiments)
     }
+    samps <- colnames(experiments)
     assay <- factor(rep(names(samps), lengths(samps)), levels=names(samps))
     colname <- unlist(samps, use.names=FALSE)
     if (is.null(idConverter)) {
@@ -42,9 +37,9 @@ generateMap <- function(experiments, pData, idConverter = NULL, ...) {
     if (length(matches) && all(is.na(matches)))
         stop("no way to map pData to ExperimentList")
     primary <- rownames(pData)[matches]
-    autoMap <- S4Vectors::DataFrame(
-        assay=assay, primary=primary, colname=colname)
-
+    autoMap <- S4Vectors::DataFrame(assay=assay,
+                                    primary=primary,
+                                    colname=colname)
     if (nrow(autoMap) && any(is.na(autoMap$primary))) {
         notFound <- autoMap[is.na(autoMap$primary), ]
         warning("Data from rows:",
@@ -54,4 +49,3 @@ generateMap <- function(experiments, pData, idConverter = NULL, ...) {
     }
     autoMap
 }
-
