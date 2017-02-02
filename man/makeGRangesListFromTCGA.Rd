@@ -28,4 +28,3 @@ data.frame or DataFrame to a \link{GRangesList}. It includes additional
 features specific to TCGA data such as, hugo symbols, probe numbers,
 segment means, and ucsc build (if available).
 }
-

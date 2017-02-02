@@ -26,4 +26,3 @@ columns. It is recommended that the user run the scripts in the
 \code{MultiAssayExperiment-TCGA} repository that build the "enhanced" type
 of data. Please see the repository's README for more information.
 }
-

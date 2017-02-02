@@ -1,18 +1,13 @@
-.getLinks <- function(keyWord1, keyWord2, datasetLink = NULL, doc)
-{
+.getLinks <- function(keyWord1, keyWord2, datasetLink = NULL, doc) {
     # Function from RTCGAToolbox
     keyWord <- keyWord1
     keyWord <- paste0("//a[contains(@href, '",keyWord,"')]")
     plinks <- rvest::html_nodes(doc, xpath = keyWord)
     plinks <- rvest::html_attr(plinks, "href")
-    if(is.null(datasetLink))
-    {
+    if (is.null(datasetLink))
         plinks <- plinks[grepl(keyWord2,plinks)]
-    }
     else
-    {
         plinks <- plinks[grepl(paste0("*.",datasetLink,keyWord2),plinks)]
-    }
     return(plinks)
 }
 

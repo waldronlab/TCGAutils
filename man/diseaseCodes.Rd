@@ -23,4 +23,3 @@ A dataset for obtaining the cancer codes in TCGA for about 13 different
 types of cancers.
 }
 \keyword{datasets}
-

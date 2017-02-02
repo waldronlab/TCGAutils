@@ -40,4 +40,3 @@ myDataColNames <- c("Start_position", "End_position", "strand",
 findGRangesCols(myDataColNames)
 
 }
-

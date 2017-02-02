@@ -37,6 +37,7 @@ dataset represents GISTIC data by all genes. "GISTIC_T" represents data
 thresholded by genes. Lowercase entries and entries without the "underscore"
 character are also valid inputs.
 }
+
 \examples{
 \dontrun{
 library(RTCGAToolbox)
@@ -50,4 +51,3 @@ cm <- TCGAextract(coadmut, "mutations")
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
 }
-

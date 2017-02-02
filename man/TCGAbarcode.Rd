@@ -47,4 +47,3 @@ TCGAbarcode(barcodes, sample = TRUE)
 \author{
 Marcel Ramos \email{mramos09@gmail.com}
 }
-

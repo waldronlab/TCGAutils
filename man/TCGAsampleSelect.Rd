@@ -25,4 +25,3 @@ See lookup table in \code{data("sampleTypes")}.
 example("TCGAbarcode")
 TCGAsampleSelect(barcodes, "11")
 }
-
