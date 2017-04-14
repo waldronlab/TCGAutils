@@ -1,6 +1,6 @@
 #' Take a MultiAssayExperiment and include curated variables
 #'
-#' This function works on the \code{pData} of a
+#' This function works on the \code{colData} of a
 #' \code{\linkS4class{MultiAssayExperiment}} object to add curated variable
 #' columns. It is recommended that the user run the scripts in the
 #' \code{MultiAssayExperiment-TCGA} repository that build the "enhanced" type
@@ -20,7 +20,7 @@ TCGAenhanceClinical <- function(MultiAssayExperiment = MultiAssayExperiment(),
     stopifnot(S4Vectors::isSingleString(cancerCode))
     stopifnot(file.exists(file.path(repoLocation, "MultiAssayExperiment-TCGA")))
 
-    clinicalDF <- pData(MultiAssayExperiment)
+    clinicalDF <- colData(MultiAssayExperiment)
     enhancedDataset <-
         readr::read_csv(
             file.path(repoLocation, "MultiAssayExperiment-TCGA",

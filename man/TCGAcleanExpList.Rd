@@ -4,13 +4,13 @@
 \alias{TCGAcleanExpList}
 \title{Remove unmatched samples from a list of experiments}
 \usage{
-TCGAcleanExpList(experiments, pData)
+TCGAcleanExpList(experiments, colData)
 }
 \arguments{
 \item{experiments}{A named \link[MultiAssayExperiment]{ExperimentList}
 of experiments compatible with the \code{MultiAssayExperiment} API}
 
-\item{pData}{A \code{data.frame} of clinical data with patient identifiers
+\item{colData}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}
 }
 \value{

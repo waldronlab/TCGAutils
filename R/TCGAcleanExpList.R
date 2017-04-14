@@ -5,7 +5,7 @@
 #'
 #' @param experiments A named \link[MultiAssayExperiment]{ExperimentList}
 #' of experiments compatible with the \code{MultiAssayExperiment} API
-#' @param pData A \code{data.frame} of clinical data with patient identifiers
+#' @param colData A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
 #' @return A named \code{list} or \link[MultiAssayExperiment]{ExperimentList}
 #' if the \code{MultiAssayExperiment} package is available
@@ -13,7 +13,7 @@
 #' @author Marcel Ramos \email{mramos09@@gmail.com}
 #'
 #' @export TCGAcleanExpList
-TCGAcleanExpList <- function(experiments, pData) {
+TCGAcleanExpList <- function(experiments, colData) {
     if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
     experiments <- MultiAssayExperiment::ExperimentList(experiments)
     sampNames <- as.list(colnames(experiments))
@@ -21,7 +21,7 @@ TCGAcleanExpList <- function(experiments, pData) {
     sampNames <- lapply(experiments, colnames)
     warning("attempting to use colnames on each experiment")
     }
-    patientIDS <- rownames(pData)
+    patientIDS <- rownames(colData)
     filler <- substr(patientIDS[1], 5, 5)
     if (filler != "-") {
         patientIDS <- gsub(paste0("\\", filler), "-", patientIDS)

@@ -5,10 +5,10 @@
 #'
 #' @param experiments A named \code{list} of experiments compatible with the
 #' MultiAssayExperiment API
-#' @param pData A \code{data.frame} of clinical data with patient identifiers
+#' @param colData A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
 #' @param idConverter A function to be used against the sample or specimen
-#' identifiers to match those in the rownames of the \code{pData} (default NULL)
+#' identifiers to match those in the rownames of the \code{colData} (default NULL)
 #' @param ... Additonal arguments to pass to the 'idConverter' function.
 #'
 #' @return A \code{DataFrame} class object of mapped samples and patient
@@ -22,21 +22,21 @@
 #' }
 #'
 #' @export generateMap
-generateMap <- function(experiments, pData, idConverter = NULL, ...) {
+generateMap <- function(experiments, colData, idConverter = NULL, ...) {
     if (!is(experiments, "ExperimentList")) {
-        experiments <- ExperimentList(experiments)
+        experiments <- MultiAssayExperiment::ExperimentList(experiments)
     }
     samps <- colnames(experiments)
     assay <- factor(rep(names(samps), lengths(samps)), levels=names(samps))
     colname <- unlist(samps, use.names=FALSE)
     if (is.null(idConverter)) {
-        matches <- match(colname, rownames(pData))
+        matches <- match(colname, rownames(colData))
     } else {
-        matches <- match(idConverter(colname, ...), rownames(pData))
+        matches <- match(idConverter(colname, ...), rownames(colData))
     }
     if (length(matches) && all(is.na(matches)))
-        stop("no way to map pData to ExperimentList")
-    primary <- rownames(pData)[matches]
+        stop("no way to map colData to ExperimentList")
+    primary <- rownames(colData)[matches]
     autoMap <- S4Vectors::DataFrame(assay=assay,
                                     primary=primary,
                                     colname=colname)

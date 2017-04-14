@@ -20,7 +20,7 @@ TCGAenhanceClinical(MultiAssayExperiment = MultiAssayExperiment(), cancerCode,
 A \code{\link{MultiAssayExperiment}} object
 }
 \description{
-This function works on the \code{pData} of a
+This function works on the \code{colData} of a
 \code{\linkS4class{MultiAssayExperiment}} object to add curated variable
 columns. It is recommended that the user run the scripts in the
 \code{MultiAssayExperiment-TCGA} repository that build the "enhanced" type

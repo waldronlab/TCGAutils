@@ -24,6 +24,9 @@ TCGAbiospec <- function(barcodes) {
     if (length(filler) != 1L) {
         stop("barcode delimiters not consistent")
     }
+    local_data_store <- new.env(parent = emptyenv())
+    data("sampleTypes", envir = local_data_store)
+    sampleTypes <- local_data_store[["sampleTypes"]]
     sample_type <- sampleTypes[["Definition"]][
         match(substr(TCGAbarcode(barcodes, participant = FALSE, sample = TRUE), 1, 2),
               sampleTypes[["Code"]])]

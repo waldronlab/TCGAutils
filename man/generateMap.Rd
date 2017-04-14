@@ -4,17 +4,17 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(experiments, pData, idConverter = NULL, ...)
+generateMap(experiments, colData, idConverter = NULL, ...)
 }
 \arguments{
 \item{experiments}{A named \code{list} of experiments compatible with the
 MultiAssayExperiment API}
 
-\item{pData}{A \code{data.frame} of clinical data with patient identifiers
+\item{colData}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}
 
 \item{idConverter}{A function to be used against the sample or specimen
-identifiers to match those in the rownames of the \code{pData} (default NULL)}
+identifiers to match those in the rownames of the \code{colData} (default NULL)}
 
 \item{...}{Additonal arguments to pass to the 'idConverter' function.}
 }
@@ -34,5 +34,5 @@ newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
 
 }
 \author{
-Marcel Ramos \email{mramos09@gmail.com}, Lucas Schiffer
+Marcel Ramos \email{mramos09@gmail.com}, Martin Morgan, Lucas Schiffer
 }
