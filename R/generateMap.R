@@ -14,7 +14,7 @@
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}, Martin Morgan, Lucas Schiffer
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}, Martin Morgan, Lucas Schiffer
 #'
 #' @examples \dontrun{
 #' ## For TCGA data
@@ -22,11 +22,15 @@
 #' }
 #'
 #' @export generateMap
-generateMap <- function(experiments, colData, idConverter = NULL, ...) {
-    if (!is(experiments, "ExperimentList")) {
+generateMap <- function(experiments, colData, idConverter = NULL, force = FALSE, ...) {
+    if (is.null(names(experiments)))
+        stop("experiments list/List must be named")
+    if (!is(experiments, "ExperimentList") && !force) {
         experiments <- MultiAssayExperiment::ExperimentList(experiments)
+        samps <- colnames(experiments)
+    } else {
+        samps <- lapply(experiments, colnames)
     }
-    samps <- colnames(experiments)
     assay <- factor(rep(names(samps), lengths(samps)), levels=names(samps))
     colname <- unlist(samps, use.names=FALSE)
     if (is.null(idConverter)) {
