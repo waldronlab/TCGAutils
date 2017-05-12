@@ -13,7 +13,7 @@
 #' size as the number of unique patient identifiers with patient identifiers as
 #' a "patientids" column
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @export TCGAmatchClinical
 TCGAmatchClinical <- function (expData, phenoDat) {

@@ -45,5 +45,5 @@ TCGAbarcode(barcodes, sample = TRUE)
 
 }
 \author{
-Marcel Ramos \email{mramos09@gmail.com}
+Marcel Ramos \email{marcel.ramos@roswellpark.org}
 }

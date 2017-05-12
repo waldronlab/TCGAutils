@@ -20,7 +20,7 @@
 #' @param sampleNames A vector of TCGA barcodes
 #' @return A \linkS4class{GRangesList} object
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @export TCGAexonToGRangesList
 TCGAexonToGRangesList <- function(filepaths, sampleNames=NULL) {

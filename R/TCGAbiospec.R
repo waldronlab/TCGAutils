@@ -8,7 +8,7 @@
 #' @return A \code{dataframe} with sample type, sample code, portion, plate,
 #' and center columns.
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @examples
 #' example("TCGAbarcode")

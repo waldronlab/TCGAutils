@@ -16,7 +16,7 @@
 #'
 #' @return A character vector or data matrix of TCGA barcode information
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @examples
 #' barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",

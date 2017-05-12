@@ -23,5 +23,5 @@ File should use default separators (i.e., periods). The column containing
 ranged information should be named "exon."
 }
 \author{
-Marcel Ramos \email{mramos09@gmail.com}
+Marcel Ramos \email{marcel.ramos@roswellpark.org}
 }

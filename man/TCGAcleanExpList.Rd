@@ -22,5 +22,5 @@ This function is intended to drop any unmatched samples from all of the
 listed experiments that are not present in the rownames of the pheno data.
 }
 \author{
-Marcel Ramos \email{mramos09@gmail.com}
+Marcel Ramos \email{marcel.ramos@roswellpark.org}
 }

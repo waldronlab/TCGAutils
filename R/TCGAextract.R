@@ -38,7 +38,7 @@
 #' @return Either an \linkS4class{ExpressionSet} object or a
 #' \linkS4class{GRangesList} object.
 #'
-#' @author Marcel Ramos \email{mramos09@@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @examples \dontrun{
 #' library(RTCGAToolbox)

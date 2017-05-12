@@ -10,7 +10,7 @@
 #' @return A named \code{list} or \link[MultiAssayExperiment]{ExperimentList}
 #' if the \code{MultiAssayExperiment} package is available
 #'
-#' @author Marcel Ramos \email{mramos09@@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @export TCGAcleanExpList
 TCGAcleanExpList <- function(experiments, colData) {

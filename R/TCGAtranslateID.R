@@ -73,7 +73,7 @@
 #' exampleType <- "Gene Expression Quantification"
 #' TCGAtranslateID(exampleCodes, dataType = exampleType)
 #'
-#' @author Marcel Ramos \email{mramos09@gmail.com}
+#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
 #'
 #' @export TCGAtranslateID
 #' @importFrom httr POST content_type_json http_status

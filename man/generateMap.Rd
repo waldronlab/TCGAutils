@@ -4,7 +4,7 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(experiments, colData, idConverter = NULL, ...)
+generateMap(experiments, colData, idConverter = NULL, force = FALSE, ...)
 }
 \arguments{
 \item{experiments}{A named \code{list} of experiments compatible with the
@@ -34,5 +34,5 @@ newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
 
 }
 \author{
-Marcel Ramos \email{mramos09@gmail.com}, Martin Morgan, Lucas Schiffer
+Marcel Ramos \email{marcel.ramos@roswellpark.org}, Martin Morgan, Lucas Schiffer
 }
