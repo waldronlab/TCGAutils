@@ -1,3 +1,6 @@
+.getGistic <- function(x) {
+
+}
 .fileSelect <- function() {
     g <- readline(
         paste0("The selected data type has more than one",
@@ -49,89 +52,19 @@
 #' }
 #'
 #' @export TCGAextract
-TCGAextract <- function(object, type = NULL) {
-    if (!is.null(type)) {
-        if (is.character(type)) {
-            type <- tolower(gsub("_", "", type))
-            type <- gsub("s$", "", type)
-        } else {
-            stop("Data type must be a character string")
-        }
-    } else {
-        stop("Specify type")
-    }
-    choices <- tolower(
-        gsub("_", "",
-             c("RNAseq_Gene", "miRNASeq_Gene", "RNAseq2_Gene_Norm",
-               "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH", "Methylation",
-               "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array")))
+TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
+    "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
+    "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
+    "gistica", "gistict")) {
+    type <- gsub("_", "", type)
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
-    if (type %in% choices) {
-        slotreq <- grep(paste0("^", type) , methods::slotNames(object),
-                        ignore.case=TRUE, perl=TRUE, value=TRUE)
-        if (methods::is(getElement(object, slotreq), "list")) {
-            elemlength <- length(getElement(object, slotreq))
-            if (elemlength > 1L) {
-                if (interactive()) {
-                    sourceName <- sapply(getElement(object, slotreq),
-                                         function(FHarray) {
-                                             getElement(FHarray, "Filename")
-                                         })
-                    dimensions <- sapply(lapply(getElement(object, slotreq),
-                                                function(tmp) {
-                                                    getElement(tmp,
-                                                               "DataMatrix")
-                                                }), dim)
-                    cat(paste0("[", seq(length(sourceName)), "] ",
-                               sourceName, paste0("\n\tNumber of rows: ",
-                                                  dimensions[1,],
-                                                  "\tNumber of columns: ",
-                                                  dimensions[2,]) ),
-                        fill = TRUE, sep = "\n")
-                    fileNo <- .fileSelect()
-                    if (fileNo == 0) {
-                        fileNo <- which.max(sapply(
-                            lapply(getElement(object, slotreq),
-                                   function(tmp) {
-                                       getElement(tmp, "DataMatrix")
-                                   }), ncol)
-                        )
-                    }
-                    message("Selecting file: [", fileNo, "] ",
-                            sourceName[fileNo])
-                    dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
-                } else {
-                    dm <- lapply(getElement(object, slotreq),
-                                 function(tmp) {
-                                     getElement(tmp, "DataMatrix")
-                                 })
-                    keeplist <- which.max(sapply(dm, ncol))
-                    dm <- dm[[keeplist]]
-                    warning(paste("Taking the array platform with",
-                                  "the greatest number of samples:", keeplist))
-                }
-            } else if(elemlength == 1L) {
-                dm <- getElement(object, slotreq)[[1]]@DataMatrix
-            } else if(elemlength == 0L) {
-                dm <- matrix(NA, nrow=0, ncol=0)
-            }
-        } else {
-            dm <- getElement(object, slotreq)
-        }
-    } else  if (type %in% c("gistica", "gistict")) {
-        if(type=="gistica"){
-            slotreq <- "AllByGene"
-        } else {
-            slotreq <- "ThresholdedByGene"
-        }
-        dm <- getElement(object@GISTIC, slotreq)
-    } else {
-        stop(paste("Data type not yet supported or could not be matched."))
-    }
-    if (dim(dm)[1] == 0 | dim(dm)[2] == 0) {
-        stop(type, " does not contain any data!")
-    } else {
-        if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
+    slotreq <- grep(paste0("^", type) , slotNames(object),
+                    ignore.case=TRUE, value=TRUE)
+    if (grepl("^gist", type, ignore.case = TRUE))
+        slotreq <- switch(type, gistica = "AllByGene",
+                          gistict = "ThresholdedByGene")
+    ## set dm from extraction methods
+    if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
             annote <- dm[, !grepl("TCGA", names(dm))]
             isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
             if (isNumRow) {
