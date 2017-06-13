@@ -177,7 +177,7 @@ TCGAextract <- function(object, type = NULL) {
             if (length(dropIdx)) {
                 dm <- dm[, -dropIdx]
             }
-            ignore.strand <- ifelse(is.na(ans_strand), TRUE, FALSE)
+            ignore.strand <- is.na(ans_strand)
             mygrl <- makeGRangesListFromTCGA(df = dm,
                                              split.field = primary,
                                              seqnames.field = ans_seqnames,
