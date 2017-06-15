@@ -55,7 +55,7 @@
 TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
     "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
     "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
-    "gistica", "gistict")) {
+    "GISTIC_A", "GISTIC_T"), ...) {
     type <- gsub("_", "", type)
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     slotreq <- grep(paste0("^", type) , slotNames(object),
@@ -84,19 +84,16 @@ TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
                 assays = SimpleList(dm), rowData = annote)
             return(newSE)
         } else if (slotreq %in% rangeslots) {
-            tsb <- match("tumor_sample_barcode", tolower(names(dm)))
-            if (length(tsb) == 1L && !is.na(tsb)) {
-                primary <- names(dm)[tsb]
-            } else if (is.na(tsb)) {
-                primary <- names(dm)[tolower(names(dm)) == "sample"]
-            } else {
+            tsbIdx <- which(tolower(names(dm)) %in% c("tumor_sample_barcode", "sample"))
+            if (!length(tsbIdx))
                 stop("'split.field' could not be found")
-            }
-            granges_cols <-
-                findGRangesCols(names(dm),
-                                seqnames.field = "Chromosome",
-                                start.field = c("Start", "Start_position"),
-                                end.field = c("End", "End_position"))
+            if (!S4Vectors::isSingleInteger(tsbIdx))
+                warning("'multiple' matches for identifiers, taking first one")
+            tsbIdx <- tsbIdx[[1L]]
+            primary <- names(dm)[tsbIdx]
+            granges_cols <- findGRangesCols(names(dm),
+                seqnames.field = "Chromosome", start.field = c("Start",
+                "Start_position"), end.field = c("End", "End_position"))
             ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
             ans_start <- names(dm)[granges_cols[["start"]]]
             ans_end <- names(dm)[granges_cols[["end"]]]
@@ -104,26 +101,24 @@ TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
             omitAdditional <- c("seqnames", "ranges", "seqlevels",
                                 "seqlengths", "iscircular", "start", "end",
                                 "width", "element", "chr")
-            diffNames <- setdiff(omitAdditional,
-                                 tolower(names(dm)[na.omit(granges_cols)]))
+            ignore.strand <- is.na(ans_strand)
+            granges_cols <- na.omit(granges_cols)
+            diffNames <- setdiff(omitAdditional, tolower(names(dm)[granges_cols]))
             dropIdx <- which(tolower(names(dm)) %in% diffNames)
-            if (length(dropIdx)) {
-                dm <- dm[, -dropIdx]
-            }
-            ignore.strand <- ifelse(is.na(ans_strand), TRUE, FALSE)
-            mygrl <- makeGRangesListFromTCGA(df = dm,
+            if (length(dropIdx)) dm <- dm[, -dropIdx]
+            rowRanges <- GenomicRanges::makeGRangesListFromDataFrame(df = dm,
                                              split.field = primary,
                                              seqnames.field = ans_seqnames,
                                              start.field = ans_start,
                                              end.field = ans_end,
                                              strand.field = ans_strand,
-                                             keep.extra.columns = TRUE,
+                                             keep.extra.columns = FALSE,
                                              ignore.strand = ignore.strand)
-            if(exists("sourceName")) {
-                mygrl@metadata <- c(mygrl@metadata,
+# TODO: FIX THIS
+# SummarizedExperiment::makeSummarizedExperimentFromDataFrame(dm[-c(tsbIdx)])
+            if(exists("sourceName"))
+                metadata(myrse) <- c(metadata(myrse),
                                     list("fileName" = sourceName[fileNo]))
-            }
-            return(mygrl)
         }
         eset <- ExpressionSet(dm)
         if (exists("annote")) {
@@ -131,5 +126,4 @@ TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
         }
         return(eset)
     }
-}
 
