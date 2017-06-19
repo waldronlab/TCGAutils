@@ -1,6 +1,17 @@
 .getGistic <- function(x) {
 
 }
+
+.removeShell <- function(x, type) {
+    dataTypes <- c("RNAseq_Gene", "miRNASeq_Gene",
+    "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
+    "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
+    "GISTIC_A", "GISTIC_T")
+    dataTypes <- gsub("_", "", dataTypes)
+    type <- match.arg(type, dataTypes)
+    getElement(x, type)
+}
+
 .fileSelect <- function() {
     g <- readline(
         paste0("The selected data type has more than one",
@@ -13,6 +24,33 @@
         return(g)
     }
 }
+
+.ansRangeNames <- function(x) {
+    granges_cols <- findGRangesCols(names(x), seqnames.field = "Chromosome",
+        start.field = c("Start", "Start_position"), end.field = c("End", "End_position"))
+    fielders <- list(seqnames.field = "seqnames", start.field = "start",
+        end.field = "end", strand.field = "strand")
+    Fargs <- lapply(fielders, function(name) { names(x)[granges_cols[[name]]] })
+    Fargs[["ignore.strand"]] <- is.na(Fargs[["strand.field"]])
+    Filter(function(g) {!is.na(g)}, Fargs)
+}
+
+
+setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray",
+                             "FirehoseMethylationArray"))
+
+setMethod("extract", "RTCGAArray", function(x, ...) {
+    dataMat <- getElement(x, "DataMatrix")
+    headers <- names(dataMat)
+    rangeNames <- .ansRangeNames(dataMat)
+    if (length(rangeNames)) {
+        ## TODO: Find SAMPLE_ID column
+        rowRanges <- do.call(makeGRangesListFromDataFrame, args = rangeNames)
+        rse <- SummarizedExperiment(assays = SimpleList(dataMat[,
+        -which(!names(dataMat) %in% rangeNames)]), rowRanges = rowRanges)
+        return(rse)
+    }
+})
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
@@ -56,7 +94,13 @@ TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
     "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
     "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
     "GISTIC_A", "GISTIC_T"), ...) {
-    type <- gsub("_", "", type)
+    extObject <- .removeShell(object, type)
+    if (is(extObject, "list")  && length(extObject) == 1L)
+        extObject <- extObject[[1L]]
+    if (is(extObject, "matrix"))
+        return(SummarizedExperiment::SummarizedExperiment(
+                assays = SimpleList(dm)))
+
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     slotreq <- grep(paste0("^", type) , slotNames(object),
                     ignore.case=TRUE, value=TRUE)
@@ -112,7 +156,7 @@ TCGAextract <- function(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
                                              start.field = ans_start,
                                              end.field = ans_end,
                                              strand.field = ans_strand,
-                                             keep.extra.columns = FALSE,
+                                             keep.extra.columns = TRUE,
                                              ignore.strand = ignore.strand)
 # TODO: FIX THIS
 # SummarizedExperiment::makeSummarizedExperimentFromDataFrame(dm[-c(tsbIdx)])
