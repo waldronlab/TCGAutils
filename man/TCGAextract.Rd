@@ -5,10 +5,10 @@
 \title{Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 \code{GRangesList} object}
 \usage{
-TCGAextract(object, type = c("RNAseq_Gene", "miRNASeq_Gene",
+TCGAextract(object, type = c("Clinical", "RNAseq_Gene", "miRNASeq_Gene",
   "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
   "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
-  "gistica", "gistict"))
+  "GISTIC_A", "GISTIC_T"), ...)
 }
 \arguments{
 \item{object}{A \code{FirehoseData} object from which to extract data.}
@@ -49,7 +49,6 @@ coadmut <- getFirehoseData("COAD", runDate = "20151101", Mutation = TRUE,
                          destdir = dataFolder)
 cm <- TCGAextract(coadmut, "mutations")
 }
-
 }
 \author{
 Marcel Ramos \email{marcel.ramos@roswellpark.org}

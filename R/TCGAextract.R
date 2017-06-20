@@ -52,8 +52,8 @@ setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray",
 setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
 
 #' @export
-setMethod("extract", "RTCGAArray", function(x, ...) {
-    dataMat <- getElement(x, "DataMatrix")
+setMethod("extract", "RTCGAArray", function(object, ...) {
+    dataMat <- getElement(object, "DataMatrix")
     headers <- names(dataMat)
     rangeNames <- .ansRangeNames(dataMat)
     if (length(rangeNames)) {
@@ -101,8 +101,8 @@ setMethod("extract", "RTCGAArray", function(x, ...) {
 #'                          destdir = dataFolder)
 #' cm <- TCGAextract(coadmut, "mutations")
 #' }
-#' @importClassesFrom RTCGAToolbox FirehosemRNAArray FirehoseCGHArray
-#' FirehoseMethylationArray
+#' @importClassesFrom RTCGAToolbox FirehoseData FirehosemRNAArray
+#' FirehoseCGHArray FirehoseMethylationArray
 #' @export TCGAextract
 TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq",
