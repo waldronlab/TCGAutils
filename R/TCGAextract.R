@@ -1,3 +1,28 @@
+#' @importFrom psygenet2r extract
+NULL
+
+.getGISTIC <- function(x, type) {
+    x <- getElement(x, type)
+    annoteCols <- !grepl("TCGA", names(x))
+    annoteRowDF <- x[, annoteCols]
+    rownames(annoteRowDF) <-
+        annoteRowDF[, grepl("gene", names(annoteRowDF), ignore.case = TRUE)]
+    x <- x[, !annoteCols]
+    x <- vapply(x, type.convert, numeric(nrow(x)))
+    colnames(x) <- .stdIDs(colnames(x))
+    SummarizedExperiment(SimpleList(x), rowData = annoteRowDF)
+}
+
+.removeShell <- function(x, type) {
+    dataTypes <- c("RNAseq_Gene", "miRNASeq_Gene",
+    "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
+    "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
+    "GISTIC_A", "GISTIC_T")
+    dataTypes <- gsub("_", "", dataTypes)
+    type <- match.arg(type, dataTypes)
+    getElement(x, type)
+}
+
 .fileSelect <- function() {
     g <- readline(
         paste0("The selected data type has more than one",
@@ -10,6 +35,35 @@
         return(g)
     }
 }
+
+.ansRangeNames <- function(x) {
+    granges_cols <- findGRangesCols(names(x), seqnames.field = "Chromosome",
+        start.field = c("Start", "Start_position"), end.field = c("End", "End_position"))
+    fielders <- list(seqnames.field = "seqnames", start.field = "start",
+        end.field = "end", strand.field = "strand")
+    Fargs <- lapply(fielders, function(name) { names(x)[granges_cols[[name]]] })
+    Fargs[["ignore.strand"]] <- is.na(Fargs[["strand.field"]])
+    Filter(function(g) {!is.na(g)}, Fargs)
+}
+
+setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray",
+                             "FirehoseMethylationArray"))
+
+setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
+
+#' @export
+setMethod("extract", "RTCGAArray", function(object, ...) {
+    dataMat <- getElement(object, "DataMatrix")
+    headers <- names(dataMat)
+    rangeNames <- .ansRangeNames(dataMat)
+    if (length(rangeNames)) {
+        ## TODO: Find SAMPLE_ID column
+        rowRanges <- do.call(makeGRangesListFromDataFrame, args = rangeNames)
+        rse <- SummarizedExperiment(assays = SimpleList(dataMat[,
+        -which(!names(dataMat) %in% rangeNames)]), rowRanges = rowRanges)
+        return(rse)
+    }
+})
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
@@ -47,91 +101,34 @@
 #'                          destdir = dataFolder)
 #' cm <- TCGAextract(coadmut, "mutations")
 #' }
-#'
+#' @importClassesFrom RTCGAToolbox FirehoseData FirehosemRNAArray
+#' FirehoseCGHArray FirehoseMethylationArray
 #' @export TCGAextract
-TCGAextract <- function(object, type = NULL) {
-    if (!is.null(type)) {
-        if (is.character(type)) {
-            type <- tolower(gsub("_", "", type))
-            type <- gsub("s$", "", type)
-        } else {
-            stop("Data type must be a character string")
-        }
-    } else {
-        stop("Specify type")
-    }
-    choices <- tolower(
-        gsub("_", "",
-             c("RNAseq_Gene", "miRNASeq_Gene", "RNAseq2_Gene_Norm",
-               "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH", "Methylation",
-               "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array")))
+TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
+    "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq",
+    "CNA_CGH", "Methylation", "Mutation", "mRNA_Array", "miRNA_Array",
+    "RPPA_Array", "GISTIC_A", "GISTIC_T"), ...) {
+    extObject <- .removeShell(object, type)
+    if (is(extObject, "list")  && length(extObject) == 1L)
+        extObject <- extObject[[1L]]
+    if (is(extObject, "matrix"))
+        return(SummarizedExperiment::SummarizedExperiment(
+                assays = SimpleList(dm)))
+
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
-    if (type %in% choices) {
-        slotreq <- grep(paste0("^", type) , methods::slotNames(object),
-                        ignore.case=TRUE, perl=TRUE, value=TRUE)
-        if (methods::is(getElement(object, slotreq), "list")) {
-            elemlength <- length(getElement(object, slotreq))
-            if (elemlength > 1L) {
-                if (interactive()) {
-                    sourceName <- sapply(getElement(object, slotreq),
-                                         function(FHarray) {
-                                             getElement(FHarray, "Filename")
-                                         })
-                    dimensions <- sapply(lapply(getElement(object, slotreq),
-                                                function(tmp) {
-                                                    getElement(tmp,
-                                                               "DataMatrix")
-                                                }), dim)
-                    cat(paste0("[", seq(length(sourceName)), "] ",
-                               sourceName, paste0("\n\tNumber of rows: ",
-                                                  dimensions[1,],
-                                                  "\tNumber of columns: ",
-                                                  dimensions[2,]) ),
-                        fill = TRUE, sep = "\n")
-                    fileNo <- .fileSelect()
-                    if (fileNo == 0) {
-                        fileNo <- which.max(sapply(
-                            lapply(getElement(object, slotreq),
-                                   function(tmp) {
-                                       getElement(tmp, "DataMatrix")
-                                   }), ncol)
-                        )
-                    }
-                    message("Selecting file: [", fileNo, "] ",
-                            sourceName[fileNo])
-                    dm <- getElement(object, slotreq)[[fileNo]]@DataMatrix
-                } else {
-                    dm <- lapply(getElement(object, slotreq),
-                                 function(tmp) {
-                                     getElement(tmp, "DataMatrix")
-                                 })
-                    keeplist <- which.max(sapply(dm, ncol))
-                    dm <- dm[[keeplist]]
-                    warning(paste("Taking the array platform with",
-                                  "the greatest number of samples:", keeplist))
-                }
-            } else if(elemlength == 1L) {
-                dm <- getElement(object, slotreq)[[1]]@DataMatrix
-            } else if(elemlength == 0L) {
-                dm <- matrix(NA, nrow=0, ncol=0)
-            }
-        } else {
-            dm <- getElement(object, slotreq)
-        }
-    } else  if (type %in% c("gistica", "gistict")) {
-        if(type=="gistica"){
-            slotreq <- "AllByGene"
-        } else {
-            slotreq <- "ThresholdedByGene"
-        }
-        dm <- getElement(object@GISTIC, slotreq)
-    } else {
-        stop(paste("Data type not yet supported or could not be matched."))
+    slotreq <- grep(paste0("^", type) , slotNames(object),
+                    ignore.case=TRUE, value=TRUE)
+    gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
+    if (gisticType) {
+        slotreq <- switch(type, GISTICA = "AllByGene",
+                          GISTICT = "ThresholdedByGene")
+        type <- gsub("A$|T$", "", type)
+        object <- getElement(object, type)
+        result <- .getGISTIC(object, slotreq)
+        return(result)
     }
-    if (dim(dm)[1] == 0 | dim(dm)[2] == 0) {
-        stop(type, " does not contain any data!")
-    } else {
-        if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
+    ## set dm from extraction methods
+    if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
             annote <- dm[, !grepl("TCGA", names(dm))]
             isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
             if (isNumRow) {
@@ -198,5 +195,4 @@ TCGAextract <- function(object, type = NULL) {
         }
         return(eset)
     }
-}
 

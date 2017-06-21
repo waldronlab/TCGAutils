@@ -1,19 +1,17 @@
 Package: TCGAutils
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
     data
-Version: 0.3.1
-Authors@R: c(
-  person("Marcel", "Ramos", email ="marcel.ramos@roswellpark.org", role = c("aut", "cre")),
-  person("Lucas", "Schiffer", role = "ctb"),
-  person("WaldronLab", role = "ctb")
-  )
+Version: 0.3.3
 Description: A suite of functions aimed at simplifying and making the use of
     TCGA data manageable.
+Authors@R: c(
+    person("Marcel", "Ramos", email ="marcel.ramos@roswellpark.org",
+    role = c("aut", "cre")),
+    person("Lucas", "Schiffer", role = "ctb"),
+    person("WaldronLab", role = "ctb")
+    )
 Depends:
     R (>= 3.3.0)
-License: GPL (>= 3)
-Encoding: UTF-8
-LazyData: true
 Imports:
     Biobase,
     BiocGenerics,
@@ -24,13 +22,18 @@ Imports:
     methods,
     MultiAssayExperiment,
     readr,
+    methods,
     RTCGAToolbox,
     rvest,
     S4Vectors,
     SummarizedExperiment,
-    xml2
+    xml2,
+    psygenet2r
 Suggests:
-    testthat,
+    testthat
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
 BugReports: https://github.com/waldronlab/TCGAutils/issues
 biocViews: Software, WorkflowStep, Preprocessing
 RoxygenNote: 6.0.1
