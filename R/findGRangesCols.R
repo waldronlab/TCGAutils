@@ -89,7 +89,7 @@ findGRangesCols <- function (df_colnames,
             if (length(idx1) == 1L && length(idx2) == 1L)
                 return(list(c(start = idx1, end = idx2), ""))
         } else {
-            stop("cannnot determine start/end columns")
+            return(list(c(start = NA_integer_, end = NA_integer_), ""))
         }
     }
 }

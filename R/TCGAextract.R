@@ -38,7 +38,8 @@ NULL
 
 .ansRangeNames <- function(x) {
     granges_cols <- findGRangesCols(names(x), seqnames.field = "Chromosome",
-        start.field = c("Start", "Start_position"), end.field = c("End", "End_position"))
+        start.field = c("Start", "Start_position"),
+        end.field = c("End", "End_position"))
     fielders <- list(seqnames.field = "seqnames", start.field = "start",
         end.field = "end", strand.field = "strand")
     Fargs <- lapply(fielders, function(name) { names(x)[granges_cols[[name]]] })
@@ -46,8 +47,7 @@ NULL
     Filter(function(g) {!is.na(g)}, Fargs)
 }
 
-setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray",
-                             "FirehoseMethylationArray"))
+setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray"))
 
 setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
 
@@ -63,6 +63,10 @@ setMethod("extract", "RTCGAArray", function(object, ...) {
         -which(!names(dataMat) %in% rangeNames)]), rowRanges = rowRanges)
         return(rse)
     }
+})
+
+setMethod("extract", "ANY", function(object, ...) {
+    object
 })
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
@@ -108,16 +112,17 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq",
     "CNA_CGH", "Methylation", "Mutation", "mRNA_Array", "miRNA_Array",
     "RPPA_Array", "GISTIC_A", "GISTIC_T"), ...) {
-    extObject <- .removeShell(object, type)
-    if (is(extObject, "list")  && length(extObject) == 1L)
-        extObject <- extObject[[1L]]
-    if (is(extObject, "matrix"))
+    sNames <- slotNames(object)
+    object <- .removeShell(object, type)
+    if (is(object, "list")  && length(object) == 1L)
+        object <- object[[1L]]
+    if (is(object, "matrix"))
         return(SummarizedExperiment::SummarizedExperiment(
-                assays = SimpleList(dm)))
+                assays = SimpleList(object)))
+    object <- extract(object, ...)
 
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
-    slotreq <- grep(paste0("^", type) , slotNames(object),
-                    ignore.case=TRUE, value=TRUE)
+    slotreq <- grep(paste0("^", type) , sNames, ignore.case=TRUE, value=TRUE)
     gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
     if (gisticType) {
         slotreq <- switch(type, GISTICA = "AllByGene",
@@ -127,26 +132,23 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
         result <- .getGISTIC(object, slotreq)
         return(result)
     }
-    ## set dm from extraction methods
-    if (slotreq %in% c("Methylation", "AllByGene", "ThresholdedByGene")) {
-            annote <- dm[, !grepl("TCGA", names(dm))]
-            isNumRow <- all(grepl("^[0-9]*$", rownames(dm)))
-            if (isNumRow) {
-                geneSymbols <- annote[, grep("symbol", names(annote),
-                                             ignore.case = TRUE, value = TRUE)]
-                rNames <- geneSymbols
-            } else {
-                rNames <- rownames(dm)
-            }
-            dm <- apply(dm[grepl("TCGA", names(dm))], 2, as.numeric, as.matrix)
-            rownames(dm) <- rNames
-            filler <- substr(colnames(dm)[1], 5, 5)
-            if (filler != "-") {
-                colnames(dm) <- gsub(paste0("\\", filler), "-", colnames(dm))
-            }
-            newSE <- SummarizedExperiment::SummarizedExperiment(
-                assays = SimpleList(dm), rowData = annote)
-            return(newSE)
+    if (slotreq %in% "Methylation") {
+        object <- getElement(object, "DataMatrix")
+        headers <- names(object)
+        annote <- object[, !grepl("TCGA", headers)]
+        isNumRow <- all(grepl("^[0-9]*$",
+            sample(rownames(object), size = 100L, replace = TRUE)))
+        if (isNumRow) {
+            geneSymbols <- annote[, grep("symbol", names(annote),
+                                         ignore.case = TRUE, value = TRUE)]
+            rNames <- geneSymbols
+        } else { rNames <- rownames(object) }
+        dm <- data.matrix(object[, grepl("TCGA", names(object))])
+        rownames(dm) <- rNames
+        colnames(dm) <- .stdIDs(colnames(dm))
+        newSE <- SummarizedExperiment::SummarizedExperiment(
+            assays = SimpleList(dm), rowData = annote)
+        return(newSE)
         } else if (slotreq %in% rangeslots) {
             tsb <- match("tumor_sample_barcode", tolower(names(dm)))
             if (length(tsb) == 1L && !is.na(tsb)) {
