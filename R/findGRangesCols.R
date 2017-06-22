@@ -99,7 +99,7 @@ findGRangesCols <- function (df_colnames,
     if (length(idx) == 0L)
         idx <- which(df_colnames %in% seqnames.field)
     if (length(idx) == 0L)
-        stop("cannnot find seqnames column")
+        return(NA_integer_)
     if (length(idx) >= 2L)
         warning("cannnot determine seqnames column unambiguously")
         return(idx[[1L]])

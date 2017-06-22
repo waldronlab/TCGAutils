@@ -1,6 +1,14 @@
 #' @importFrom psygenet2r extract
 NULL
 
+.getDataMatrix <- function(object) {
+    getElement(object, "DataMatrix")
+}
+
+.getFilenames <- function(object) {
+    getElement(object, "Filename")
+}
+
 .getGISTIC <- function(x, type) {
     x <- getElement(x, type)
     annoteCols <- !grepl("TCGA", names(x))
@@ -13,14 +21,30 @@ NULL
     SummarizedExperiment(SimpleList(x), rowData = annoteRowDF)
 }
 
-.removeShell <- function(x, type) {
-    dataTypes <- c("RNAseq_Gene", "miRNASeq_Gene",
+.removeShells <- function(x, type) {
+    dataTypes <- c("Clinical", "RNAseq_Gene", "miRNASeq_Gene",
     "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
     "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
     "GISTIC_A", "GISTIC_T")
     dataTypes <- gsub("_", "", dataTypes)
     type <- match.arg(type, dataTypes)
-    getElement(x, type)
+    x <- getElement(x, type)
+    if (is(x, "list")) {
+        if (length(x) == 1L) {
+            x <- x[[1L]]
+        if (is(object, "FirehoseCGHArray") || is(object, "FirehosemRNAArray")) {
+            x <- .getDataMatrix(x)
+            if (is(x, "data.frame")) {
+                x <- DataFrame(x)
+                metadata(x) <- .getFilenames(x)
+            }
+        }
+        } else {
+            x <- List(lapply(x, .getDataMatrix))
+            metadata(x) <- lapply(x, .getFilenames)
+        }
+    }
+    return(x)
 }
 
 .fileSelect <- function() {
@@ -37,6 +61,7 @@ NULL
 }
 
 .ansRangeNames <- function(x) {
+    if (is(x, "list")) { return(list()) }
     granges_cols <- findGRangesCols(names(x), seqnames.field = "Chromosome",
         start.field = c("Start", "Start_position"),
         end.field = c("End", "End_position"))
@@ -46,10 +71,6 @@ NULL
     Fargs[["ignore.strand"]] <- is.na(Fargs[["strand.field"]])
     Filter(function(g) {!is.na(g)}, Fargs)
 }
-
-setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray"))
-
-setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
 
 .findSampleCol <- function(x) {
     tsb <- match("tumor_sample_barcode", tolower(names(x)))
@@ -63,26 +84,56 @@ setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
     return(primary)
 }
 
-#' @export
-setMethod("extract", "RTCGAArray", function(object, ...) {
-    dataMat <- getElement(object, "DataMatrix")
+.extractRangedDF <- function(object, ...) {
+    dataMat <- .getDataMatrix(object)
     headers <- names(dataMat)
     rangeNames <- .ansRangeNames(dataMat)
     if (length(rangeNames)) {
+        # .extractRanged(dataMat, rangeNames)
         sampID <- .findSampleCol(dataMat)
         rowRanges <- do.call(makeGRangesListFromDataFrame,
             args = c(list(df = dataMat, split.field = sampID,
-                          keep.extra.columns = TRUE), rangeNames))
+                          keep.extra.columns = FALSE), rangeNames))
         rangeNames <- rangeNames[-match("ignore.strand", names(rangeNames))]
         rangeNames <- c(rangeNames, split.field = sampID)
         rse <- SummarizedExperiment(assays = SimpleList(dataMat[,
         -which(!names(dataMat) %in% rangeNames)]), rowRanges = rowRanges)
         return(rse)
     }
-})
+}
 
-setMethod("extract", "ANY", function(object, ...) {
-    object
+.extractRanged <- function(object, rangeNames) {
+    primary <- .findSampleCol(object)
+    omitAdditional <- c("seqnames", "ranges", "seqlevels",
+                        "seqlengths", "iscircular", "start", "end",
+                        "width", "element", "chr")
+    diffNames <- setdiff(omitAdditional, tolower(rangeNames))
+    dropIdx <- which(tolower(names(object)) %in% diffNames)
+    if (length(dropIdx))
+        object <- object[, -dropIdx]
+    mygrl <- makeGRangesListFromTCGA(df = object,
+                                     split.field = primary,
+                                     seqnames.field = ans_seqnames,
+                                     start.field = ans_start,
+                                     end.field = ans_end,
+                                     strand.field = ans_strand,
+                                     keep.extra.columns = TRUE,
+                                     ignore.strand = ignore.strand)
+    if(exists("sourceName")) {
+        mygrl@metadata <- c(mygrl@metadata,
+                            list("fileName" = sourceName[fileNo]))
+    }
+    return(mygrl)
+}
+
+setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
+
+#' @export
+setMethod("extract", "List", function(object, ...) {
+    args <- list(...)
+    type <- args[["type"]]
+    for (i in seq_along(object))
+    object[[i]] <- TCGAextract(object[[i]], type)
 })
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
@@ -128,14 +179,19 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq",
     "CNA_CGH", "Methylation", "Mutation", "mRNA_Array", "miRNA_Array",
     "RPPA_Array", "GISTIC_A", "GISTIC_T"), ...) {
-    sNames <- slotNames(object)
-    object <- .removeShell(object, type)
-    if (is(object, "list")  && length(object) == 1L)
-        object <- object[[1L]]
-    if (is(object, "matrix"))
-        return(SummarizedExperiment::SummarizedExperiment(
-                assays = SimpleList(object)))
-    object <- extract(object, ...)
+    sNames <- c("Clinical", "RNASeqGene", "RNASeq2GeneNorm", "miRNASeqGene",
+                "CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Methylation",
+                "mRNAArray", "miRNAArray", "RPPAArray", "Mutations", "GISTIC")
+    object <- .removeShells(object, type)
+    if (type == "Clinical") { return(object) }
+    if (is(object, "matrix")) {
+        return(SummarizedExperiment(assays = SimpleList(object)))
+    }
+    rangeNames <- .ansRangeNames(object)
+    if (length(rangeNames)) { return(.extractRanged(object, rangeNames)) }
+    if (is(object, "List")) {
+        return(extract(object, type = type, ...))
+    }
 
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     slotreq <- grep(paste0("^", type) , sNames, ignore.case=TRUE, value=TRUE)
@@ -166,44 +222,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
             assays = SimpleList(dm), rowData = annote)
         return(newSE)
         } else if (slotreq %in% rangeslots) {
-            primary <- .findSampleCol(dm)
-            granges_cols <-
-                findGRangesCols(names(dm),
-                                seqnames.field = "Chromosome",
-                                start.field = c("Start", "Start_position"),
-                                end.field = c("End", "End_position"))
-            ans_seqnames <- names(dm)[granges_cols[["seqnames"]]]
-            ans_start <- names(dm)[granges_cols[["start"]]]
-            ans_end <- names(dm)[granges_cols[["end"]]]
-            ans_strand <- names(dm)[granges_cols[["strand"]]]
-            omitAdditional <- c("seqnames", "ranges", "seqlevels",
-                                "seqlengths", "iscircular", "start", "end",
-                                "width", "element", "chr")
-            diffNames <- setdiff(omitAdditional,
-                                 tolower(names(dm)[na.omit(granges_cols)]))
-            dropIdx <- which(tolower(names(dm)) %in% diffNames)
-            if (length(dropIdx)) {
-                dm <- dm[, -dropIdx]
-            }
-            ignore.strand <- is.na(ans_strand)
-            mygrl <- makeGRangesListFromTCGA(df = dm,
-                                             split.field = primary,
-                                             seqnames.field = ans_seqnames,
-                                             start.field = ans_start,
-                                             end.field = ans_end,
-                                             strand.field = ans_strand,
-                                             keep.extra.columns = TRUE,
-                                             ignore.strand = ignore.strand)
-            if(exists("sourceName")) {
-                mygrl@metadata <- c(mygrl@metadata,
-                                    list("fileName" = sourceName[fileNo]))
-            }
-            return(mygrl)
+            object <- .extractRanged(object, rangeNames)
         }
-        eset <- ExpressionSet(dm)
-        if (exists("annote")) {
-            featureData(eset) <- AnnotatedDataFrame(annote)
-        }
-        return(eset)
-    }
-
+    return(object)
+}
