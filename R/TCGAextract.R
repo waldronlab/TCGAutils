@@ -51,14 +51,30 @@ setClassUnion("RTCGAArray", c("FirehosemRNAArray", "FirehoseCGHArray"))
 
 setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
 
+.findSampleCol <- function(x) {
+    tsb <- match("tumor_sample_barcode", tolower(names(x)))
+    if (length(tsb) == 1L && !is.na(tsb)) {
+        primary <- names(x)[tsb]
+    } else if (is.na(tsb)) {
+        primary <- names(x)[tolower(names(x)) == "sample"]
+    } else {
+        stop("'split.field' could not be found")
+    }
+    return(primary)
+}
+
 #' @export
 setMethod("extract", "RTCGAArray", function(object, ...) {
     dataMat <- getElement(object, "DataMatrix")
     headers <- names(dataMat)
     rangeNames <- .ansRangeNames(dataMat)
     if (length(rangeNames)) {
-        ## TODO: Find SAMPLE_ID column
-        rowRanges <- do.call(makeGRangesListFromDataFrame, args = rangeNames)
+        sampID <- .findSampleCol(dataMat)
+        rowRanges <- do.call(makeGRangesListFromDataFrame,
+            args = c(list(df = dataMat, split.field = sampID,
+                          keep.extra.columns = TRUE), rangeNames))
+        rangeNames <- rangeNames[-match("ignore.strand", names(rangeNames))]
+        rangeNames <- c(rangeNames, split.field = sampID)
         rse <- SummarizedExperiment(assays = SimpleList(dataMat[,
         -which(!names(dataMat) %in% rangeNames)]), rowRanges = rowRanges)
         return(rse)
@@ -150,14 +166,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
             assays = SimpleList(dm), rowData = annote)
         return(newSE)
         } else if (slotreq %in% rangeslots) {
-            tsb <- match("tumor_sample_barcode", tolower(names(dm)))
-            if (length(tsb) == 1L && !is.na(tsb)) {
-                primary <- names(dm)[tsb]
-            } else if (is.na(tsb)) {
-                primary <- names(dm)[tolower(names(dm)) == "sample"]
-            } else {
-                stop("'split.field' could not be found")
-            }
+            primary <- .findSampleCol(dm)
             granges_cols <-
                 findGRangesCols(names(dm),
                                 seqnames.field = "Chromosome",
