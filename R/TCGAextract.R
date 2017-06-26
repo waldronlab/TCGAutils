@@ -28,11 +28,12 @@ NULL
     "GISTIC_A", "GISTIC_T")
     dataTypes <- gsub("_", "", dataTypes)
     type <- match.arg(type, dataTypes)
+    type <- gsub("Seq$", "seq", type)
     x <- getElement(x, type)
     if (is(x, "list")) {
         if (length(x) == 1L) {
             x <- x[[1L]]
-        if (is(object, "FirehoseCGHArray") || is(object, "FirehosemRNAArray")) {
+        if (is(x, "FirehoseCGHArray") || is(x, "FirehosemRNAArray")) {
             x <- .getDataMatrix(x)
             if (is(x, "data.frame")) {
                 x <- DataFrame(x)
@@ -102,27 +103,34 @@ NULL
     }
 }
 
+## TODO: All filename metadata
+
+## TODO: Filter and create by equal lengths per sample (RSE vs RE)
+
+.hasConsistentRanges <- function(object) {
+    primary <- .findSampleCol(object)
+    S4Vectors::isSingleInteger(Reduce(unique,
+        lengths(base::split(object, object[[primary]]))))
+}
+
 .extractRanged <- function(object, rangeNames) {
     primary <- .findSampleCol(object)
-    omitAdditional <- c("seqnames", "ranges", "seqlevels",
-                        "seqlengths", "iscircular", "start", "end",
-                        "width", "element", "chr")
+    omitAdditional <- c("seqnames", "ranges", "seqlevels", "seqlengths",
+        "iscircular", "start", "end", "width", "element", "chr")
     diffNames <- setdiff(omitAdditional, tolower(rangeNames))
     dropIdx <- which(tolower(names(object)) %in% diffNames)
     if (length(dropIdx))
         object <- object[, -dropIdx]
     mygrl <- makeGRangesListFromTCGA(df = object,
-                                     split.field = primary,
-                                     seqnames.field = ans_seqnames,
-                                     start.field = ans_start,
-                                     end.field = ans_end,
-                                     strand.field = ans_strand,
-                                     keep.extra.columns = TRUE,
-                                     ignore.strand = ignore.strand)
-    if(exists("sourceName")) {
-        mygrl@metadata <- c(mygrl@metadata,
-                            list("fileName" = sourceName[fileNo]))
-    }
+        split.field = primary,
+        seqnames.field = rangeNames[["seqnames.field"]],
+        start.field = rangeNames[["start.field"]],
+        end.field = rangeNames[["end.field"]],
+        strand.field =
+            if (is.null(rangeNames[["strand"]]))
+                { "strand" } else { rangeNames[["strand"]] },
+        keep.extra.columns = TRUE,
+        ignore.strand = rangeNames[["ignore.strand"]])
     return(mygrl)
 }
 
