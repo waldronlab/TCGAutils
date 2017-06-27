@@ -151,6 +151,15 @@ NULL
         rowRanges = rowRanges))
 }
 
+.makeRaggedExperimentFromDataFrame <- function(df) {
+    split.field <- .findSampleCol(df)
+    ansRanges <- .ansRangeNames(df)
+    rangeInfo <- c(ansRanges, list(split.field = split.field))
+    newGRL <- do.call(makeGRangesListFromDataFrame,
+            args = c(list(df = df, keep.extra.columns = TRUE), rangeInfo))
+    RaggedExperiment::RaggedExperiment(newGRL)
+}
+
 .extractRanged <- function(object, rangeNames) {
     primary <- .findSampleCol(object)
     omitAdditional <- c("seqnames", "ranges", "seqlevels", "seqlengths",
