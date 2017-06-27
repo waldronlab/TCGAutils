@@ -139,7 +139,6 @@ NULL
     nameAssays <- names(numInfo)
     numInfo <- base::split(numInfo, df[, split.field])
     countList <- vector(mode = "list", length = numAssays)
-    browser()
     for (i in seq_len(numAssays)) {
         countList[[i]] <- do.call(cbind, lapply(numInfo,
             function(smalldf) { smalldf[[i]] }))
@@ -160,12 +159,19 @@ NULL
     RaggedExperiment::RaggedExperiment(newGRL)
 }
 
-.extractRanged <- function(object, rangeNames) {
-    primary <- .findSampleCol(object)
-    omitAdditional <- c("seqnames", "ranges", "seqlevels", "seqlengths",
+.omitAdditionalIdx <- function(object) {
+    rangeNames <- .ansRangeNames(object)
+    rangeNames <- Filter(function(x) !is.logical(x), rangeNames)
+    omitAdditional <- c("seqnames", "seqname", "chromosome", "chrom",
+        "chromosome_name", "ranges", "seqlevels", "seqlengths", "seq_id",
         "iscircular", "start", "end", "width", "element", "chr")
     diffNames <- setdiff(omitAdditional, tolower(rangeNames))
-    dropIdx <- which(tolower(names(object)) %in% diffNames)
+    which(tolower(names(object)) %in% diffNames)
+}
+
+.extractRanged <- function(object, rangeNames) {
+    primary <- .findSampleCol(object)
+    dropIdx <- .omitAdditionalIdx(object)
     if (length(dropIdx))
         object <- object[, -dropIdx]
     mygrl <- makeGRangesListFromTCGA(df = object,
@@ -246,16 +252,15 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     hasRanged <- .hasRangeNames(object)
     if (hasRanged) {
         if (.hasConsistentRanges(object)) {
-            # object <- SummarizedExperiment()
+            object <- .makeRangedSummarizedExperimentFromDataFrame(object)
         } else {
-            # object <- RaggedExperiment
+            object <- .makeRaggedExperimentFromDataFrame(object)
         }
         return(object)
-        }
+    }
     if (is(object, "List")) {
         return(extract(object, type = type, ...))
     }
-
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     slotreq <- grep(paste0("^", type) , sNames, ignore.case=TRUE, value=TRUE)
     gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
