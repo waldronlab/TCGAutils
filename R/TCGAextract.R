@@ -111,8 +111,44 @@ NULL
 
 .hasConsistentRanges <- function(object) {
     primary <- .findSampleCol(object)
-    S4Vectors::isSingleInteger(Reduce(unique,
-        lengths(base::split(object, object[[primary]]))))
+    S4Vectors::isSingleInteger(unique(
+        vapply(base::split(object, object[[primary]]), nrow, integer(1L))
+        ))
+}
+
+.hasRangeNames <- function(x) {
+    if (!any(is.data.frame(x), is(x, "DataFrame"), is.matrix(x)))
+        stop("(internal) 'x' must be rectangular")
+    !all(is.na(findGRangesCols(names(x), seqnames.field = "Chromosome",
+        start.field = c("Start", "Start_position"),
+        end.field = c("End", "End_position"))))
+}
+
+## Safe to assume equal number of ranges == equal ranges (?)
+
+.makeRangedSummarizedExperimentFromDataFrame <- function(df, ...,
+        seqinfo = NULL, starts.in.df.are.0based = FALSE) {
+    if (!.hasConsistentRanges(df))
+        stop("All ranges must be equal in number by 'split.field'")
+    split.field <- .findSampleCol(df)
+    ansRanges <- .ansRangeNames(df)
+    strictRanges <- Filter(function(x) !is.logical(x), ansRanges)
+    RangeInfo <- c(strictRanges, list(split.field = split.field))
+    numInfo <- df[, !(names(df) %in% RangeInfo)]
+    numAssays <- ncol(numInfo)
+    nameAssays <- names(numInfo)
+    numInfo <- base::split(numInfo, df[, split.field])
+    countList <- vector(mode = "list", length = numAssays)
+    browser()
+    for (i in seq_len(numAssays)) {
+        countList[[i]] <- do.call(cbind, lapply(numInfo,
+            function(smalldf) { smalldf[[i]] }))
+    }
+    names(countList) <- nameAssays
+    rowRanges <- makeGRangesListFromDataFrame(df[, unlist(RangeInfo)],
+                                              split.field = split.field)
+    return(SummarizedExperiment(assays = SimpleList(countList),
+        rowRanges = rowRanges))
 }
 
 .extractRanged <- function(object, rangeNames) {
