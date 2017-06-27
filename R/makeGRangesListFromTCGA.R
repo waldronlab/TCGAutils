@@ -1,4 +1,4 @@
-.setHGBuild <- function(hgbuild) {
+.getHGBuild <- function(hgbuild) {
     buildDF <- DataFrame(Date = c("July 2004", "May 2004", "March 2006",
                                   "February 2009"),
                          NCBI = c("34", "35", "36", "37"),
@@ -70,7 +70,7 @@ makeGRangesListFromTCGA <-
             if (length(build_name) != 1L) {
                 warning("inconsistent ncbi_build values in data")
             } else {
-                ucscBuild <- .setHGBuild(build_name)
+                ucscBuild <- .getHGBuild(build_name)
                 GenomeInfoDb::genome(grl) <- ucscBuild
             }
         }
