@@ -197,8 +197,16 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     if (is(object, "matrix")) {
         return(SummarizedExperiment(assays = SimpleList(object)))
     }
-    rangeNames <- .ansRangeNames(object)
-    if (length(rangeNames)) { return(.extractRanged(object, rangeNames)) }
+    if (is(object, "SummarizedExperiment")) { return(object) }
+    hasRanged <- .hasRangeNames(object)
+    if (hasRanged) {
+        if (.hasConsistentRanges(object)) {
+            # object <- SummarizedExperiment()
+        } else {
+            # object <- RaggedExperiment
+        }
+        return(object)
+        }
     if (is(object, "List")) {
         return(extract(object, type = type, ...))
     }
