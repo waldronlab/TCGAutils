@@ -63,6 +63,30 @@ NULL
     }
 }
 
+.getBuildCol <- function(x) {
+    ncbi <- tolower(names(x)) %in% "ncbi_build"
+    stopifnot(sum(ncbi) <= 1L)
+    names(x)[ncbi]
+}
+
+.hasBuildInfo <- function(x) {
+    buildInfo <- .getBuildCol(x)
+    as.logical(length(buildInfo))
+}
+
+.getBuild <- function(x) {
+    binf <- .hasBuildInfo(x)
+    if (binf) {
+        BCOL <- .getBuildCol(x)
+        build <- unique(x[[BCOL]])
+        stopifnot(length(build) == 1L)
+        build <- as.character(build)
+        return(.getHGBuild(build))
+    } else {
+        stop("Build not available")
+    }
+}
+
 .ansRangeNames <- function(x) {
     if (is(x, "list")) { return(list()) }
     granges_cols <- findGRangesCols(names(x), seqnames.field = "Chromosome",
