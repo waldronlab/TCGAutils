@@ -111,24 +111,6 @@ NULL
     return(primary)
 }
 
-.extractRangedDF <- function(object, ...) {
-    dataMat <- .getDataMatrix(object)
-    headers <- names(dataMat)
-    rangeNames <- .ansRangeNames(dataMat)
-    if (length(rangeNames)) {
-        # .extractRanged(dataMat, rangeNames)
-        sampID <- .findSampleCol(dataMat)
-        rowRanges <- do.call(makeGRangesListFromDataFrame,
-            args = c(list(df = dataMat, split.field = sampID,
-                          keep.extra.columns = FALSE), rangeNames))
-        rangeNames <- rangeNames[-match("ignore.strand", names(rangeNames))]
-        rangeNames <- c(rangeNames, split.field = sampID)
-        rse <- SummarizedExperiment(assays = SimpleList(dataMat[,
-        -which(!names(dataMat) %in% rangeNames)]), rowRanges = rowRanges)
-        return(rse)
-    }
-}
-
 ## TODO: All filename metadata
 
 ## TODO: Filter and create by equal lengths per sample (RSE vs RE)
