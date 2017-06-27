@@ -34,7 +34,9 @@ NULL
         if (length(x) == 1L) {
             x <- x[[1L]]
         if (is(x, "FirehoseCGHArray") || is(x, "FirehosemRNAArray")) {
-            x <- .getDataMatrix(x)
+            fname <- .getFilenames(x)
+            x <- SummarizedExperiment(.getDataMatrix(x))
+            metadata(x) <- list(filename = fname)
             if (is(x, "data.frame")) {
                 x <- DataFrame(x)
                 metadata(x) <- .getFilenames(x)
