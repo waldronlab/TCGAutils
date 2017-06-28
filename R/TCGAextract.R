@@ -134,6 +134,9 @@ NULL
 
 .makeRangedSummarizedExperimentFromDataFrame <- function(df, ...,
         seqinfo = NULL, starts.in.df.are.0based = FALSE) {
+    args <- list(...)
+    if (!is.null(args[["build"]]))
+        build <- args[["build"]]
     if (!.hasConsistentRanges(df))
         stop("All ranges must be equal in number by 'split.field'")
     split.field <- .findSampleCol(df)
@@ -152,21 +155,30 @@ NULL
     names(countList) <- nameAssays
     rowRanges <- makeGRangesListFromDataFrame(df[, unlist(RangeInfo)],
                                               split.field = split.field)
+    if (exists("build"))
+        GenomeInfoDb::genome(rowRanges) <- build
     return(SummarizedExperiment(assays = SimpleList(countList),
         rowRanges = rowRanges))
 }
 
-.makeRaggedExperimentFromDataFrame <- function(df) {
+.makeRaggedExperimentFromDataFrame <- function(df, ...) {
+    args <- list(...)
+    if (!is.null(args[["build"]]))
+        build <- args[["build"]]
     split.field <- .findSampleCol(df)
     ansRanges <- .ansRangeNames(df)
     rangeInfo <- c(ansRanges, list(split.field = split.field))
+    dropIdx <- .omitAdditionalIdx(object, ansRanges)
+    if (length(dropIdx))
+        df <- df[, -dropIdx]
     newGRL <- do.call(makeGRangesListFromDataFrame,
             args = c(list(df = df, keep.extra.columns = TRUE), rangeInfo))
+    if (exists("build"))
+        GenomeInfoDb::genome(newGRL) <- build
     RaggedExperiment::RaggedExperiment(newGRL)
 }
 
-.omitAdditionalIdx <- function(object) {
-    rangeNames <- .ansRangeNames(object)
+.omitAdditionalIdx <- function(object, rangeNames) {
     rangeNames <- Filter(function(x) !is.logical(x), rangeNames)
     omitAdditional <- c("seqnames", "seqname", "chromosome", "chrom",
         "chromosome_name", "ranges", "seqlevels", "seqlengths", "seq_id",
@@ -175,9 +187,11 @@ NULL
     which(tolower(names(object)) %in% diffNames)
 }
 
+## TODO: Handle strand conditionally
+
 .extractRanged <- function(object, rangeNames) {
     primary <- .findSampleCol(object)
-    dropIdx <- .omitAdditionalIdx(object)
+    dropIdx <- .omitAdditionalIdx(object, rangeNames)
     if (length(dropIdx))
         object <- object[, -dropIdx]
     mygrl <- makeGRangesListFromTCGA(df = object,
@@ -257,8 +271,12 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     if (is(object, "SummarizedExperiment")) { return(object) }
     hasRanged <- .hasRangeNames(object)
     if (hasRanged) {
+        if (.hasBuildInfo(object)) {
+            build <- .getBuild(object)
+        }
         if (.hasConsistentRanges(object)) {
-            object <- .makeRangedSummarizedExperimentFromDataFrame(object)
+            object <- .makeRangedSummarizedExperimentFromDataFrame(object,
+                build = if (exists("build")) { build } else { NULL })
         } else {
             object <- .makeRaggedExperimentFromDataFrame(object)
         }
