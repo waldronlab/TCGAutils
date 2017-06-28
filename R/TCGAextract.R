@@ -29,7 +29,6 @@ NULL
     dataTypes <- gsub("_", "", dataTypes)
     type <- match.arg(type, dataTypes)
     type <- gsub("Seq$", "seq", type)
-    x <- getElement(x, type)
     if (is(x, "list")) {
         if (length(x) == 1L) {
             x <- x[[1L]]
@@ -46,6 +45,8 @@ NULL
             x <- List(lapply(x, .getDataMatrix))
             metadata(x) <- lapply(x, .getFilenames)
         }
+    } else {
+        x <- getElement(x, type)
     }
     return(x)
 }
