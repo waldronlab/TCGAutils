@@ -65,7 +65,8 @@ NULL
 
 .getBuildCol <- function(x) {
     ncbi <- tolower(names(x)) %in% "ncbi_build"
-    stopifnot(sum(ncbi) <= 1L)
+    if (sum(ncbi) > 1L)
+        stop("Multiple ncbi_build columns detected")
     names(x)[ncbi]
 }
 
@@ -79,7 +80,8 @@ NULL
     if (binf) {
         BCOL <- .getBuildCol(x)
         build <- unique(x[[BCOL]])
-        stopifnot(length(build) == 1L)
+        if (length(build) > 1L)
+            stop("Inconsistent genome build column")
         build <- as.character(build)
         return(.getHGBuild(build))
     } else {
