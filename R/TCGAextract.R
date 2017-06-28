@@ -114,10 +114,6 @@ NULL
     return(primary)
 }
 
-## TODO: All filename metadata
-
-## TODO: Filter and create by equal lengths per sample (RSE vs RE)
-
 .hasConsistentRanges <- function(object) {
     primary <- .findSampleCol(object)
     S4Vectors::isSingleInteger(unique(
@@ -191,24 +187,8 @@ NULL
 }
 
 ## TODO: Handle strand conditionally
-
-.extractRanged <- function(object, rangeNames) {
-    primary <- .findSampleCol(object)
-    dropIdx <- .omitAdditionalIdx(object, rangeNames)
-    if (length(dropIdx))
-        object <- object[, -dropIdx]
-    mygrl <- makeGRangesListFromTCGA(df = object,
-        split.field = primary,
-        seqnames.field = rangeNames[["seqnames.field"]],
-        start.field = rangeNames[["start.field"]],
-        end.field = rangeNames[["end.field"]],
-        strand.field =
-            if (is.null(rangeNames[["strand"]]))
-                { "strand" } else { rangeNames[["strand"]] },
-        keep.extra.columns = TRUE,
-        ignore.strand = rangeNames[["ignore.strand"]])
-    return(mygrl)
-}
+## Genome build from FILENAME
+## RSE helper function from genome symbols to build (RNASeq, ExpSets)
 
 setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
 
@@ -218,6 +198,7 @@ setMethod("extract", "List", function(object, ...) {
     type <- args[["type"]]
     for (i in seq_along(object))
     object[[i]] <- TCGAextract(object[[i]], type)
+    return(object)
 })
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
@@ -266,6 +247,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
     sNames <- c("Clinical", "RNASeqGene", "RNASeq2GeneNorm", "miRNASeqGene",
                 "CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Methylation",
                 "mRNAArray", "miRNAArray", "RPPAArray", "Mutations", "GISTIC")
+    rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     object <- .removeShells(object, type)
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
@@ -281,14 +263,14 @@ TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
             object <- .makeRangedSummarizedExperimentFromDataFrame(object,
                 build = if (exists("build")) { build } else { NULL })
         } else {
-            object <- .makeRaggedExperimentFromDataFrame(object)
+            object <- .makeRaggedExperimentFromDataFrame(object,
+                build = if (exists("build")) { build } else { NULL })
         }
         return(object)
     }
     if (is(object, "List")) {
         return(extract(object, type = type, ...))
     }
-    rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
     slotreq <- grep(paste0("^", type) , sNames, ignore.case=TRUE, value=TRUE)
     gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
     if (gisticType) {
