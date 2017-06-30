@@ -211,7 +211,6 @@ return(x)
     which(tolower(names(object)) %in% diffNames)
 }
 
-## TODO: Handle strand conditionally
 ## Genome build from FILENAME
 ## RSE helper function from genome symbols to build (RNASeq, ExpSets)
 
@@ -299,13 +298,16 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
                 build = if (exists("build")) { build } else { NULL })
         }
         return(object)
+    } else {
+        object <- .standardizeBC(object)
+        metadat <- metadata(object)
+        object <- SummarizedExperiment(assays = SimpleList(object))
+        metadata(object) <- metadat
     }
     gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
     if (gisticType) {
         slotreq <- switch(type, GISTICA = "AllByGene",
                           GISTICT = "ThresholdedByGene")
-        type <- gsub("A$|T$", "", type)
-        object <- getElement(object, type)
         result <- .getGISTIC(object, slotreq)
         return(result)
     }
@@ -322,10 +324,9 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         } else { rNames <- rownames(object) }
         dm <- data.matrix(object[, grepl("TCGA", names(object))])
         rownames(dm) <- rNames
-        colnames(dm) <- .stdIDs(colnames(dm))
-        newSE <- SummarizedExperiment::SummarizedExperiment(
+        dm <- .standardizeBC(dm)
+        object <- SummarizedExperiment::SummarizedExperiment(
             assays = SimpleList(dm), rowData = annote)
-        return(newSE)
         }
     return(object)
 }

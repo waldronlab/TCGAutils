@@ -5,10 +5,10 @@
 \title{Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 \code{GRangesList} object}
 \usage{
-TCGAextract(object, type = c("Clinical", "RNAseq_Gene", "miRNASeq_Gene",
-  "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
-  "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
-  "GISTIC_A", "GISTIC_T"), ...)
+TCGAextract(object, type = c("Clinical", "RNASeqGene", "miRNASeqGene",
+  "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq", "CNACGH", "Methylation",
+  "Mutation", "mRNAArray", "miRNAArray", "RPPAArray", "GISTICA", "GISTICT"),
+  ...)
 }
 \arguments{
 \item{object}{A \code{FirehoseData} object from which to extract data.}
@@ -32,11 +32,11 @@ this function works best with the modifications found in the github fork:
 }
 \section{type}{
 
-Choices include: "RNAseq_Gene",
-"Clinic", "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP",
-"CNA_Seq", "CNA_CGH", "Methylation", "Mutation", "mRNA_Array",
-"miRNA_Array", "RPPA_Array", "GISTIC_A", "GISTIC_T". The "GISTIC_A" type of
-dataset represents GISTIC data by all genes. "GISTIC_T" represents data
+Choices include: "RNAseqGene",
+"Clinic", "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP",
+"CNASeq", "CNACGH", "Methylation", "Mutation", "mRNAArray",
+"miRNAArray", "RPPAArray", "GISTICA", "GISTICT". The "GISTICA" type of
+dataset represents GISTIC data by all genes. "GISTICT" represents data
 thresholded by genes. Lowercase entries and entries without the "underscore"
 character are also valid inputs.
 }
@@ -47,7 +47,7 @@ library(RTCGAToolbox)
 dataFolder <- normalizePath("~/Documents/data")
 coadmut <- getFirehoseData("COAD", runDate = "20151101", Mutation = TRUE,
                          destdir = dataFolder)
-cm <- TCGAextract(coadmut, "mutations")
+cm <- TCGAextract(coadmut, "Mutation")
 }
 }
 \author{
