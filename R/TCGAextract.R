@@ -9,6 +9,11 @@ NULL
     getElement(object, "Filename")
 }
 
+.standardizeBC <- function(x) {
+    colnames(x) <- .stdIDs(colnames(x))
+    return(x)
+}
+
 .getGISTIC <- function(x, type) {
     x <- getElement(x, type)
     annoteCols <- !grepl("TCGA", names(x))
@@ -17,7 +22,7 @@ NULL
         annoteRowDF[, grepl("gene", names(annoteRowDF), ignore.case = TRUE)]
     x <- x[, !annoteCols]
     x <- vapply(x, type.convert, numeric(nrow(x)))
-    colnames(x) <- .stdIDs(colnames(x))
+    x <- .standardizeBC(x)
     SummarizedExperiment(SimpleList(x), rowData = annoteRowDF)
 }
 
@@ -27,8 +32,21 @@ NULL
     "Methylation", "Mutation", "mRNAArray", "miRNAArray", "RPPAArray",
     "GISTICA", "GISTICT")
     type <- match.arg(type, dataTypes)
+    type <- gsub("A$|T$", "", type)
     x <- getElement(x, type)
     return(x)
+}
+
+.searchBuild <- function(x) {
+    gsub("(^.+)_(hg[0-9]{2})_(.+$)", "\\2",
+         x = x, ignore.case = TRUE)
+}
+
+
+## TODO: Fix this
+
+.searchPlatform <- function(x) {
+    gsub("(^.+)_(cgh_[0-9]{3}[ak])_(.+$)", "\\2", ffname )
 }
 
 .unNestList <- function(x) {
@@ -38,9 +56,11 @@ NULL
     if (suppclasses) {
         x <- lapply(x, function(y) {
             fname <- .getFilenames(y)
+            if (!.hasBuildInfo(y))
+                 build <- .searchBuild(fname)
             y <- .getDataMatrix(y)
             y <- DataFrame(y)
-            metadata(y) <- list(filename = fname)
+            metadata(y) <- list(filename = fname, build = build)
             return(y)
         })
     }
