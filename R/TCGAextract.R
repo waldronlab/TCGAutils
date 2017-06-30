@@ -116,12 +116,15 @@ NULL
 
 .hasConsistentRanges <- function(object) {
     primary <- .findSampleCol(object)
-    S4Vectors::isSingleInteger(unique(
-        vapply(base::split(object, object[[primary]]), nrow, integer(1L))
-        ))
+    if (is(object, "DataFrame"))
+        asListData <- IRanges::splitAsList(object, object[[primary]])
+    else
+        asListData <- base::split(object, object[[primary]])
+    S4Vectors::isSingleInteger(unique( vapply(asListData, nrow, integer(1L)) ))
 }
 
 .hasRangeNames <- function(x) {
+    if (is(x, "list")) { return(FALSE) }
     if (!any(is.data.frame(x), is(x, "DataFrame"), is.matrix(x)))
         stop("(internal) 'x' must be rectangular")
     !all(is.na(findGRangesCols(names(x), seqnames.field = "Chromosome",
@@ -145,7 +148,10 @@ NULL
     numInfo <- df[, !(names(df) %in% RangeInfo)]
     numAssays <- ncol(numInfo)
     nameAssays <- names(numInfo)
-    numInfo <- base::split(numInfo, df[, split.field])
+    if (is(df, "DataFrame"))
+        numInfo <- IRanges::splitAsList(numInfo, df[[split.field]])
+    else
+        numInfo <- base::split(numInfo, df[[split.field]])
     countList <- vector(mode = "list", length = numAssays)
     for (i in seq_len(numAssays)) {
         countList[[i]] <- do.call(cbind, lapply(numInfo,
