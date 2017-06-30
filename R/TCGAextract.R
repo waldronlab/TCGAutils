@@ -172,7 +172,7 @@ return(x)
     split.field <- .findSampleCol(df)
     ansRanges <- .ansRangeNames(df)
     rangeInfo <- c(ansRanges, list(split.field = split.field))
-    dropIdx <- .omitAdditionalIdx(object, ansRanges)
+    dropIdx <- .omitAdditionalIdx(df, ansRanges)
     if (length(dropIdx))
         df <- df[, -dropIdx]
     newGRL <- do.call(makeGRangesListFromDataFrame,
@@ -198,7 +198,7 @@ return(x)
 setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
 
 #' @export
-setMethod("extract", "List", function(object, ...) {
+setMethod("extract", "list", function(object, ...) {
     args <- list(...)
     type <- args[["type"]]
     for (i in seq_along(object))
@@ -275,10 +275,6 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         }
         return(object)
     }
-    if (is(object, "List")) {
-        return(extract(object, type = type, ...))
-    }
-    slotreq <- grep(paste0("^", type) , sNames, ignore.case=TRUE, value=TRUE)
     gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
     if (gisticType) {
         slotreq <- switch(type, GISTICA = "AllByGene",
@@ -288,7 +284,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         result <- .getGISTIC(object, slotreq)
         return(result)
     }
-    if (slotreq %in% "Methylation") {
+    if (type == "Methylation") {
         object <- getElement(object, "DataMatrix")
         headers <- names(object)
         annote <- object[, !grepl("TCGA", headers)]
@@ -305,8 +301,6 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         newSE <- SummarizedExperiment::SummarizedExperiment(
             assays = SimpleList(dm), rowData = annote)
         return(newSE)
-        } else if (slotreq %in% rangeslots) {
-            object <- .extractRanged(object, rangeNames)
         }
     return(object)
 }
