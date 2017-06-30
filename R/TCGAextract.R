@@ -21,34 +21,33 @@ NULL
     SummarizedExperiment(SimpleList(x), rowData = annoteRowDF)
 }
 
-.removeShells <- function(x, type) {
-    dataTypes <- c("Clinical", "RNAseq_Gene", "miRNASeq_Gene",
-    "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq", "CNA_CGH",
-    "Methylation", "Mutation", "mRNA_Array", "miRNA_Array", "RPPA_Array",
-    "GISTIC_A", "GISTIC_T")
-    dataTypes <- gsub("_", "", dataTypes)
+.removeShell <- function(x, type) {
+    dataTypes <- c("Clinical", "RNASeqGene", "miRNASeqGene",
+    "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq", "CNACGH",
+    "Methylation", "Mutation", "mRNAArray", "miRNAArray", "RPPAArray",
+    "GISTICA", "GISTICT")
     type <- match.arg(type, dataTypes)
-    type <- gsub("Seq$", "seq", type)
-    if (is(x, "list")) {
-        if (length(x) == 1L) {
-            x <- x[[1L]]
-        if (is(x, "FirehoseCGHArray") || is(x, "FirehosemRNAArray")) {
-            fname <- .getFilenames(x)
-            x <- SummarizedExperiment(.getDataMatrix(x))
-            metadata(x) <- list(filename = fname)
-            if (is(x, "data.frame")) {
-                x <- DataFrame(x)
-                metadata(x) <- .getFilenames(x)
-            }
-        }
-        } else {
-            x <- List(lapply(x, .getDataMatrix))
-            metadata(x) <- lapply(x, .getFilenames)
-        }
-    } else {
-        x <- getElement(x, type)
-    }
+    x <- getElement(x, type)
     return(x)
+}
+
+.unNestList <- function(x) {
+    suppclasses <- all(vapply(x, function(y) {
+        any(is(y, "FirehosemRNAArray"), is(y, "FirehoseCGHArray")) },
+        logical(1L)))
+    if (suppclasses) {
+        x <- lapply(x, function(y) {
+            fname <- .getFilenames(y)
+            y <- .getDataMatrix(y)
+            y <- DataFrame(y)
+            metadata(y) <- list(filename = fname)
+            return(y)
+        })
+    }
+    if (length(x) == 1L) {
+        x <- x[[1L]]
+    }
+return(x)
 }
 
 .fileSelect <- function() {
@@ -220,11 +219,11 @@ setMethod("extract", "List", function(object, ...) {
 #' (see makeGRangesListFromTCGA).
 #'
 #' @section type:
-#' Choices include: "RNAseq_Gene",
-#' "Clinic", "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP",
-#' "CNA_Seq", "CNA_CGH", "Methylation", "Mutation", "mRNA_Array",
-#' "miRNA_Array", "RPPA_Array", "GISTIC_A", "GISTIC_T". The "GISTIC_A" type of
-#' dataset represents GISTIC data by all genes. "GISTIC_T" represents data
+#' Choices include: "RNAseqGene",
+#' "Clinic", "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP",
+#' "CNASeq", "CNACGH", "Methylation", "Mutation", "mRNAArray",
+#' "miRNAArray", "RPPAArray", "GISTICA", "GISTICT". The "GISTICA" type of
+#' dataset represents GISTIC data by all genes. "GISTICT" represents data
 #' thresholded by genes. Lowercase entries and entries without the "underscore"
 #' character are also valid inputs.
 #'
@@ -246,18 +245,20 @@ setMethod("extract", "List", function(object, ...) {
 #' @importClassesFrom RTCGAToolbox FirehoseData FirehosemRNAArray
 #' FirehoseCGHArray FirehoseMethylationArray
 #' @export TCGAextract
-TCGAextract <- function(object, type = c("Clinical", "RNAseq_Gene",
-    "miRNASeq_Gene", "RNAseq2_Gene_Norm", "CNA_SNP", "CNV_SNP", "CNA_Seq",
-    "CNA_CGH", "Methylation", "Mutation", "mRNA_Array", "miRNA_Array",
-    "RPPA_Array", "GISTIC_A", "GISTIC_T"), ...) {
-    sNames <- c("Clinical", "RNASeqGene", "RNASeq2GeneNorm", "miRNASeqGene",
-                "CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Methylation",
-                "mRNAArray", "miRNAArray", "RPPAArray", "Mutations", "GISTIC")
-    rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutations")
-    object <- .removeShells(object, type)
+TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
+    "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq",
+    "CNACGH", "Methylation", "Mutation", "mRNAArray", "miRNAArray",
+    "RPPAArray", "GISTICA", "GISTICT"), ...) {
+    rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutation")
+    if (!is(object, "DataFrame"))
+        object <- .removeShell(object, type)
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
         return(SummarizedExperiment(assays = SimpleList(object)))
+    }
+    if (is.list(object)) {
+        object <- .unNestList(object)
+        return(extract(object, type = type, ...))
     }
     if (is(object, "SummarizedExperiment")) { return(object) }
     hasRanged <- .hasRangeNames(object)
