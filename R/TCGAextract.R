@@ -260,7 +260,7 @@ setMethod("extract", "list", function(object, ...) {
 #' dataFolder <- normalizePath("~/Documents/data")
 #' coadmut <- getFirehoseData("COAD", runDate = "20151101", Mutation = TRUE,
 #'                          destdir = dataFolder)
-#' cm <- TCGAextract(coadmut, "mutations")
+#' cm <- TCGAextract(coadmut, "Mutation")
 #' }
 #' @importClassesFrom RTCGAToolbox FirehoseData FirehosemRNAArray
 #' FirehoseCGHArray FirehoseMethylationArray
@@ -269,15 +269,20 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq",
     "CNACGH", "Methylation", "Mutation", "mRNAArray", "miRNAArray",
     "RPPAArray", "GISTICA", "GISTICT"), ...) {
+    if (length(type) != 1L)
+        stop("Please specify a single data type")
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutation")
-    if (!is(object, "DataFrame"))
+    if (!is(object, "DataFrame") || !is.data.frame(object))
         object <- .removeShell(object, type)
+    if (is.list(object) && !is.data.frame(object)) {
+        ## TODO: include build info from metadata
+        object <- .unNestList(object)
+    }
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
         return(SummarizedExperiment(assays = SimpleList(object)))
     }
-    if (is.list(object)) {
-        object <- .unNestList(object)
+    if (is(object, "List") && !is(object, "DataFrame")) {
         return(extract(object, type = type, ...))
     }
     if (is(object, "SummarizedExperiment")) { return(object) }
