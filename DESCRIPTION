@@ -21,7 +21,6 @@ Imports:
     jsonlite,
     methods,
     MultiAssayExperiment,
-    psygenet2r,
     RaggedExperiment,
     readr,
     RTCGAToolbox (>= 2.7.5),

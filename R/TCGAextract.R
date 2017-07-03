@@ -214,16 +214,13 @@ return(x)
 ## Genome build from FILENAME
 ## RSE helper function from genome symbols to build (RNASeq, ExpSets)
 
-setGeneric("extract", getGeneric("extract", package = "psygenet2r"))
-
-#' @export
-setMethod("extract", "list", function(object, ...) {
+.extractList <- function(object, ...) {
     args <- list(...)
     type <- args[["type"]]
     for (i in seq_along(object))
     object[[i]] <- TCGAextract(object[[i]], type)
     return(object)
-})
+}
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
