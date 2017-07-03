@@ -22,7 +22,7 @@ NULL
         annoteRowDF[, grepl("gene", names(annoteRowDF), ignore.case = TRUE)]
     x <- x[, !annoteCols]
     x <- vapply(x, type.convert, numeric(nrow(x)))
-    x <- .standardizeBC(x)
+    colnames(x) <- .standardizeBC(colnames(x))
     SummarizedExperiment(SimpleList(x), rowData = annoteRowDF)
 }
 
