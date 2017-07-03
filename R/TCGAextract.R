@@ -268,18 +268,18 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     if (length(type) != 1L)
         stop("Please specify a single data type")
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutation")
-    if (!is(object, "DataFrame") || !is.data.frame(object))
+    if (!is(object, "DataFrame") && !is.data.frame(object))
         object <- .removeShell(object, type)
+    if (!length(object)) { return(object) }
     if (is.list(object) && !is.data.frame(object)) {
-        ## TODO: include build info from metadata
         object <- .unNestList(object)
     }
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
         return(SummarizedExperiment(assays = SimpleList(object)))
     }
-    if (is(object, "List") && !is(object, "DataFrame")) {
-        return(extract(object, type = type, ...))
+    if (is(object, "list") && !is(object, "DataFrame")) {
+        return(.extractList(object, type = type, ...))
     }
     if (is(object, "SummarizedExperiment")) { return(object) }
     hasRanged <- .hasRangeNames(object)
