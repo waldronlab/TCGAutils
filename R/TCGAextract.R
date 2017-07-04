@@ -42,11 +42,12 @@ NULL
          x = x, ignore.case = TRUE)
 }
 
-
-## TODO: Fix this
-
 .searchPlatform <- function(x) {
-    gsub("(^.+)_(cgh_[0-9]{3}[ak])_(.+$)", "\\2", ffname )
+    brokenUP <- unlist(strsplit(x, "_"))
+    indx <- which(grepl("cgh|mirna", brokenUP, ignore.case = TRUE))
+    endx <- which(grepl("[0-9]k$|[0-9]a$", brokenUP, ignore.case = TRUE))
+    subber <- seq(indx, endx)
+    paste(brokenUP[subber], collapse = "_")
 }
 
 .unNestList <- function(x) {
