@@ -158,6 +158,7 @@ return(x)
     args <- list(...)
     if (!is.null(args[["build"]]))
         build <- args[["build"]]
+    metadat <- metadata(df)
     if (!.hasConsistentRanges(df))
         stop("All ranges must be equal in number by 'split.field'")
     split.field <- .findSampleCol(df)
@@ -181,14 +182,17 @@ return(x)
                                               split.field = split.field)
     if (exists("build"))
         GenomeInfoDb::genome(rowRanges) <- build
-    return(SummarizedExperiment(assays = SimpleList(countList),
-        rowRanges = rowRanges))
+    newSE <- SummarizedExperiment(assays = SimpleList(countList),
+        rowRanges = rowRanges)
+    metadata(newSE) <- metadat
+    return(newSE)
 }
 
 .makeRaggedExperimentFromDataFrame <- function(df, ...) {
     args <- list(...)
     if (!is.null(args[["build"]]))
         build <- args[["build"]]
+    metadat <- metadata(df)
     split.field <- .findSampleCol(df)
     ansRanges <- .ansRangeNames(df)
     rangeInfo <- c(ansRanges, list(split.field = split.field))
@@ -199,7 +203,9 @@ return(x)
             args = c(list(df = df, keep.extra.columns = TRUE), rangeInfo))
     if (exists("build"))
         GenomeInfoDb::genome(newGRL) <- build
-    RaggedExperiment::RaggedExperiment(newGRL)
+    newRE <- RaggedExperiment::RaggedExperiment(newGRL)
+    metadata(newRE) <- metadat
+    return(newRE)
 }
 
 .omitAdditionalIdx <- function(object, rangeNames) {
