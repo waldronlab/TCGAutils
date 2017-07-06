@@ -27,10 +27,9 @@ NULL
 }
 
 .removeShell <- function(x, type) {
-    dataTypes <- c("Clinical", "RNASeqGene", "miRNASeqGene",
-    "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq", "CNACGH",
-    "Methylation", "Mutation", "mRNAArray", "miRNAArray", "RPPAArray",
-    "GISTICA", "GISTICT")
+    dataTypes <- c("Clinical", "RNASeqGene", "miRNASeqGene", "RNASeq2GeneNorm",
+        "CNASNP", "CNVSNP", "CNASeq", "CNACGH", "Methylation", "Mutation",
+        "mRNAArray", "miRNAArray", "RPPAArray", "GISTIC", "GISTICA", "GISTICT")
     type <- match.arg(type, dataTypes)
     type <- gsub("A$|T$", "", type)
     x <- getElement(x, type)
@@ -242,13 +241,12 @@ return(x)
 #' (see makeGRangesListFromTCGA).
 #'
 #' @section type:
-#' Choices include: "RNAseqGene",
-#' "Clinic", "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP",
-#' "CNASeq", "CNACGH", "Methylation", "Mutation", "mRNAArray",
-#' "miRNAArray", "RPPAArray", "GISTICA", "GISTICT". The "GISTICA" type of
-#' dataset represents GISTIC data by all genes. "GISTICT" represents data
-#' thresholded by genes. Lowercase entries and entries without the "underscore"
-#' character are also valid inputs.
+#' Choices include: "RNAseqGene", "Clinical", "miRNASeqGene",
+#' "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq", "CNACGH", "Methylation",
+#' "Mutation", "mRNAArray", "miRNAArray", "RPPAArray", "GISTIC", "GISTICA",
+#' "GISTICT". The "GISTICA" type of dataset represents GISTIC data by all
+#' genes. "GISTICT" represents data thresholded by genes. To get both types
+#' in a list, use "GISTIC".
 #'
 #' @param object A \code{FirehoseData} object from which to extract data.
 #' @param type The type of data to extract from the "FirehoseData" object,
@@ -271,7 +269,7 @@ return(x)
 TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq",
     "CNACGH", "Methylation", "Mutation", "mRNAArray", "miRNAArray",
-    "RPPAArray", "GISTICA", "GISTICT"), ...) {
+    "RPPAArray", "GISTIC", "GISTICA", "GISTICT"), ...) {
     if (length(type) != 1L)
         stop("Please specify a single data type")
     rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutation")
@@ -289,32 +287,20 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         return(.extractList(object, type = type, ...))
     }
     if (is(object, "SummarizedExperiment")) { return(object) }
-    hasRanged <- .hasRangeNames(object)
-    if (hasRanged) {
-        if (.hasBuildInfo(object)) {
-            build <- .getBuild(object)
-        }
-        if (.hasConsistentRanges(object)) {
-            object <- .makeRangedSummarizedExperimentFromDataFrame(object,
-                build = if (exists("build")) { build } else { NULL })
-        } else {
-            object <- .makeRaggedExperimentFromDataFrame(object,
-                build = if (exists("build")) { build } else { NULL })
-        }
-        return(object)
-    } else {
-        object <- .standardizeBC(object)
-        metadat <- metadata(object)
-        object <- SummarizedExperiment(assays = SimpleList(object))
-        metadata(object) <- metadat
-    }
+
     gisticType <- grepl("^GISTIC", type, ignore.case = TRUE)
     if (gisticType) {
         slotreq <- switch(type, GISTICA = "AllByGene",
-                          GISTICT = "ThresholdedByGene")
-        result <- .getGISTIC(object, slotreq)
+                          GISTICT = "ThresholdedByGene",
+                          GISTIC = c("AllByGene", "ThresholdedByGene"))
+        if (type == "GISTIC") {
+            names(slotreq) <- slotreq
+            result <- lapply(slotreq, function (x) { .getGISTIC(object, x) })
+        } else
+            result <- .getGISTIC(object, slotreq)
         return(result)
     }
+
     if (type == "Methylation") {
         object <- getElement(object, "DataMatrix")
         headers <- names(object)
@@ -331,6 +317,26 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         dm <- .standardizeBC(dm)
         object <- SummarizedExperiment::SummarizedExperiment(
             assays = SimpleList(dm), rowData = annote)
+        return(object)
+    }
+
+    hasRanged <- .hasRangeNames(object)
+    if (hasRanged) {
+        if (.hasBuildInfo(object)) {
+            build <- .getBuild(object)
         }
+        if (.hasConsistentRanges(object)) {
+            object <- .makeRangedSummarizedExperimentFromDataFrame(object,
+                build = if (exists("build")) { build } else { NULL })
+        } else {
+            object <- .makeRaggedExperimentFromDataFrame(object,
+                build = if (exists("build")) { build } else { NULL })
+        }
+    } else {
+        object <- .standardizeBC(object)
+        metadat <- metadata(object)
+        object <- SummarizedExperiment(assays = SimpleList(object))
+        metadata(object) <- metadat
+    }
     return(object)
 }

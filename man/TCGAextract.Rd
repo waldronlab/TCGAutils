@@ -7,8 +7,8 @@
 \usage{
 TCGAextract(object, type = c("Clinical", "RNASeqGene", "miRNASeqGene",
   "RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq", "CNACGH", "Methylation",
-  "Mutation", "mRNAArray", "miRNAArray", "RPPAArray", "GISTICA", "GISTICT"),
-  ...)
+  "Mutation", "mRNAArray", "miRNAArray", "RPPAArray", "GISTIC", "GISTICA",
+  "GISTICT"), ...)
 }
 \arguments{
 \item{object}{A \code{FirehoseData} object from which to extract data.}
@@ -32,13 +32,12 @@ this function works best with the modifications found in the github fork:
 }
 \section{type}{
 
-Choices include: "RNAseqGene",
-"Clinic", "miRNASeqGene", "RNASeq2GeneNorm", "CNASNP", "CNVSNP",
-"CNASeq", "CNACGH", "Methylation", "Mutation", "mRNAArray",
-"miRNAArray", "RPPAArray", "GISTICA", "GISTICT". The "GISTICA" type of
-dataset represents GISTIC data by all genes. "GISTICT" represents data
-thresholded by genes. Lowercase entries and entries without the "underscore"
-character are also valid inputs.
+Choices include: "RNAseqGene", "Clinical", "miRNASeqGene",
+"RNASeq2GeneNorm", "CNASNP", "CNVSNP", "CNASeq", "CNACGH", "Methylation",
+"Mutation", "mRNAArray", "miRNAArray", "RPPAArray", "GISTIC", "GISTICA",
+"GISTICT". The "GISTICA" type of dataset represents GISTIC data by all
+genes. "GISTICT" represents data thresholded by genes. To get both types
+in a list, use "GISTIC". Lowercase entries are also valid inputs.
 }
 
 \examples{
