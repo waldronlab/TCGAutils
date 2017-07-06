@@ -14,7 +14,11 @@ MultiAssayExperiment API}
 as rownames}
 
 \item{idConverter}{A function to be used against the sample or specimen
-identifiers to match those in the rownames of the \code{colData} (default NULL)}
+identifiers to match those in the rownames of the \code{colData}
+(default NULL)}
+
+\item{force}{Force use of \code{colnames} to all the data list elements for
+map creation}
 
 \item{...}{Additonal arguments to pass to the 'idConverter' function.}
 }

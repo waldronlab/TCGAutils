@@ -8,7 +8,10 @@
 #' @param colData A \code{data.frame} of clinical data with patient identifiers
 #' as rownames
 #' @param idConverter A function to be used against the sample or specimen
-#' identifiers to match those in the rownames of the \code{colData} (default NULL)
+#' identifiers to match those in the rownames of the \code{colData}
+#' (default NULL)
+#' @param force Force use of \code{colnames} to all the data list elements for
+#' map creation
 #' @param ... Additonal arguments to pass to the 'idConverter' function.
 #'
 #' @return A \code{DataFrame} class object of mapped samples and patient
@@ -28,9 +31,7 @@ generateMap <- function(experiments, colData, idConverter = NULL, force = FALSE,
     if (!is(experiments, "ExperimentList") && !force) {
         experiments <- MultiAssayExperiment::ExperimentList(experiments)
         samps <- colnames(experiments)
-    } else {
-        samps <- lapply(experiments, colnames)
-    }
+    } else { samps <- lapply(experiments, colnames) }
     assay <- factor(rep(names(samps), lengths(samps)), levels=names(samps))
     colname <- unlist(samps, use.names=FALSE)
     if (is.null(idConverter)) {
