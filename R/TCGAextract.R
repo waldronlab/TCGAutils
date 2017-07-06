@@ -193,7 +193,7 @@ return(x)
     args <- list(...)
     if (!is.null(args[["build"]]))
         build <- args[["build"]]
-    metadat <- metadata(df)
+    metadat <- if (is(df, "DataFrame")) { metadata(df) } else { list() }
     split.field <- .findSampleCol(df)
     ansRanges <- .ansRangeNames(df)
     rangeInfo <- c(ansRanges, list(split.field = split.field))
