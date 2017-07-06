@@ -37,7 +37,7 @@ Choices include: "RNAseqGene", "Clinical", "miRNASeqGene",
 "Mutation", "mRNAArray", "miRNAArray", "RPPAArray", "GISTIC", "GISTICA",
 "GISTICT". The "GISTICA" type of dataset represents GISTIC data by all
 genes. "GISTICT" represents data thresholded by genes. To get both types
-in a list, use "GISTIC". Lowercase entries are also valid inputs.
+in a list, use "GISTIC".
 }
 
 \examples{
