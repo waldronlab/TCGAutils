@@ -157,7 +157,7 @@ return(x)
         seqinfo = NULL, starts.in.df.are.0based = FALSE) {
     args <- list(...)
     if (!is.null(args[["build"]]))
-        build <- args[["build"]]
+        GBuild <- args[["build"]]
     metadat <- metadata(df)
     if (!.hasConsistentRanges(df))
         stop("All ranges must be equal in number by 'split.field'")
@@ -180,8 +180,8 @@ return(x)
     names(countList) <- nameAssays
     rowRanges <- makeGRangesListFromDataFrame(df[, unlist(RangeInfo)],
                                               split.field = split.field)
-    if (exists("build"))
-        GenomeInfoDb::genome(rowRanges) <- build
+    if (exists("GBuild"))
+        GenomeInfoDb::genome(rowRanges) <- GBuild
     newSE <- SummarizedExperiment(assays = SimpleList(countList),
         rowRanges = rowRanges)
     metadata(newSE) <- metadat
@@ -191,7 +191,7 @@ return(x)
 .makeRaggedExperimentFromDataFrame <- function(df, ...) {
     args <- list(...)
     if (!is.null(args[["build"]]))
-        build <- args[["build"]]
+        GBuild <- args[["build"]]
     metadat <- if (is(df, "DataFrame")) { metadata(df) } else { list() }
     split.field <- .findSampleCol(df)
     ansRanges <- .ansRangeNames(df)
@@ -201,8 +201,8 @@ return(x)
         df <- df[, -dropIdx]
     newGRL <- do.call(makeGRangesListFromDataFrame,
             args = c(list(df = df, keep.extra.columns = TRUE), rangeInfo))
-    if (exists("build"))
-        GenomeInfoDb::genome(newGRL) <- build
+    if (exists("GBuild"))
+        GenomeInfoDb::genome(newGRL) <- GBuild
     newRE <- RaggedExperiment::RaggedExperiment(newGRL)
     metadata(newRE) <- metadat
     return(newRE)
@@ -323,14 +323,14 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     hasRanged <- .hasRangeNames(object)
     if (hasRanged) {
         if (.hasBuildInfo(object)) {
-            build <- .getBuild(object)
+            GBuild <- .getBuild(object)
         }
         if (.hasConsistentRanges(object)) {
             object <- .makeRangedSummarizedExperimentFromDataFrame(object,
-                build = if (exists("build")) { build } else { NULL })
+                build = if (exists("GBuild")) { GBuild } else { NULL })
         } else {
             object <- .makeRaggedExperimentFromDataFrame(object,
-                build = if (exists("build")) { build } else { NULL })
+                build = if (exists("GBuild")) { GBuild } else { NULL })
         }
     } else {
         object <- .standardizeBC(object)
