@@ -207,6 +207,11 @@ return(x)
     dropIdx <- .omitAdditionalIdx(df, ansRanges)
     if (length(dropIdx))
         df <- df[, -dropIdx]
+    if (.hasHugoInfo(df)) {
+        hugos <- df[, .findCol(df, "Hugo_Symbol")]
+        if (identical(length(hugos), length(unique(hugos))))
+            rownames(df) <- df[, .findCol(df, "Hugo_Symbol")]
+    }
     newGRL <- do.call(makeGRangesListFromDataFrame,
             args = c(list(df = df, keep.extra.columns = TRUE), rangeInfo))
     if (exists("GBuild"))
