@@ -83,22 +83,30 @@ return(x)
     }
 }
 
-.getBuildCol <- function(x) {
-    ncbi <- tolower(names(x)) %in% "ncbi_build"
-    if (sum(ncbi) > 1L)
-        stop("Multiple ncbi_build columns detected")
-    names(x)[ncbi]
+.findCol <- function(x, colname) {
+    stopifnot(is.character(colname))
+    dataNames <- tolower(gsub("\\.|_", "", names(x)))
+    colname <- tolower(gsub("\\.|_", "", colname))
+    foundInData <- dataNames %in% colname
+    if (sum(foundInData) > 1L)
+        stop("Multiple matched columns detected")
+    names(x)[foundInData]
 }
 
 .hasBuildInfo <- function(x) {
-    buildInfo <- .getBuildCol(x)
+    buildInfo <- .findCol(x, "NCBI_Build")
     as.logical(length(buildInfo))
+}
+
+.hasHugoInfo <- function(x) {
+    hugoInfo <- .findCol(x, "Hugo_Symbol")
+    as.logical(length(hugoInfo))
 }
 
 .getBuild <- function(x) {
     binf <- .hasBuildInfo(x)
     if (binf) {
-        BCOL <- .getBuildCol(x)
+        BCOL <- .findCol(x, "NCBI_Build")
         build <- unique(x[[BCOL]])
         if (length(build) > 1L)
             stop("Inconsistent genome build column")
