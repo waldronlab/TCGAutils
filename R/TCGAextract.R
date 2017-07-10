@@ -26,6 +26,23 @@ NULL
     SummarizedExperiment(SimpleList(x), rowData = annoteRowDF)
 }
 
+.getMethyl <- function(x) {
+    object <- getElement(object, "DataMatrix")
+    headers <- names(object)
+    annote <- object[, !grepl("TCGA", headers)]
+    isNumRow <- all(grepl("^[0-9]*$",
+        sample(rownames(object), size = 100L, replace = TRUE)))
+    if (isNumRow) {
+        geneSymbols <- annote[, grep("symbol", names(annote),
+                                     ignore.case = TRUE, value = TRUE)]
+        rNames <- geneSymbols
+    } else { rNames <- rownames(object) }
+    dm <- data.matrix(object[, grepl("TCGA", names(object))])
+    rownames(dm) <- rNames
+    dm <- .standardizeBC(dm)
+    SummarizedExperiment::SummarizedExperiment(SimpleList(dm), rowData = annote)
+}
+
 .removeShell <- function(x, type) {
     dataTypes <- c("Clinical", "RNASeqGene", "miRNASeqGene", "RNASeq2GeneNorm",
         "CNASNP", "CNVSNP", "CNASeq", "CNACGH", "Methylation", "Mutation",
@@ -315,22 +332,8 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     }
 
     if (type == "Methylation") {
-        object <- getElement(object, "DataMatrix")
-        headers <- names(object)
-        annote <- object[, !grepl("TCGA", headers)]
-        isNumRow <- all(grepl("^[0-9]*$",
-            sample(rownames(object), size = 100L, replace = TRUE)))
-        if (isNumRow) {
-            geneSymbols <- annote[, grep("symbol", names(annote),
-                                         ignore.case = TRUE, value = TRUE)]
-            rNames <- geneSymbols
-        } else { rNames <- rownames(object) }
-        dm <- data.matrix(object[, grepl("TCGA", names(object))])
-        rownames(dm) <- rNames
-        dm <- .standardizeBC(dm)
-        object <- SummarizedExperiment::SummarizedExperiment(
-            assays = SimpleList(dm), rowData = annote)
-        return(object)
+        objName <- .searchPlatform(.getFilenames(object))
+        assign(objName, .getMethyl(object))
     }
 
     hasRanged <- .hasRangeNames(object)
