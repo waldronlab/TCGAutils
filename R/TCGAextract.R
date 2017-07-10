@@ -54,16 +54,22 @@ NULL
 }
 
 .searchBuild <- function(x) {
-    gsub("(^.+)_(hg[0-9]{2})_(.+$)", "\\2",
-         x = x, ignore.case = TRUE)
+    gsub("(^.+)_(hg[0-9]{2})_(.+$)", "\\2", x = x, ignore.case = TRUE)
 }
 
 .searchPlatform <- function(x) {
     brokenUP <- unlist(strsplit(x, "_"))
-    indx <- which(grepl("cgh|mirna", brokenUP, ignore.case = TRUE))
-    endx <- which(grepl("[0-9]k$|[0-9]a$", brokenUP, ignore.case = TRUE))
-    subber <- seq(indx, endx)
-    paste(brokenUP[subber], collapse = "_")
+    platNumExp <- "[0-9]k$|[0-9]a$|450$|27$"
+    namePlat <- unique(grep("cgh|mirna|meth", brokenUP, ignore.case = TRUE,
+        value = TRUE))
+    result <- grep(platNumExp, namePlat, ignore.case = TRUE, value = TRUE)
+    if (length(result) != 1L)
+        findPlat <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
+    if (length(findPlat))
+        result <- paste(toupper(namePlat), findPlat, sep = "_")
+    if (!length(namePlat))
+        result <- character(0L)
+    return(result)
 }
 
 .unNestList <- function(x) {
