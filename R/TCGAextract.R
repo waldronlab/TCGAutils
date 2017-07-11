@@ -72,16 +72,19 @@
 
 .unNestList <- function(x) {
     suppclasses <- all(vapply(x, function(y) {
-        any(is(y, "FirehosemRNAArray"), is(y, "FirehoseCGHArray")) },
+        any(is(y, "FirehosemRNAArray"), is(y, "FirehoseCGHArray"),
+            is(y, "FirehoseMethylationArray")) },
         logical(1L)))
     if (suppclasses) {
         x <- lapply(x, function(y) {
             fname <- .getFilenames(y)
+            platform <- .searchPlatform(fname)
             if (!.hasBuildInfo(y))
                  build <- .searchBuild(fname)
             y <- .getDataMatrix(y)
             y <- DataFrame(y)
-            metadata(y) <- list(filename = fname, build = build)
+            metadata(y) <- list(filename = fname, build = build,
+                platform = platform)
             return(y)
         })
     }
@@ -317,7 +320,8 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     if (is(object, "matrix")) {
         return(SummarizedExperiment(assays = SimpleList(object)))
     }
-    if (is(object, "list") && !is(object, "DataFrame")) {
+    if (is(object, "list") && !is(object, "DataFrame") &&
+        type != "Methylation") {
         return(.extractList(object, type = type, ...))
     }
     if (is(object, "SummarizedExperiment")) { return(object) }
@@ -336,8 +340,11 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     }
 
     if (type == "Methylation") {
-        objName <- .searchPlatform(.getFilenames(object))
-        assign(objName, .getMethyl(object))
+        platNames <- vapply(object, function(x) {
+            metadata(x)[["platform"]] }, character(1L))
+        result <- lapply(object, .getMethyl)
+        names(result) <- platNames
+        return(result)
     }
 
     hasRanged <- .hasRangeNames(object)
