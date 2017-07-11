@@ -25,17 +25,16 @@
 }
 
 .getMethyl <- function(x) {
-    object <- getElement(object, "DataMatrix")
-    headers <- names(object)
-    annote <- object[, !grepl("TCGA", headers)]
+    headers <- names(x)
+    annote <- x[, !grepl("TCGA", headers)]
     isNumRow <- all(grepl("^[0-9]*$",
-        sample(rownames(object), size = 100L, replace = TRUE)))
+        sample(rownames(x), size = 100L, replace = TRUE)))
     if (isNumRow) {
         geneSymbols <- annote[, grep("symbol", names(annote),
                                      ignore.case = TRUE, value = TRUE)]
         rNames <- geneSymbols
-    } else { rNames <- rownames(object) }
-    dm <- data.matrix(object[, grepl("TCGA", names(object))])
+    } else { rNames <- rownames(x) }
+    dm <- data.matrix(x[, grepl("TCGA", names(x))])
     rownames(dm) <- rNames
     dm <- .standardizeBC(dm)
     SummarizedExperiment::SummarizedExperiment(SimpleList(dm), rowData = annote)
