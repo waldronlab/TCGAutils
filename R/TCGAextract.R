@@ -1,6 +1,4 @@
-#' @importFrom psygenet2r extract
-NULL
-
+## Helper functions
 .getDataMatrix <- function(object) {
     getElement(object, "DataMatrix")
 }
