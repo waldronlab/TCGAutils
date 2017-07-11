@@ -60,12 +60,13 @@
     namePlat <- unique(grep("cgh|mirna|meth", brokenUP, ignore.case = TRUE,
         value = TRUE))
     result <- grep(platNumExp, namePlat, ignore.case = TRUE, value = TRUE)
-    if (length(result) != 1L)
+    if (length(result) != 1L) {
         findPlat <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
     if (length(findPlat))
         result <- paste(toupper(namePlat), findPlat, sep = "_")
     if (!length(namePlat))
         result <- character(0L)
+    }
     return(result)
 }
 
