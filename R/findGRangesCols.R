@@ -45,8 +45,7 @@ findGRangesCols <- function (df_colnames,
     }
     else {
         strand.field0 <- GenomicRanges:::.normarg_field(strand.field, "strand")
-        strand_col <- GenomicRanges:::.find_strand_col(df_colnames0, strand.field0,
-                                                       prefix)
+        strand_col <- .find_strand_col(df_colnames0, strand.field0, prefix)
     }
     c(seqnames = seqnames_col, start_end_cols[[1L]], width = width_col,
       strand = strand_col)
@@ -124,4 +123,17 @@ findGRangesCols <- function (df_colnames,
                nchar(df_colnames[idx]))
     })
     unique(unlist(suffixes))
+}
+
+.find_strand_col <- function(df_colnames, strand.field, prefix) {
+    idx <- which(df_colnames %in% paste0(prefix, strand.field))
+    if (length(idx) == 0L)
+        idx <- which(df_colnames %in% strand.field)
+    if (length(idx) == 0L)
+        return(NA_integer_)
+    if (length(idx) >= 2L) {
+        warning("Multiple strand measurements detected, taking first one")
+        idx <- idx[[1L]]
+    }
+    idx
 }
