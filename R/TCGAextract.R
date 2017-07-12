@@ -87,11 +87,14 @@
                 platform = platform)
             return(y)
         })
+        if (length(x) > 1L) {
+        platNames <- vapply(x, function(y) {
+            metadata(y)[["platform"]] }, character(1L))
+        platNames <- gsub("human|hum", "", platNames)
+        names(x) <- platNames
+        } else if (length(x) == 1L) { x <- x[[1L]] }
     }
-    if (length(x) == 1L) {
-        x <- x[[1L]]
-    }
-return(x)
+    return(x)
 }
 
 .fileSelect <- function() {
