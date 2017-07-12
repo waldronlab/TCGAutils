@@ -343,11 +343,11 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     }
 
     if (type == "Methylation") {
-        platNames <- vapply(object, function(x) {
-            metadata(x)[["platform"]] }, character(1L))
-        platNames <- gsub("human|hum", "", platNames)
-        result <- lapply(object, .getMethyl)
-        names(result) <- platNames
+        if (is.list(object)) {
+            result <- lapply(object, .getMethyl)
+        } else {
+            result <- .getMethyl(object)
+        }
         return(result)
     }
 
