@@ -1,56 +1,4 @@
-#' Obtain minimum necessary names for the creation of a GRangesList object
-#'
-#' This function attempts to match chromosome, start position, end position and
-#' strand names in the given character vector. Modified helper from the
-#' \code{GenomicRanges} package.
-#'
-#' @param df_colnames A \code{character} vector of names in a dataset
-#' @param seqnames.field A \code{character} vector of the chromosome name
-#' @param start.field A \code{character} vector that indicates the column name
-#' of the start positions of ranged data
-#' @param end.field A \code{character} vector that indicates the end position
-#' of ranged data
-#' @param strand.field A \code{character} vector of the column name that
-#' indicates the strand type
-#' @param ignore.strand logical (default FALSE) whether to ignore the strand
-#' field in the data
-#' @return Index positions vector indicating columns with appropriate names
-#'
-#' @examples
-#' myDataColNames <- c("Start_position", "End_position", "strand",
-#'                  "chromosome", "num_probes", "segment_mean")
-#' findGRangesCols(myDataColNames)
-#'
-#' @export findGRangesCols
-findGRangesCols <- function (df_colnames,
-                             seqnames.field = c("seqnames", "seqname",
-                                                "chromosome", "chrom", "chr",
-                                                "chromosome_name", "seqid"),
-                             start.field = "start",
-                             end.field = c("end", "stop"),
-                             strand.field = "strand",
-                             ignore.strand = FALSE) {
-    df_colnames0 <- tolower(df_colnames)
-    seqnames.field0 <- GenomicRanges:::.normarg_field(seqnames.field, "seqnames")
-    start.field0 <- GenomicRanges:::.normarg_field(start.field, "start")
-    end.field0 <- GenomicRanges:::.normarg_field(end.field, "end")
-    start_end_cols <- .find_start_end_cols(df_colnames0, start.field0,
-                                           end.field0)
-    prefix <- start_end_cols[[2L]]
-    width_col <- GenomicRanges:::.find_width_col(df_colnames0, "width", prefix)
-    seqnames_col <- .find_seqnames_col(df_colnames0, seqnames.field0,
-                                       prefix)
-    if (ignore.strand) {
-        strand_col <- NA_integer_
-    }
-    else {
-        strand.field0 <- GenomicRanges:::.normarg_field(strand.field, "strand")
-        strand_col <- .find_strand_col(df_colnames0, strand.field0, prefix)
-    }
-    c(seqnames = seqnames_col, start_end_cols[[1L]], width = width_col,
-      strand = strand_col)
-}
-
+## Helper functions
 .find_start_end_cols <-function (df_colnames, start.field, end.field) {
     idx1 <- which(df_colnames %in% start.field)
     idx2 <- which(df_colnames %in% end.field)
@@ -137,3 +85,57 @@ findGRangesCols <- function (df_colnames,
     }
     idx
 }
+
+#' Obtain minimum necessary names for the creation of a GRangesList object
+#'
+#' This function attempts to match chromosome, start position, end position and
+#' strand names in the given character vector. Modified helper from the
+#' \code{GenomicRanges} package.
+#'
+#' @param df_colnames A \code{character} vector of names in a dataset
+#' @param seqnames.field A \code{character} vector of the chromosome name
+#' @param start.field A \code{character} vector that indicates the column name
+#' of the start positions of ranged data
+#' @param end.field A \code{character} vector that indicates the end position
+#' of ranged data
+#' @param strand.field A \code{character} vector of the column name that
+#' indicates the strand type
+#' @param ignore.strand logical (default FALSE) whether to ignore the strand
+#' field in the data
+#' @return Index positions vector indicating columns with appropriate names
+#'
+#' @examples
+#' myDataColNames <- c("Start_position", "End_position", "strand",
+#'                  "chromosome", "num_probes", "segment_mean")
+#' findGRangesCols(myDataColNames)
+#'
+#' @export findGRangesCols
+findGRangesCols <- function (df_colnames,
+                             seqnames.field = c("seqnames", "seqname",
+                                                "chromosome", "chrom", "chr",
+                                                "chromosome_name", "seqid"),
+                             start.field = "start",
+                             end.field = c("end", "stop"),
+                             strand.field = "strand",
+                             ignore.strand = FALSE) {
+    df_colnames0 <- tolower(df_colnames)
+    seqnames.field0 <- GenomicRanges:::.normarg_field(seqnames.field, "seqnames")
+    start.field0 <- GenomicRanges:::.normarg_field(start.field, "start")
+    end.field0 <- GenomicRanges:::.normarg_field(end.field, "end")
+    start_end_cols <- .find_start_end_cols(df_colnames0, start.field0,
+                                           end.field0)
+    prefix <- start_end_cols[[2L]]
+    width_col <- GenomicRanges:::.find_width_col(df_colnames0, "width", prefix)
+    seqnames_col <- .find_seqnames_col(df_colnames0, seqnames.field0,
+                                       prefix)
+    if (ignore.strand) {
+        strand_col <- NA_integer_
+    }
+    else {
+        strand.field0 <- GenomicRanges:::.normarg_field(strand.field, "strand")
+        strand_col <- .find_strand_col(df_colnames0, strand.field0, prefix)
+    }
+    c(seqnames = seqnames_col, start_end_cols[[1L]], width = width_col,
+      strand = strand_col)
+}
+
