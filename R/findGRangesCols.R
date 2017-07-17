@@ -2,27 +2,40 @@
 .find_start_end_cols <-function (df_colnames, start.field, end.field) {
     idx1 <- which(df_colnames %in% start.field)
     idx2 <- which(df_colnames %in% end.field)
-    if (length(idx1) == 1L && length(idx2) == 1L)
-        return(list(c(start = idx1, end = idx2), ""))
-    if (length(idx1) == 0L && length(idx2) == 0L) {
-        prefixes1 <- .collect_prefixes(df_colnames, start.field)
-        prefixes2 <- .collect_prefixes(df_colnames, end.field)
-        suffixes1 <- .collect_suffixes(df_colnames, start.field)
-        suffixes2 <- .collect_suffixes(df_colnames, end.field)
-        if (length(prefixes1) != 0L && length(prefixes2) != 0L) {
+    prefixes1 <- .collect_prefixes(df_colnames, start.field)
+    prefixes2 <- .collect_prefixes(df_colnames, end.field)
+    suffixes1 <- .collect_suffixes(df_colnames, start.field)
+    suffixes2 <- .collect_suffixes(df_colnames, end.field)
+    if (length(idx1) != 1L || length(idx2) != 1L) {
+        matchPre <- intersect(prefixes1, prefixes2)
+        stopifnot(S4Vectors::isSingleString(matchPre))
+        if (length(nchar(matchPre))) {
+            start.field <- start.field[grep(paste0("^", matchPre), start.field)]
+            end.field <- end.field[grep(paste0("^", matchPre), end.field)]
+        }
+        matchSuf <- intersect(suffixes1, suffixes2)
+        stopifnot(S4Vectors::isSingleString(matchSuf))
+        if (length(nchar(matchSuf))) {
+            start.field <- start.field[grep(paste0(matchSuf, "$"), start.field)]
+            end.field <- end.field[grep(paste0(matchSuf, "$"), end.field)]
+        }
+    idx1 <- which(df_colnames %in% start.field)
+    idx2 <- which(df_colnames %in% end.field)
+    } else if (!length(idx1) && !length(idx2)) {
+        if (length(prefixes1) && length(prefixes2)) {
             if (length(prefixes1) >= 2L && length(prefixes2) >= 2L) {
                 warning("multiple prefixes found, using first match")
                 if (prefixes1[[1L]] == prefixes2[[1L]])
                     prefix <- prefixes1[[1L]]
-            } else if (length(prefixes1) == 1L && length(prefixes2) == 1L &&
+            } else if (length(prefixes1) && length(prefixes2) &&
                        prefixes1 == prefixes2) {
                 prefix <- prefixes1
             }
             idx1 <- which(df_colnames %in% paste0(prefix, start.field))
             idx2 <- which(df_colnames %in% paste0(prefix, end.field))
-            if (length(idx1) == 1L && length(idx2) == 1L)
-                return(list(c(start = idx1, end = idx2), prefix))
-        } else if (length(suffixes1) != 0L && length(suffixes2) != 0L) {
+            if (length(idx1) == 1L && length(idx2) == 1L) {
+                return(list(c(start = idx1, end = idx2), prefix)) }
+        } else if (length(suffixes1) && length(suffixes2)) {
             if (length(suffixes1) >= 2L && length(suffixes2) >= 2L) {
                 warning("multiple suffixes found, using first match")
                 if (suffixes1[[1L]] == suffixes2[[1L]])
@@ -33,12 +46,13 @@
             }
             idx1 <- which(df_colnames %in% paste0(start.field, suffix))
             idx2 <- which(df_colnames %in% paste0(end.field, suffix))
-            if (length(idx1) == 1L && length(idx2) == 1L)
-                return(list(c(start = idx1, end = idx2), ""))
+            if (length(idx1) == 1L && length(idx2) == 1L) {
+                return(list(c(start = idx1, end = idx2), "")) }
         } else {
             return(list(c(start = NA_integer_, end = NA_integer_), ""))
         }
     }
+    return(list(c(start = idx1, end = idx2), ""))
 }
 
 .find_seqnames_col <- function (df_colnames, seqnames.field, prefix) {
