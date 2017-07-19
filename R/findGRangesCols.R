@@ -1,5 +1,5 @@
 ## Helper functions
-.find_start_end_cols <-function (df_colnames, start.field, end.field) {
+.find_start_end_cols <- function (df_colnames, start.field, end.field) {
     idx1 <- which(df_colnames %in% start.field)
     idx2 <- which(df_colnames %in% end.field)
     prefixes1 <- .collect_prefixes(df_colnames, start.field)
@@ -87,7 +87,7 @@
     unique(unlist(suffixes))
 }
 
-.find_strand_col <- function(df_colnames, strand.field, prefix) {
+.find_strands_col <- function(df_colnames, strand.field, prefix) {
     idx <- which(df_colnames %in% paste0(prefix, strand.field))
     if (length(idx) == 0L)
         idx <- which(df_colnames %in% strand.field)
@@ -147,7 +147,7 @@ findGRangesCols <- function (df_colnames,
     }
     else {
         strand.field0 <- GenomicRanges:::.normarg_field(strand.field, "strand")
-        strand_col <- .find_strand_col(df_colnames0, strand.field0, prefix)
+        strand_col <- .find_strands_col(df_colnames0, strand.field0, prefix)
     }
     c(seqnames = seqnames_col, start_end_cols[[1L]], width = width_col,
       strand = strand_col)
