@@ -179,6 +179,7 @@
 
 .hasRangeNames <- function(x) {
     if (is(x, "list")) { return(FALSE) }
+    if (all(grepl("^TCGA", names(x)))) { return(FALSE) }
     if (!any(is.data.frame(x), is(x, "DataFrame"), is.matrix(x)))
         stop("(internal) 'x' must be rectangular")
     !all(is.na(findGRangesCols(names(x), seqnames.field = "Chromosome",
