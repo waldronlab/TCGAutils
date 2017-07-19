@@ -313,7 +313,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     "RPPAArray", "GISTIC", "GISTICA", "GISTICT"), ...) {
     if (length(type) != 1L)
         stop("Please specify a single data type")
-    rangeslots <- c("CNVSNP", "CNASNP", "CNAseq", "CNACGH", "Mutation")
+    message("working on: ", type)
     if (!is(object, "DataFrame") && !is.data.frame(object))
         object <- .removeShell(object, type)
     if (!length(object)) { return(object) }
