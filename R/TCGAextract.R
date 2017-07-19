@@ -251,11 +251,12 @@
 
 .omitAdditionalIdx <- function(object, rangeNames) {
     rangeNames <- Filter(function(x) !is.logical(x), rangeNames)
+    rangeIdx <- match(rangeNames, names(object))
     omitAdditional <- c("seqnames", "seqname", "chromosome", "chrom",
-        "chromosome_name", "ranges", "seqlevels", "seqlengths", "seq_id",
-        "iscircular", "start", "end", "width", "element", "chr")
-    diffNames <- setdiff(omitAdditional, tolower(rangeNames))
-    which(tolower(names(object)) %in% diffNames)
+       "chromosome_name", "ranges", "seqlevels", "seqlengths", "seq_id",
+        "iscircular", "start", "end", "strand", "width", "element", "chr")
+    rmIdx <- which(tolower(names(object)) %in% omitAdditional)
+    setdiff(rmIdx, rangeIdx)
 }
 
 ## Genome build from FILENAME
