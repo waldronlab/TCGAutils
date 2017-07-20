@@ -56,16 +56,21 @@
 
 .searchPlatform <- function(x) {
     brokenUP <- unlist(strsplit(x, "_"))
+    brokenUP <- Filter(function(y) nchar(y) != 0L, brokenUP)
     platNumExp <- "[0-9]k$|[0-9]a$|450$|27$"
     namePlat <- unique(grep("cgh|mirna|meth", brokenUP, ignore.case = TRUE,
         value = TRUE))
     result <- grep(platNumExp, namePlat, ignore.case = TRUE, value = TRUE)
     if (length(result) != 1L) {
         findPlat <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
-    if (length(findPlat))
-        result <- paste(toupper(namePlat), findPlat, sep = "_")
-    if (!length(namePlat))
-        result <- character(0L)
+        if (length(findPlat) == 1L) {
+            result <- paste(toupper(namePlat), findPlat, sep = "_")
+        } else if (length(findPlat)) {
+            result <- paste(toupper(namePlat),
+                            paste0(findPlat, collapse = "_"), sep = "_")
+        }
+        if (!length(namePlat))
+            result <- character(0L)
     }
     return(result)
 }
