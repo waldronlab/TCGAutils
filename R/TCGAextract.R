@@ -61,6 +61,25 @@
     x
 }
 
+.mergeNames <- function(platform, version) {
+    plat <- tolower(platform)
+    ver <- tolower(version)
+    logRM <- ver %in% plat
+    version <- version[!logRM]
+    relNames <- c(plat, version)
+    starter <- grepl(paste0("^", plat), tolower(version))
+    if (any(starter)) {
+        keep <- grepl("[0-9]{2}$", relNames, ignore.case = TRUE)
+        result <- relNames[keep]
+    } else if (length(version) > 1L) {
+        result <- paste(toupper(plat), paste0(version, collapse = "_"),
+        sep = "_")
+    } else if (length(version)) {
+        result <- paste(toupper(plat), version, sep = "_")
+    }
+    return(result)
+}
+
 .searchPlatform <- function(x) {
     brokenUP <- unlist(strsplit(x, "_"))
     brokenUP <- Filter(function(y) nchar(y) != 0L, brokenUP)
@@ -68,13 +87,9 @@
     namePlat <- unique(grep("cgh|mirna|meth|huex|^trans", brokenUP,
         ignore.case = TRUE, value = TRUE))
     namePlat <- .nameClean(namePlat)
-    version <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
-    version <- .nameClean(version)
-    keepL <- ifelse(stringdist::stringdist(version, namePlat) <= 4L, FALSE, TRUE)
-    if (any(keepL)) {
-        namePlat <- namePlat[keepL]
-        result <- paste(toupper(namePlat), version, sep = "_")
-    } else { result <- version }
+    vers <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
+    vers <- .nameClean(vers)
+    result <- .mergeNames(namePlat, vers)
     if (!length(result))
         result <- ""
     return(result)
