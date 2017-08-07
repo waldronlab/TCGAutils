@@ -54,22 +54,27 @@
     gsub("(^.+)_(hg[0-9]{2})_(.+$)", "\\2", x = x, ignore.case = TRUE)
 }
 
+.nameClean <- function(x) {
+    x <- gsub("human|hum|agilent", "", x)
+    x <- gsub("transcriptome", "tx", x, ignore.case = TRUE)
+    x <- gsub("methylation", "methyl", x, ignore.case = TRUE)
+    x
+}
+
 .searchPlatform <- function(x) {
     brokenUP <- unlist(strsplit(x, "_"))
     brokenUP <- Filter(function(y) nchar(y) != 0L, brokenUP)
     platNumExp <- "[0-9]k$|[0-9]a$|450$|27$|ht|hg"
     namePlat <- unique(grep("cgh|mirna|meth|huex|^trans", brokenUP,
         ignore.case = TRUE, value = TRUE))
-    namePlat <- gsub("transcriptome", "tx", namePlat, ignore.case = TRUE)
+    namePlat <- .nameClean(namePlat)
     version <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
-    if (length(version) == 1L) {
+    version <- .nameClean(version)
+    keepL <- ifelse(stringdist::stringdist(version, namePlat) <= 4L, FALSE, TRUE)
+    if (any(keepL)) {
+        namePlat <- namePlat[keepL]
         result <- paste(toupper(namePlat), version, sep = "_")
-    } else if (length(version)) {
-        result <- paste(toupper(namePlat),
-                        paste0(version, collapse = "_"), sep = "_")
-    } else {
-        result <- namePlat
-    }
+    } else { result <- version }
     if (!length(result))
         result <- ""
     return(result)
