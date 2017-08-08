@@ -62,7 +62,10 @@
 }
 
 .mergeNames <- function(platform, version) {
-    plat <- tolower(platform)
+    plat <- Filter(function(x) { !is.na(x) && length(x) }, tolower(platform))
+    plat <- plat[which.min(nchar(plat))]
+    if (!length(version))
+        return(plat)
     ver <- tolower(version)
     logRM <- ver %in% plat
     version <- version[!logRM]
