@@ -70,8 +70,11 @@
     logRM <- ver %in% plat
     version <- version[!logRM]
     relNames <- c(plat, version)
-    starter <- grepl(paste0("^", plat), tolower(version))
-    if (any(starter)) {
+    if (length(plat) > 1L) {
+        warning("Multiple platform names found, taking first one")
+        plat <- plat[[1L]]
+    }
+    if (length(plat) && any(grepl(plat, tolower(version)))) {
         keep <- grepl("[0-9]{2}$", relNames, ignore.case = TRUE)
         result <- relNames[keep]
     } else if (length(version) > 1L) {
