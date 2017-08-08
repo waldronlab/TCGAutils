@@ -122,7 +122,7 @@
         platNames <- vapply(x, function(y) {
             metadata(y)[["platform"]] }, character(1L))
         platNames <- gsub("human|hum|agilent", "", platNames)
-        names(x) <- platNames
+        names(x) <- make.unique(platNames, sep = "_")
         } else if (length(x) == 1L) { x <- x[[1L]] }
     }
     return(x)
