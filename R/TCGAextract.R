@@ -82,6 +82,8 @@
         sep = "_")
     } else if (length(version)) {
         result <- paste(toupper(plat), version, sep = "_")
+    } else {
+        result <- ""
     }
     return(result)
 }
@@ -96,8 +98,6 @@
     vers <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
     vers <- .nameClean(vers)
     result <- .mergeNames(namePlat, vers)
-    if (!length(result))
-        result <- ""
     return(result)
 }
 
