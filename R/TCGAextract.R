@@ -301,6 +301,50 @@
     return(object)
 }
 
+.checkEqualRows <- function(x, y) {
+	rownx <- rownames(x)
+	rowny <- rownames(y)
+	if (any(is.null(rownx), is.null(rowny))) {
+		return(FALSE)
+	}
+    all(
+    identical(dim(x)[[1]], dim(y)[[1]]),
+    identical(sort(rownx), sort(rowny))
+    )
+}
+
+.checkEqualColumns <- function(x, y) {
+    all(
+    identical(dim(x)[[2]], dim(y)[[2]]),
+    identical(sort(colnames(x)), sort(colnames(y)))
+    )
+}
+
+.checkSamePatient <- function(x, y) {
+	colnx <- sort(colnames(x))
+	colny <- sort(colnames(y))
+	maxIdx <- which.max(c(length(colnx), length(colny)))
+	minIdx <- 3L - maxIdx
+	nameList <- list(colnx, colny)
+	perc <- sum(nameList[[maxIdx]] %in% nameList[[minIdx]]) /
+		length(nameList[[maxIdx]])
+	perc > 0.95
+}
+
+.compareListElements <- function(datList) {
+    lst <- t(combn(length(datList), 2L))
+	colnames(lst) <- c("first", "second")
+	checkList <- list(rowChecks = .checkEqualRows, columnChecks = .checkEqualColumns,
+	patientChecks = .checkSamePatient)
+	logicList <- lapply(checkList, function(fun) {
+	apply(lst, 1, function(x) {
+	fun(datList[[x[1]]], datList[[x[2]]])
+	})
+	})
+	cbind.data.frame(lst, logicList)
+}
+
+
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
 #'
