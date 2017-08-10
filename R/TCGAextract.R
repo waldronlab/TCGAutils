@@ -367,11 +367,13 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         slotreq <- switch(type, GISTICA = "AllByGene",
                           GISTICT = "ThresholdedByGene",
                           GISTIC = c("AllByGene", "ThresholdedByGene"))
+        if (!length(object@Dataset)) { return(list()) }
         if (type == "GISTIC") {
             names(slotreq) <- slotreq
             result <- lapply(slotreq, function (x) { .getGISTIC(object, x) })
-        } else
+        } else {
             result <- .getGISTIC(object, slotreq)
+        }
         return(result)
     }
 
