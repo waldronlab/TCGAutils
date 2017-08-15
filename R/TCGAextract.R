@@ -334,16 +334,45 @@
 .compareListElements <- function(datList) {
     lst <- t(combn(length(datList), 2L))
 	colnames(lst) <- c("first", "second")
-	checkList <- list(rowChecks = .checkEqualRows, columnChecks = .checkEqualColumns,
-	patientChecks = .checkSamePatient)
-	logicList <- lapply(checkList, function(fun) {
-	apply(lst, 1, function(x) {
-	fun(datList[[x[1]]], datList[[x[2]]])
-	})
-	})
-	cbind.data.frame(lst, logicList)
+	checkList <- list(rowChecks = .checkEqualRows,
+        columnChecks = .checkEqualColumns, patientChecks = .checkSamePatient)
+    logicList <- lapply(checkList, function(fun) {
+                            apply(lst, 1L, function(x) {
+                                      fun(datList[[x[1L]]], datList[[x[2L]]])
+            })
+        })
+    cbind.data.frame(lst, logicList)
 }
 
+.combineData <- function(datList, compareDF) {
+    logicDF <- compareDF[, c("rowChecks", "columnChecks", "patientChecks")]
+    listIdx <- compareDF[, c("first", "second")]
+    logicDM <- data.matrix(logicDF)
+}
+
+.convertToCode <- function(logicVect) {
+    logicVect <- as.numeric(logicVect)
+    if (!length(logicVect) == 3L)
+    stop("<internal> logical vector not of length 3")
+    checking <- matrix(c(rep(1, 3), c(1,0,0), c(0,1,1)), byrow = TRUE,
+        ncol = 3L, dimnames = list(c("warn", "bindCols", "bindRows"), list()))
+    validRow <- apply(checking, 1L, function(x) {
+        identical(x, logicVect)
+    })
+    if (validRow) {
+        procedure <- names(validRow)
+        procedure <- switch(procedure, warn = NA, bindCols = 2L, bindRows = 1L)
+    } else { procedure <- 0L }
+    procedure
+}
+
+.topMerge <- function(dataList) {
+i## TODO
+}
+
+.juxMerge <- function(dataList) {
+i## TODO
+}
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
