@@ -348,6 +348,32 @@
     logicDF <- compareDF[, c("rowChecks", "columnChecks", "patientChecks")]
     listIdx <- compareDF[, c("first", "second")]
     logicDM <- data.matrix(logicDF)
+    operation <- apply(logicDM, 1L, function(rows) {
+        .convertToCode(rows)
+    })
+    if (!sum(operation, na.rm = TRUE)) {
+        return(datList)
+    }
+    listIdx <- cbind(listIdx, operation)
+    mergeList <- apply(listIdx, 1L, function(rows, dataset) {
+        if (rows[3L] == 2L) {
+            res <- .justMerge(dataset, rows[1:2], "rows")
+        } else if (rows[3L] == 1L) {
+            res <- .justMerge(dataset, rows[1:2], "columns")
+        } else if (is.na(rows[3L]) | rows[3L] == 0L) {
+            if (is.na(rows[3L]))
+            warning("Possible duplication of assays present: ",
+                    paste(rows[1:2], collapse = ", "))
+            res <- NULL
+        }
+        return(res)
+    }, dataset = datList)
+    mergeList <- Filter(function(elem) !is.null(elem), mergeList)
+    remainder <- (is.na(operation) | operation == 0L)
+    merged <- !remainder
+    mergeIdx <- unique(unlist(listIdx[merged, c("first", "second")]))
+    remaining <- !(seq_along(datList) %in% mergeIdx)
+    c(mergeList, datList[remaining])
 }
 
 .convertToCode <- function(logicVect) {
