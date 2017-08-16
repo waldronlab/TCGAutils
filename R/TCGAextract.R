@@ -393,12 +393,22 @@
     procedure
 }
 
-.topMerge <- function(dataList) {
-i## TODO
-}
-
-.juxMerge <- function(dataList) {
-i## TODO
+.justMerge <- function(dataList, mergeIds, dimension) {
+    if (dimension == "rows") {
+        dimFun <- rownames
+        binder <- cbind
+    } else if (dimension == "columns") {
+        dimFun <- colnames
+        binder <- rbind
+    }
+    handle <- dataList[mergeIds]
+    orderedRows <- Reduce(identical, lapply(handle, dimFun))
+    if (!orderedRows) {
+    dimIdx <- lapply(handle, function(datset) { order(dimFun(datset)) })
+    handle <- Map(function(x, y) { x[y, , drop = FALSE] },
+        x = handle, y = dimIdx)
+    }
+    do.call(binder, handle)
 }
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
@@ -451,6 +461,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     if (!length(object)) { return(object) }
     if (is.list(object) && !is.data.frame(object)) {
         object <- .unNestList(object)
+        object <- .combineData(object, .compareListElements(object))
     }
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
