@@ -352,16 +352,17 @@
 
 .convertToCode <- function(logicVect) {
     logicVect <- as.numeric(logicVect)
+    if (sum(logicVect > 3L)) { return(0L) }
     if (!length(logicVect) == 3L)
     stop("<internal> logical vector not of length 3")
-    checking <- matrix(c(rep(1, 3), c(1,0,0), c(0,1,1)), byrow = TRUE,
+    checking <- matrix(c(rep(1,3), c(1,0,0), c(0,1,1)), byrow = TRUE,
         ncol = 3L, dimnames = list(c("warn", "bindCols", "bindRows"), list()))
     validRow <- apply(checking, 1L, function(x) {
         identical(x, logicVect)
     })
-    if (validRow) {
-        procedure <- names(validRow)
-        procedure <- switch(procedure, warn = NA, bindCols = 2L, bindRows = 1L)
+    validName <- names(which(validRow))
+    if (length(validName)) {
+        procedure <- switch(validName, warn = NA, bindCols = 2L, bindRows = 1L)
     } else { procedure <- 0L }
     procedure
 }
