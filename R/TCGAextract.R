@@ -368,7 +368,7 @@
         }
         return(res)
     }, dataset = datList)
-    mergeList <- Filter(function(elem) !is.null(elem), mergeList)
+    mergeList <- unlist(Filter(function(elem) !is.null(elem), mergeList))
     remainder <- (is.na(operation) | operation == 0L)
     merged <- !remainder
     mergeIdx <- unique(unlist(listIdx[merged, c("first", "second")]))
@@ -408,7 +408,13 @@
     handle <- Map(function(x, y) { x[y, , drop = FALSE] },
         x = handle, y = dimIdx)
     }
-    do.call(binder, handle)
+    result <- binder(handle[[1L]], handle[[2L]])
+    resName <- names(handle)
+    resName <- paste(Reduce(intersect, strsplit(resName, "_")),
+        collapse = "_")
+    result <- list(result)
+    names(result) <- resName
+    return(result)
 }
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
