@@ -473,6 +473,7 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     if (!length(object)) { return(object) }
     if (is.list(object) && !is.data.frame(object)) {
         object <- .unNestList(object)
+        object <- lapply(object, .standardizeBC(object))
         object <- .combineData(object, .compareListElements(object))
     }
     if (type == "Clinical") { return(object) }
