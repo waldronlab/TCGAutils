@@ -387,12 +387,17 @@
 
 .getMergeIndices <- function(compareDF) {
     numElems <- compareDF[nrow(compareDF), "second"]
-    for (idx  in c(2, 1)) {
-        for (compares in seq_len(numElems))
-    newDF <- compareDF[compareDF[, "first"] == comprares, ]
-    indices <- newDF[newDF[, "ops"] == idx, c("first", "second")]
-    TODO: take indices from each group of results
+    rest <- vector(mode = "list", length = 2L)
+    names(rest) <- c("rowChecks", "columnChecks")
+    for (check in names(rest)) {
+        rest[[check]] <- lapply(seq_along(numElems),
+            function(compares, compDF) {
+                newDF <- compDF[compDF[, "first"] == compares, ]
+                indices <- newDF[newDF[, check], c("first", "second")]
+                unique(unlist(indices, use.names = FALSE))
+            }, compDF = compareDF)
     }
+    rest
 }
 
 .combineData <- function(datList, compareDF) {
