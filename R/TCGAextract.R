@@ -62,13 +62,19 @@
 }
 
 .mergeNames <- function(platform, version) {
-    plat <- tolower(platform)
+    plat <- Filter(function(x) { !is.na(x) && length(x) }, tolower(platform))
+    plat <- plat[which.min(nchar(plat))]
+    if (!length(version))
+        return(plat)
     ver <- tolower(version)
     logRM <- ver %in% plat
     version <- version[!logRM]
     relNames <- c(plat, version)
-    starter <- grepl(paste0("^", plat), tolower(version))
-    if (any(starter)) {
+    if (length(plat) > 1L) {
+        warning("Multiple platform names found, taking first one")
+        plat <- plat[[1L]]
+    }
+    if (length(plat) && any(grepl(plat, tolower(version)))) {
         keep <- grepl("[0-9]{2}$", relNames, ignore.case = TRUE)
         result <- relNames[keep]
     } else if (length(version) > 1L) {
@@ -76,6 +82,8 @@
         sep = "_")
     } else if (length(version)) {
         result <- paste(toupper(plat), version, sep = "_")
+    } else {
+        result <- ""
     }
     return(result)
 }
@@ -90,8 +98,6 @@
     vers <- grep(platNumExp, brokenUP, ignore.case = TRUE, value = TRUE)
     vers <- .nameClean(vers)
     result <- .mergeNames(namePlat, vers)
-    if (!length(result))
-        result <- ""
     return(result)
 }
 
@@ -116,7 +122,7 @@
         platNames <- vapply(x, function(y) {
             metadata(y)[["platform"]] }, character(1L))
         platNames <- gsub("human|hum|agilent", "", platNames)
-        names(x) <- platNames
+        names(x) <- make.unique(platNames, sep = "_")
         } else if (length(x) == 1L) { x <- x[[1L]] }
     }
     return(x)
@@ -295,6 +301,133 @@
     return(object)
 }
 
+.checkEqualRows <- function(x, y) {
+	rownx <- rownames(x)
+	rowny <- rownames(y)
+	if (any(is.null(rownx), is.null(rowny))) {
+		return(FALSE)
+	}
+    all(
+    identical(dim(x)[[1]], dim(y)[[1]]),
+    identical(sort(rownx), sort(rowny))
+    )
+}
+
+.checkEqualColumns <- function(x, y) {
+    all(
+    identical(dim(x)[[2]], dim(y)[[2]]),
+    identical(sort(colnames(x)), sort(colnames(y)))
+    )
+}
+
+.checkSamePatient <- function(x, y) {
+	colnx <- sort(colnames(x))
+	colny <- sort(colnames(y))
+	maxIdx <- which.max(c(length(colnx), length(colny)))
+	minIdx <- 3L - maxIdx
+	nameList <- list(colnx, colny)
+	perc <- sum(nameList[[maxIdx]] %in% nameList[[minIdx]]) /
+		length(nameList[[maxIdx]])
+	perc > 0.95
+}
+
+.compareListElements <- function(datList) {
+    lst <- t(combn(length(datList), 2L))
+	colnames(lst) <- c("first", "second")
+	checkList <- list(rowChecks = .checkEqualRows,
+        columnChecks = .checkEqualColumns, patientChecks = .checkSamePatient)
+    logicList <- lapply(checkList, function(fun) {
+                            apply(lst, 1L, function(x) {
+                                      fun(datList[[x[1L]]], datList[[x[2L]]])
+            })
+        })
+    cbind.data.frame(lst, logicList)
+}
+
+.convertToCode <- function(logicVect) {
+    logicVect <- as.numeric(logicVect)
+    if (sum(logicVect > 3L)) { return(0L) }
+    if (!length(logicVect) == 3L)
+    stop("<internal> logical vector not of length 3")
+    checking <- matrix(c(rep(1,3), c(1,0,0), c(0,1,1)), byrow = TRUE,
+        ncol = 3L, dimnames = list(c("warn", "bindCols", "bindRows"), list()))
+    validRow <- apply(checking, 1L, function(x) {
+        identical(x, logicVect)
+    })
+    validName <- names(which(validRow))
+    if (length(validName)) {
+        procedure <- switch(validName, warn = NA, bindCols = 2L, bindRows = 1L)
+    } else { procedure <- 0L }
+    procedure
+}
+
+.justMerge <- function(dataList, mergeIds, dimension) {
+    if (dimension == "rows") {
+        dimFun <- rownames
+        binder <- cbind
+    } else if (dimension == "columns") {
+        dimFun <- colnames
+        binder <- rbind
+    }
+    handle <- dataList[mergeIds]
+    orderedRows <- Reduce(identical, lapply(handle, dimFun))
+    if (!orderedRows) {
+    dimIdx <- lapply(handle, function(datset) { order(dimFun(datset)) })
+    handle <- Map(function(x, y) { x[y, , drop = FALSE] },
+        x = handle, y = dimIdx)
+    }
+    result <- binder(handle[[1L]], handle[[2L]])
+    resName <- names(handle)
+    resName <- paste(Reduce(intersect, strsplit(resName, "_")),
+        collapse = "_")
+    result <- list(result)
+    names(result) <- resName
+    return(result)
+}
+
+.getMergeIndices <- function(compareDF) {
+    numElems <- compareDF[nrow(compareDF), "second"]
+    rest <- vector(mode = "list", length = 2L)
+    names(rest) <- c("rowChecks", "columnChecks")
+    for (check in names(rest)) {
+        rest[[check]] <- lapply(seq_along(numElems),
+            function(compares, compDF) {
+                newDF <- compDF[compDF[, "first"] == compares, ]
+                indices <- newDF[newDF[, check], c("first", "second")]
+                unique(unlist(indices, use.names = FALSE))
+            }, compDF = compareDF)
+    }
+    rest
+}
+
+.combineData <- function(datList, compareDF) {
+    logicDF <- compareDF[, c("rowChecks", "columnChecks", "patientChecks")]
+    listIdx <- compareDF[, c("first", "second")]
+    logicDM <- data.matrix(logicDF)
+    ops <- apply(logicDM, 1L, .convertToCode)
+    if (!sum(ops, na.rm = TRUE)) { return(datList) }
+    listIdx <- cbind(listIdx, ops = ops)
+    mergeList <- apply(listIdx, 1L, function(rows, dataset) {
+        if (rows[3L] == 2L) {
+            res <- .justMerge(dataset, rows[1:2], "rows")
+        } else if (rows[3L] == 1L) {
+            res <- .justMerge(dataset, rows[1:2], "columns")
+        } else if (is.na(rows[3L]) | rows[3L] == 0L) {
+            if (is.na(rows[3L]))
+            warning("Possible duplication of assays present: ",
+                    paste(rows[1:2], collapse = ", "))
+            res <- NULL
+        }
+        return(res)
+    }, dataset = datList)
+    mergeList <- unlist(Filter(function(elem) !is.null(elem), mergeList))
+    remainder <- (is.na(ops) | ops == 0L)
+    merged <- !remainder
+    mergeIdx <- unique(unlist(listIdx[merged, c("first", "second")]))
+    remaining <- !(seq_along(datList) %in% mergeIdx)
+    c(mergeList, datList[remaining])
+}
+
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
 #' \code{GRangesList} object
 #'
@@ -345,6 +478,8 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     if (!length(object)) { return(object) }
     if (is.list(object) && !is.data.frame(object)) {
         object <- .unNestList(object)
+        object <- lapply(object, .standardizeBC(object))
+        object <- .combineData(object, .compareListElements(object))
     }
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
@@ -361,11 +496,13 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
         slotreq <- switch(type, GISTICA = "AllByGene",
                           GISTICT = "ThresholdedByGene",
                           GISTIC = c("AllByGene", "ThresholdedByGene"))
+        if (!length(object@Dataset)) { return(list()) }
         if (type == "GISTIC") {
             names(slotreq) <- slotreq
             result <- lapply(slotreq, function (x) { .getGISTIC(object, x) })
-        } else
+        } else {
             result <- .getGISTIC(object, slotreq)
+        }
         return(result)
     }
 

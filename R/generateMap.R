@@ -45,11 +45,11 @@ generateMap <- function(experiments, colData, idConverter = NULL, force = FALSE,
     autoMap <- S4Vectors::DataFrame(assay=assay,
                                     primary=primary,
                                     colname=colname)
-    if (nrow(autoMap) && any(is.na(autoMap$primary))) {
-        notFound <- autoMap[is.na(autoMap$primary), ]
-        warning("Data from rows:",
-                sprintf("\n %s - %s", notFound[, 2], notFound[, 3]),
-                "\ndropped due to missing phenotype data")
+    missingPrimary <- is.na(autoMap[["primary"]])
+    if (nrow(autoMap) && any(missingPrimary)) {
+        notFound <- autoMap[missingPrimary, ]
+        warning("[", sum(missingPrimary), "] rows dropped, no phenotype data:",
+                sprintf("\n %s - %s", notFound[, 2], notFound[, 3]))
         autoMap <- autoMap[!is.na(autoMap$primary), ]
     }
     autoMap
