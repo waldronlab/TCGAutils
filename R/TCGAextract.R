@@ -402,12 +402,15 @@
     rest <- vector(mode = "list", length = 2L)
     names(rest) <- c("rowChecks", "columnChecks")
     for (check in names(rest)) {
-        rest[[check]] <- lapply(seq_along(numElems),
-            function(compares, compDF) {
-                newDF <- compDF[compDF[, "first"] == compares, ]
-                indices <- newDF[newDF[, check], c("first", "second")]
-                unique(unlist(indices, use.names = FALSE))
-            }, compDF = compareDF)
+        rest[[check]] <- IRanges::IntegerList(
+            Filter(length, lapply(seq_len(numElems-1L),
+                function(compares, compDF) {
+                    newDF <- compDF[compDF[, "first"] == compares, ]
+                    indices <- newDF[newDF[, check], c("first", "second")]
+                    unique(unlist(indices, use.names = FALSE))
+                }, compDF = compareDF)
+            )
+        )
     }
     rest
 }
