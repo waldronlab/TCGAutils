@@ -416,31 +416,17 @@
 }
 
 .combineData <- function(datList, compareDF) {
-    logicDF <- compareDF[, c("rowChecks", "columnChecks", "patientChecks")]
-    listIdx <- compareDF[, c("first", "second")]
-    logicDM <- data.matrix(logicDF)
-    ops <- apply(logicDM, 1L, .convertToCode)
-    if (!sum(ops, na.rm = TRUE)) { return(datList) }
-    listIdx <- cbind(listIdx, ops = ops)
-    mergeList <- apply(listIdx, 1L, function(rows, dataset) {
-        if (rows[3L] == 2L) {
-            res <- .justMerge(dataset, rows[1:2], "rows")
-        } else if (rows[3L] == 1L) {
-            res <- .justMerge(dataset, rows[1:2], "columns")
-        } else if (is.na(rows[3L]) | rows[3L] == 0L) {
-            if (is.na(rows[3L]))
-            warning("Possible duplication of assays present: ",
-                    paste(rows[1:2], collapse = ", "))
-            res <- NULL
-        }
-        return(res)
-    }, dataset = datList)
+    mergeIDX <- .getMergeIndices(compareDF)
+    dataIdx <- seq_along(datList)
+    dataList <- .justMerge(datList, mergeIDX)
+
+    rowMerges <- unique(unlist(mergeIDX[["rowChecks"]]))
+    colMerges <- unique(unlist(mergeIDX[["columnChecks"]]))
+    noMerge <- dataIdx[!(dataIdx %in% c(rowMerges, colMerges))]
+
     mergeList <- unlist(Filter(function(elem) !is.null(elem), mergeList))
     remainder <- (is.na(ops) | ops == 0L)
-    merged <- !remainder
-    mergeIdx <- unique(unlist(listIdx[merged, c("first", "second")]))
-    remaining <- !(seq_along(datList) %in% mergeIdx)
-    c(mergeList, datList[remaining])
+    c(mergeList, dataList[noMerge])
 }
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
