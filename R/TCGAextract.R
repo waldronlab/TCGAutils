@@ -364,10 +364,10 @@
 .justMerge <- function(dataList, mergeIds, dimension) {
     if (dimension == "rows") {
         dimFun <- rownames
-        binder <- cbind
+        binder <- BiocGenerics::cbind
     } else if (dimension == "columns") {
         dimFun <- colnames
-        binder <- rbind
+        binder <- BiocGenerics::rbind
     }
     handle <- dataList[mergeIds]
     orderedRows <- Reduce(identical, lapply(handle, dimFun))
