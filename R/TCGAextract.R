@@ -369,20 +369,32 @@
         dimFun <- colnames
         binder <- BiocGenerics::rbind
     }
-    handle <- dataList[mergeIds]
-    orderedRows <- Reduce(identical, lapply(handle, dimFun))
-    if (!orderedRows) {
-    dimIdx <- lapply(handle, function(datset) { order(dimFun(datset)) })
-    handle <- Map(function(x, y) { x[y, , drop = FALSE] },
-        x = handle, y = dimIdx)
+    mergedList <- vector("list", length(mergeIds))
+    for (i in seq_along(mergeIds)) {
+        mergedList[[i]] <- lapply(mergeIds[[i]], function(idx) {
+            handle <- dataList[idx]
+            combinations <- t(combn(length(handle), 2L))
+            dimIdentical <- apply(combinations, 1L, function(vec) {
+                identical(dimFun(handle[vec[[1L]]]),
+                    dimFun(handle[vec[[2L]]]))
+            })
+            if (!all(dimIdentical)) {
+            dimIdx <- lapply(handle, function(datset) {
+                order(dimFun(datset))
+                })
+            handle <- Map(function(x, y) { x[y, , drop = FALSE] },
+                x = handle, y = dimIdx)
+            }
+            result <- do.call(binder, handle)
+            resName <- names(handle)
+        resName <- paste(Reduce(intersect, strsplit(resName, "_")),
+            collapse = "_")
+        result <- list(result)
+        names(result) <- resName
+        return(result)
+        })
     }
-    result <- binder(handle[[1L]], handle[[2L]])
-    resName <- names(handle)
-    resName <- paste(Reduce(intersect, strsplit(resName, "_")),
-        collapse = "_")
-    result <- list(result)
-    names(result) <- resName
-    return(result)
+    mergedList
 }
 
 .getMergeIndices <- function(compareDF) {
