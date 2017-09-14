@@ -9,7 +9,11 @@
 
 ## Standardize barcode format
 .stdIDs <- function(sampleBarcode) {
-    bcodeTest <- grepl("\\.", sample(sampleBarcode, 10L, replace = TRUE))
+    if (!length(sampleBarcode)) {
+        stop("<internal> Barcode must be of positive length")
+    }
+    sampleBC <- base::sample(sampleBarcode, 10L, replace = TRUE)
+    bcodeTest <- grepl("\\.", sampleBC)
     if (all(bcodeTest))
         sampleBarcode <- gsub("\\.", "-", sampleBarcode)
     toupper(sampleBarcode)
@@ -18,6 +22,6 @@
 ## Find columns that are all NA
 .findNAColumns <- function(dataset) {
     apply(dataset, 2, function(column) {
-              all(is.na(column))
-                              })
+        all(is.na(column))
+    })
 }
