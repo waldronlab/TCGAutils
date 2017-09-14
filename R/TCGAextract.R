@@ -479,8 +479,6 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     if (!length(object)) { return(object) }
     if (is.list(object) && !is.data.frame(object)) {
         object <- .unNestList(object)
-        object <- lapply(object, .standardizeBC(object))
-        object <- .combineData(object, .compareListElements(object))
     }
     if (type == "Clinical") { return(object) }
     if (is(object, "matrix")) {
@@ -488,7 +486,14 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     }
     if (is(object, "list") && !is(object, "DataFrame") &&
         type != "Methylation") {
-        return(.extractList(object, type = type, ...))
+        extractedList <- .extractList(object, type = type, ...)
+        if (length(extractedList) > 1L) {
+            object <- lapply(object, .standardizeBC)
+            object <- .combineData(object, .compareListElements(object))
+        } else {
+            object <- .standardizeBC(object[[1L]])
+        }
+        return(object)
     }
     if (is(object, "SummarizedExperiment")) { return(object) }
 
