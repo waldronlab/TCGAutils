@@ -411,15 +411,14 @@
 .combineData <- function(datList, compareDF) {
     mergeIDX <- .getMergeIndices(compareDF)
     dataIdx <- seq_along(datList)
-    dataList <- .justMerge(datList, mergeIDX)
+    mergeList <- .justMerge(datList, mergeIDX)
 
     rowMerges <- unique(unlist(mergeIDX[["rowChecks"]]))
     colMerges <- unique(unlist(mergeIDX[["columnChecks"]]))
     noMerge <- dataIdx[!(dataIdx %in% c(rowMerges, colMerges))]
 
     mergeList <- unlist(Filter(function(elem) !is.null(elem), mergeList))
-    remainder <- (is.na(ops) | ops == 0L)
-    c(mergeList, dataList[noMerge])
+    c(mergeList, datList[noMerge])
 }
 
 #' Extract data from \code{FirehoseData} object into \code{ExpressionSet} or
@@ -479,9 +478,9 @@ TCGAextract <- function(object, type = c("Clinical", "RNASeqGene",
     }
     if (is(object, "list") && !is(object, "DataFrame") &&
         type != "Methylation") {
-        extractedList <- .extractList(object, type = type, ...)
+        extractedList <- .extractList(object, type = type)
         if (length(extractedList) > 1L) {
-            object <- lapply(object, .standardizeBC)
+            object <- lapply(extractedList, .standardizeBC)
             object <- .combineData(object, .compareListElements(object))
         } else {
             object <- .standardizeBC(object[[1L]])
