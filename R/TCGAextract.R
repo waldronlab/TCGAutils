@@ -293,9 +293,7 @@
 ## Genome build from FILENAME
 ## RSE helper function from genome symbols to build (RNASeq, ExpSets)
 
-.extractList <- function(object, ...) {
-    args <- list(...)
-    type <- args[["type"]]
+.extractList <- function(object, type) {
     for (i in seq_along(object))
     object[[i]] <- TCGAextract(object[[i]], type)
     return(object)
@@ -361,31 +359,26 @@
     procedure
 }
 
-.justMerge <- function(dataList, mergeIds, dimension) {
-    if (dimension == "rows") {
-        dimFun <- rownames
-        binder <- BiocGenerics::cbind
-    } else if (dimension == "columns") {
-        dimFun <- colnames
-        binder <- BiocGenerics::rbind
-    }
+.justMerge <- function(dataList, mergeIds) {
+    dimFuns <- list(rownames, colnames)
+    bindFuns <- list(cbind, rbind)
     mergedList <- vector("list", length(mergeIds))
     for (i in seq_along(mergeIds)) {
         mergedList[[i]] <- lapply(mergeIds[[i]], function(idx) {
             handle <- dataList[idx]
             combinations <- t(combn(length(handle), 2L))
             dimIdentical <- apply(combinations, 1L, function(vec) {
-                identical(dimFun(handle[vec[[1L]]]),
-                    dimFun(handle[vec[[2L]]]))
+                identical(dimFuns[[i]](handle[[vec[[1L]]]]),
+                    dimFuns[[i]](handle[[vec[[2L]]]]))
             })
             if (!all(dimIdentical)) {
             dimIdx <- lapply(handle, function(datset) {
-                order(dimFun(datset))
+                order(dimFuns[[i]](datset))
                 })
             handle <- Map(function(x, y) { x[y, , drop = FALSE] },
                 x = handle, y = dimIdx)
             }
-            result <- do.call(binder, handle)
+            result <- BiocGenerics::do.call(bindFuns[[i]], handle)
             resName <- names(handle)
         resName <- paste(Reduce(intersect, strsplit(resName, "_")),
             collapse = "_")
