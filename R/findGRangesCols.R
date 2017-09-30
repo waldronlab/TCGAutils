@@ -14,6 +14,7 @@
             end.field <- end.field[grep(paste0("^", matchPre), end.field)]
         }
         matchSuf <- intersect(suffixes1, suffixes2)
+        matchSuf <- matchSuf[nchar(matchSuf) != 0L]
         stopifnot(S4Vectors::isSingleString(matchSuf))
         if (length(nchar(matchSuf))) {
             start.field <- start.field[grep(paste0(matchSuf, "$"), start.field)]
