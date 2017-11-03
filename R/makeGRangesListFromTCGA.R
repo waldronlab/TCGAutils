@@ -1,16 +1,17 @@
-.getHGBuild <- function(hgbuild) {
-    buildDF <- DataFrame(Date = c("July 2004", "May 2004", "March 2006",
-                                  "February 2009"),
-                         NCBI = c("34", "35", "36", "37"),
-                         UCSC = c("hg16", "hg17", "hg18", "hg19"))
-    buildIndex <- match(hgbuild, buildDF[["NCBI"]])
+.translateBuild <- function(fromBuild, toBuild = "UCSC") {
+    buildDF <- S4Vectors::DataFrame(
+        Date = c("July 2004", "May 2004", "March 2006", "February 2009",
+            "December 2013"),
+        NCBI = c("34", "35", "36", "37", "38"),
+        UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
+    )
+    matchBuild <- switch (toBuild, UCSC = "NCBI", NCBI = "UCSC" )
+    buildIndex <- match(fromBuild, buildDF[[matchBuild]])
     if (is.na(buildIndex)) {
         warning("build could not be matched")
         return(NA_character_)
-    } else {
-        ucscBuild <- buildDF$UCSC[buildIndex]
-        return(ucscBuild)
     }
+    buildDF[[toBuild]][buildIndex]
 }
 
 #' Make a GRangesList from TCGA data
@@ -72,7 +73,7 @@ makeGRangesListFromTCGA <-
             if (length(build_name) != 1L) {
                 warning("inconsistent ncbi_build values in data")
             } else {
-                ucscBuild <- .getHGBuild(build_name)
+                ucscBuild <- .translateBuild(build_name, "UCSC")
                 GenomeInfoDb::genome(grl) <- ucscBuild
             }
         }
