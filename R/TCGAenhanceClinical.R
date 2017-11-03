@@ -16,7 +16,7 @@
 #' @export TCGAenhanceClinical
 TCGAenhanceClinical <- function(MultiAssayExperiment = MultiAssayExperiment(),
                             cancerCode, repoLocation = ".") {
-    stopifnot(inherits(MultiAssayExperiment, "MultiAssayExperiment"))
+    stopifnot(is(MultiAssayExperiment, "MultiAssayExperiment"))
     stopifnot(S4Vectors::isSingleString(cancerCode))
     stopifnot(file.exists(file.path(repoLocation, "MultiAssayExperiment-TCGA")))
 

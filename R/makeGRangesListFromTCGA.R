@@ -16,9 +16,9 @@
 #' Make a GRangesList from TCGA data
 #'
 #' \code{makeGRangesListFromTCGA} allows the user to convert objects of class
-#' data.frame or DataFrame to a \link{GRangesList}. It includes additional
-#' features specific to TCGA data such as, hugo symbols, probe numbers,
-#' segment means, and ucsc build (if available).
+#' data.frame or DataFrame to a \linkS4class{GRangesList}. It includes
+#' additional features specific to TCGA data such as, hugo symbols,
+#' probe numbers, segment means, and ucsc build (if available).
 #'
 #' @param df A \code{data.frame} or \code{DataFrame} class object. \code{list}
 #' class objects are coerced to data.frame or DataFrame.
@@ -39,6 +39,8 @@ makeGRangesListFromTCGA <-
         if (is.list(df) && !inherits(df, "data.frame"))
             df <- do.call(rbind, df)
 
+        if (!S4Vectors::isSingleString(names.field))
+            stop("'names.field' must be a single sting")
         if (!S4Vectors::isSingleString(split.field))
             stop("'split.field' must be a single sting")
 
@@ -55,14 +57,14 @@ makeGRangesListFromTCGA <-
                                                 names.field = hugoName, ...)
         } else {
             grl <- makeGRangesListFromDataFrame(df = df, split.field =
-                                                    split.field, ...)
+                split.field, ...)
         }
 
         if (twoMeta) {
             numProb <- names(df)[match("num_probes", tolower(names(df)))]
             segMean <- names(df)[match("segment_mean", tolower(names(df)))]
             mcols(grl) <- cbind(mcols(grl), DataFrame(num_probes = numProb,
-                                                      segment_mean = segMean))
+                segment_mean = segMean))
         }
         if (ncbi) {
             ncbi_build <- names(df)[match("ncbi_build", tolower(names(df)))]

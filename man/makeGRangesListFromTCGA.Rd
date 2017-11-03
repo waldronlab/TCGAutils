@@ -24,7 +24,7 @@ A \link{GRangesList} class object
 }
 \description{
 \code{makeGRangesListFromTCGA} allows the user to convert objects of class
-data.frame or DataFrame to a \link{GRangesList}. It includes additional
-features specific to TCGA data such as, hugo symbols, probe numbers,
-segment means, and ucsc build (if available).
+data.frame or DataFrame to a \linkS4class{GRangesList}. It includes
+additional features specific to TCGA data such as, hugo symbols,
+probe numbers, segment means, and ucsc build (if available).
 }
