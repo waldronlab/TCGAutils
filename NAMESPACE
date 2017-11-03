@@ -2,11 +2,9 @@
 
 export(TCGAbarcode)
 export(TCGAbiospec)
-export(TCGAcleanExpList)
 export(TCGAenhanceClinical)
 export(TCGAexonToGRangesList)
 export(TCGAextract)
-export(TCGAmatchClinical)
 export(TCGAsampleSelect)
 export(TCGAtranslateID)
 export(findGRangesCols)
