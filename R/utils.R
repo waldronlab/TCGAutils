@@ -8,7 +8,7 @@
 }
 
 ## Standardize barcode format
-.stdIDs <- function(sampleBarcode) {
+standardBarcodes <- function(sampleBarcode) {
     if (!length(sampleBarcode)) {
         stop("<internal> Barcode must be of positive length")
     }

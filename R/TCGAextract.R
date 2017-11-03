@@ -8,7 +8,7 @@
 }
 
 .standardizeBC <- function(x) {
-    colnames(x) <- .stdIDs(colnames(x))
+    colnames(x) <- standardBarcodes(colnames(x))
     return(x)
 }
 
