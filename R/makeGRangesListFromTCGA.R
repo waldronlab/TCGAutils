@@ -46,16 +46,13 @@ makeGRangesListFromTCGA <-
             stop("'split.field' must be a single sting")
 
         twoMeta <- all(c("num_probes", "segment_mean") %in% tolower(names(df)))
-        hugo <- tolower(names.field) %in% tolower(names(df))
-        ncbi <- "ncbi_build" %in% tolower(names(df))
+        rnames <- tolower(names(df)) %in% tolower(names.field)
+        ncbi <- tolower(names(df)) %in% "ncbi_build"
 
-        if (hugo) {
-            hugoName <-
-                names(df)[match(tolower(names.field), tolower(names(df)))]
+        if (any(rnames) && sum(rnames) == 1L) {
+            setrname <- names(df)[rnames]
             grl <- makeGRangesListFromDataFrame(df = df,
-                                                split.field =
-                                                    split.field,
-                                                names.field = hugoName, ...)
+                split.field = split.field, names.field = setrname, ...)
         } else {
             grl <- makeGRangesListFromDataFrame(df = df, split.field =
                 split.field, ...)
@@ -67,8 +64,8 @@ makeGRangesListFromTCGA <-
             mcols(grl) <- cbind(mcols(grl), DataFrame(num_probes = numProb,
                 segment_mean = segMean))
         }
-        if (ncbi) {
-            ncbi_build <- names(df)[match("ncbi_build", tolower(names(df)))]
+        if (any(ncbi) && sum(ncbi) == 1L) {
+            ncbi_build <- names(df)[ncbi]
             build_name <- unique(df[[ncbi_build]])
             if (length(build_name) != 1L) {
                 warning("inconsistent ncbi_build values in data")
