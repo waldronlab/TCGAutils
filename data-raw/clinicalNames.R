@@ -36,7 +36,7 @@ names(TCGAcodes) <- TCGAcodes
 clinicalNames <- IRanges::CharacterList(lapply(TCGAcodes, function(cancer) {
     clindat <- read.csv(file.path(myDataDir, cancer, "clinical.csv"),
                         row.names = 1L, nrows = 2L)
-    names(clindat)
+    names(clindat)[names(clindat) != "Composite.Element.REF"]
 }))
 
 devtools::use_data(clinicalNames)
