@@ -2,6 +2,7 @@
 # Script used with https://github.com/waldronlab/MultiAssayExperiment-TCGA
 
 library(TCGAutils)
+library(RTCGAToolbox)
 data(diseaseCodes)
 
 TCGAcodes <- RTCGAToolbox::getFirehoseDatasets()
@@ -18,8 +19,8 @@ lapply(TCGAcodes, function(cancer) {
     if (!file.exists(file.path(myDataDir, cancer, "clinical.csv"))) {
         clinDat <- RTCGAToolbox::getFirehoseData(dataset = cancer,
                                                  destdir = tempfile())
-        clinFrame <- getData(clinDat, "clinical")
-        rownames(clinFrame) <- standardBarcodes(rownames(clinFrame))
+        clinFrame <- RTCGAToolbox::getData(clinDat, "clinical")
+        rownames(clinFrame) <- .standardBarcodes(rownames(clinFrame))
 
         dir.create(file.path(myDataDir, cancer))
 
