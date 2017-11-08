@@ -7,6 +7,8 @@
 \format{A data frame with 37 rows and 2 variables:
 \describe{
      \item{Study.Abbreviation}{Disease Code used in TCGA}
+     \item{Available}{Cancer datasets available via curatedTCGAData}
+     \item{SubtypeData}{Subtype curation data available via curatedTCGAData}
      \item{Study.Name}{The full length study name (i.e., type of cancer)}
 }}
 \source{

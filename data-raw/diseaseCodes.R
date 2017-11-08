@@ -22,9 +22,10 @@ diseaseCodes <- diseaseCodes[order(diseaseCodes[["Study.Abbreviation"]]), ]
 ## Rearrange column order
 diseaseCodes <- diseaseCodes[,
     c("Study.Abbreviation", "Available", "SubtypeData", "Study.Name")]
+rownames(diseaseCodes) <- NULL
 
-## Save dataset exported use
-devtools::use_data(diseaseCodes, internal = TRUE, overwrite = TRUE)
+## Save dataset for exported use
+devtools::use_data(diseaseCodes, internal = FALSE, overwrite = TRUE)
 
 ## For easy subsetting use:
 diseaseCodes[["Study.Abbreviation"]][diseaseCodes$Available == "Yes"]
