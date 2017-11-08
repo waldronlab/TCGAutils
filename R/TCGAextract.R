@@ -169,7 +169,7 @@
         if (length(build) > 1L)
             stop("Inconsistent genome build column")
         build <- as.character(build)
-        return(.getHGBuild(build))
+        return(.translateBuild(build))
     } else {
         stop("Build not available")
     }
