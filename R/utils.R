@@ -1,10 +1,14 @@
 ## Helper for finding barcode column
 ## **Takes the first result!**
 .findBarcodeCol <- function(DF) {
-    apply(DF, 2, function(column) {
-        logicBCode <- grepl("^TCGA", column)
-        logicBCode
-    }) %>% apply(., 2, all) %>% Filter(isTRUE, .) %>% names %>% `[[`(1L)
+    cnames <- names(DF)
+    containsBC <- vapply(head(DF), function(column) {
+        all(grepl("^TCGA", column))
+    }, logical(1L))
+    names(containsBC) <- cnames
+    bcIdx <- which(containsBC)
+    stopifnot(S4Vectors::isSingleInteger(which(containsBC)))
+    names(containsBC)[bcIdx]
 }
 
 .translateBuild <- function(fromBuild, toBuild = "UCSC") {
