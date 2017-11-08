@@ -1,6 +1,7 @@
 #' @import S4Vectors Biobase GenomicRanges methods BiocGenerics GenomeInfoDb
 #' SummarizedExperiment
 #' @importFrom readr read_delim
+#' @importFrom IRanges CharacterList
 NULL
 
 #' TCGA Cancer Disease Codes Table
