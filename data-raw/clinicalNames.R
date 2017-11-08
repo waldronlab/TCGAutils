@@ -34,9 +34,11 @@ lapply(TCGAcodes, function(cancer) {
 names(TCGAcodes) <- TCGAcodes
 
 clinicalNames <- IRanges::CharacterList(lapply(TCGAcodes, function(cancer) {
-    clindat <- read.csv(file.path(myDataDir, cancer, "clinical.csv"),
-                        row.names = 1L, nrows = 2L)
-    names(clindat)[names(clindat) != "Composite.Element.REF"]
+    clinDat <- read.csv(file.path(myDataDir, cancer, "clinical.csv"),
+        row.names = 1L)
+    allNA <- vapply(clinDat, function(col) all(is.na(col)), logical(1L))
+    clinDat <- clinDat[, !allNA]
+    names(clinDat)[names(clinDat) != "Composite.Element.REF"]
 }))
 
 devtools::use_data(clinicalNames)
