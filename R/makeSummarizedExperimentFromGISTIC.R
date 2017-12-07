@@ -10,6 +10,13 @@
 #'
 #' @author Ludwig Geistlinger, Marcel Ramos
 #'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#'
+#' @examples
+#' library(RTCGAToolbox)
+#' co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE)
+#' makeSummarizedExperimentFromGISTIC(co, "AllByGene")
+#'
 #' @export
 makeSummarizedExperimentFromGISTIC <- function(gistic, dataType) {
     gist <- RTCGAToolbox::getData(gistic, "GISTIC", dataType)
@@ -28,6 +35,7 @@ makeSummarizedExperimentFromGISTIC <- function(gistic, dataType) {
             rowRanges = rowranges)
         rowData(gisticSE) <- rowdata
     } else if (dataType %in% c("ThresholdedByGene", "AllByGene")) {
+        colnames(gistData) <- .standardBarcodes(colnames(gistData))
         gisticSE <- SummarizedExperiment(gistData)
     }
     gisticSE

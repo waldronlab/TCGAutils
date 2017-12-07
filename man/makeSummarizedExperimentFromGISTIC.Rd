@@ -17,6 +17,11 @@ Use the output of \code{getFirehoseData} to create a
 data, G-scores thresholded by gene, copy number by gene, and copy number by
 peak regions.
 }
+\examples{
+library(RTCGAToolbox)
+co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE)
+makeSummarizedExperimentFromGISTIC(co, "AllByGene")
+}
 \author{
 Ludwig Geistlinger, Marcel Ramos
 }
