@@ -21,6 +21,7 @@ peak regions.
 library(RTCGAToolbox)
 co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE)
 makeSummarizedExperimentFromGISTIC(co, "AllByGene")
+
 }
 \author{
 Ludwig Geistlinger, Marcel Ramos

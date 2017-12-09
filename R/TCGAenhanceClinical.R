@@ -7,25 +7,23 @@
 #' of data. Please see the repository's README for more information.
 #'
 #' @param MultiAssayExperiment A \linkS4class{MultiAssayExperiment} object
-#' @param cancerCode A single string indicating the TCGA cancer code
-#' (e.g., "PRAD")
-#' @param repoLocation The directory location where the
-#' "MultiAssayExperiment-TCGA" repository can be found
+#' @param clinicalData A \code{DataFrame} or {data.frame} to merge with
+#' clinical data in the MultiAssayExperiment object
 #'
 #' @return A \code{\link{MultiAssayExperiment}} object
-#' @export TCGAenhanceClinical
-TCGAenhanceClinical <- function(MultiAssayExperiment = MultiAssayExperiment(),
-                            cancerCode, repoLocation = ".") {
-    stopifnot(is(MultiAssayExperiment, "MultiAssayExperiment"))
-    stopifnot(S4Vectors::isSingleString(cancerCode))
-    stopifnot(file.exists(file.path(repoLocation, "MultiAssayExperiment-TCGA")))
+#'
+#' @export addClinical
+addClinical <- function(MultiAssayExperiment, clinicalData) {
+    if (!is(MultiAssayExperiment, "MultiAssayExperiment"))
+        stop("Provide a valid MultiAssayExperiment object")
+    if (!is(clinicalData, "DataFrame") && !is.data.frame(clinicalData))
+        stop("Clinical data must be 'DataFrame' or 'data.frame'")
 
-    clinicalDF <- colData(MultiAssayExperiment)
-    enhancedDataset <-
-        readr::read_csv(
-            file.path(repoLocation, "MultiAssayExperiment-TCGA",
-                      "inst/extdata/Clinical/enhanced/",
-                      paste0(toupper(cancerCode), ".csv")))
-    merge(clinicalDF, enhancedDataset, by.x = rownames(clinicalDF),
-          by.y = "patientID")
+    maeClinical <- colData(MultiAssayExperiment)
+    mergedClin <- merge(maeClinical, clinicalData,
+        by = "row.names", all = TRUE, sort = FALSE, stringsAsFactors = FALSE)
+    rownames(mergedClin) <- mergedClin[["Row.names"]]
+    mergedClin <- mergedClin[, names(mergedClin) != "Row.names", drop = FALSE]
+    colData(MultiAssayExperiment) <- as(mergedClin, "DataFrame")
+    MultiAssayExperiment
 }
