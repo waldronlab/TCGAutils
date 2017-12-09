@@ -18,28 +18,30 @@
 #' function parallel those in the \link{getFirehoseData} function. It is only
 #' available for select data types.
 #'
-#' @param disease The TCGA cancer disease code
+#' @param disease The TCGA cancer disease code, e.g., "COAD"
 #' @param runDate The single \code{string} used in the \code{getFirehoseData}
-#' function
-#' @param CNA_SNP A \code{logical} (default = FALSE) vector indicating whether to get the file
-#' name from this data type
-#' @param CNV_SNP A \code{logical} (default = FALSE) vector indicating whether to get the file
-#' name from this data type
-#' @param CNA_Seq A \code{logical} (default = FALSE) vector indicating whether to get the file
-#' name from this data type
-#' @param CNA_CGH A \code{logical} (default = FALSE) vector indicating whether to get the file
-#' name from this data type
+#' function (default "20160128")
+#' @param CNASNP A \code{logical} (default = FALSE) vector indicating whether
+#' to get the file name from this data type
+#' @param CNVSNP A \code{logical} (default = FALSE) vector indicating whether
+#' to get the file name from this data type
+#' @param CNASeq A \code{logical} (default = FALSE) vector indicating whether
+#' to get the file name from this data type
+#' @param CNACGH A \code{logical} (default = FALSE) vector indicating whether
+#' to get the file name from this data type
 #'
 #' @return A \code{character} vector of length one indicating the file name
-#' @export getFileNames
+#'
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_attr
-getFileNames <- function(disease, runDate,
-                         CNA_SNP = FALSE,
-                         CNV_SNP = FALSE,
-                         CNA_Seq = FALSE,
-                         CNA_CGH = FALSE) {
-    if (!any(c(CNA_SNP, CNV_SNP, CNA_Seq, CNA_CGH)))
+#'
+#' @export getFileNames
+getFileNames <- function(disease, runDate = "20160128",
+                         CNASNP = FALSE,
+                         CNVSNP = FALSE,
+                         CNASeq = FALSE,
+                         CNACGH = FALSE) {
+    if (!any(c(CNASNP, CNVSNP, CNASeq, CNACGH)))
         stop("Set a data type to TRUE")
 
     fh_url <- "http://gdac.broadinstitute.org/runs/stddata__"
@@ -52,24 +54,24 @@ getFileNames <- function(disease, runDate,
     plinks <- vector(mode = "character", length = 1L)
     names(plinks) <- disease
 
-    if (CNA_SNP)
+    if (CNASNP)
         plinks <- .getLinks(
             "Level_3__segmented_scna_hg19__seg.Level_3",
             paste0("[.]Merge_snp__.*.__Level_3__segmented",
                    "_scna_hg19__seg.Level_3.*.tar[.]gz$"),
             disease, doc)
-    if (CNV_SNP)
+    if (CNVSNP)
         plinks <- .getLinks(
             "Level_3__segmented_scna_minus_germline_cnv_hg19__seg.Level_3",
             paste0("[.]Merge_snp__.*.__Level_3__segmented_scna_",
                    "minus_germline_cnv_hg19__seg.Level_3.*.tar[.]gz$"),
             disease, doc)
-    if (CNA_Seq)
+    if (CNASeq)
         plinks <- .getLinks("__Level_3__segmentation__seg.Level_3",
                             paste0("[.]Merge_cna__.*.dnaseq.*.__Level_3__",
                                    "segmentation__seg.Level_3.*.tar[.]gz$"),
                             disease, doc)
-    if (CNA_CGH)
+    if (CNACGH)
         plinks <- .getLinks("__Level_3__segmentation__seg.Level_3",
                             paste0("[.]Merge_cna__.*.cgh.*.__Level_3__",
                                    "segmentation__seg.Level_3.*.tar[.]gz$"),

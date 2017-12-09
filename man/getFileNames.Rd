@@ -4,26 +4,26 @@
 \alias{getFileNames}
 \title{Find the file names used in RTCGAToolbox}
 \usage{
-getFileNames(disease, runDate, CNA_SNP = FALSE, CNV_SNP = FALSE,
-  CNA_Seq = FALSE, CNA_CGH = FALSE)
+getFileNames(disease, runDate = "20160128", CNASNP = FALSE,
+  CNVSNP = FALSE, CNASeq = FALSE, CNACGH = FALSE)
 }
 \arguments{
-\item{disease}{The TCGA cancer disease code}
+\item{disease}{The TCGA cancer disease code, e.g., "COAD"}
 
 \item{runDate}{The single \code{string} used in the \code{getFirehoseData}
-function}
+function (default "20160128")}
 
-\item{CNA_SNP}{A \code{logical} (default = FALSE) vector indicating whether to get the file
-name from this data type}
+\item{CNASNP}{A \code{logical} (default = FALSE) vector indicating whether
+to get the file name from this data type}
 
-\item{CNV_SNP}{A \code{logical} (default = FALSE) vector indicating whether to get the file
-name from this data type}
+\item{CNVSNP}{A \code{logical} (default = FALSE) vector indicating whether
+to get the file name from this data type}
 
-\item{CNA_Seq}{A \code{logical} (default = FALSE) vector indicating whether to get the file
-name from this data type}
+\item{CNASeq}{A \code{logical} (default = FALSE) vector indicating whether
+to get the file name from this data type}
 
-\item{CNA_CGH}{A \code{logical} (default = FALSE) vector indicating whether to get the file
-name from this data type}
+\item{CNACGH}{A \code{logical} (default = FALSE) vector indicating whether
+to get the file name from this data type}
 }
 \value{
 A \code{character} vector of length one indicating the file name
