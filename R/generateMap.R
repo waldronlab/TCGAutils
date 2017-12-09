@@ -1,7 +1,10 @@
 #' Create a sampleMap from an experiment list and phenoData dataframe
 #'
 #' This function helps create a sampleMap in preparation of a
-#' \code{MultiAssayExperiment} object
+#' \code{MultiAssayExperiment} object. This especially useful when the
+#' sample identifiers are not very different, as in the case of TCGA barcodes.
+#' An \code{idConverter} function can be provided to truncate such sample
+#' identifiers and obtain patient identifiers.
 #'
 #' @param experiments A named \code{list} of experiments compatible with the
 #' MultiAssayExperiment API
@@ -10,14 +13,13 @@
 #' @param idConverter A function to be used against the sample or specimen
 #' identifiers to match those in the rownames of the \code{colData}
 #' (default NULL)
-#' @param force Force use of \code{colnames} to all the data list elements for
-#' map creation
 #' @param ... Additonal arguments to pass to the 'idConverter' function.
 #'
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
-#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}, Martin Morgan, Lucas Schiffer
+#' @importFrom MultiAssayExperiment ExperimentList
+#' @author Marcel Ramos, Martin Morgan, Lucas Schiffer
 #'
 #' @examples \dontrun{
 #' ## For TCGA data
@@ -25,13 +27,10 @@
 #' }
 #'
 #' @export generateMap
-generateMap <- function(experiments, colData, idConverter = NULL, force = FALSE, ...) {
-    if (is.null(names(experiments)))
-        stop("experiments list/List must be named")
-    if (!is(experiments, "ExperimentList") && !force) {
-        experiments <- MultiAssayExperiment::ExperimentList(experiments)
-        samps <- colnames(experiments)
-    } else { samps <- lapply(experiments, colnames) }
+generateMap <- function(experiments, colData, idConverter = NULL, ...) {
+    if (!is(experiments, "ExperimentList"))
+    experiments <- ExperimentList(experiments)
+    samps <- colnames(experiments)
     assay <- factor(rep(names(samps), lengths(samps)), levels=names(samps))
     colname <- unlist(samps, use.names=FALSE)
     if (is.null(idConverter)) {

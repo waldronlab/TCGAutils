@@ -4,7 +4,7 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(experiments, colData, idConverter = NULL, force = FALSE, ...)
+generateMap(experiments, colData, idConverter = NULL, ...)
 }
 \arguments{
 \item{experiments}{A named \code{list} of experiments compatible with the
@@ -17,9 +17,6 @@ as rownames}
 identifiers to match those in the rownames of the \code{colData}
 (default NULL)}
 
-\item{force}{Force use of \code{colnames} to all the data list elements for
-map creation}
-
 \item{...}{Additonal arguments to pass to the 'idConverter' function.}
 }
 \value{
@@ -28,7 +25,10 @@ identifiers including assays
 }
 \description{
 This function helps create a sampleMap in preparation of a
-\code{MultiAssayExperiment} object
+\code{MultiAssayExperiment} object. This especially useful when the
+sample identifiers are not very different, as in the case of TCGA barcodes.
+An \code{idConverter} function can be provided to truncate such sample
+identifiers and obtain patient identifiers.
 }
 \examples{
 \dontrun{
@@ -38,5 +38,5 @@ newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
 
 }
 \author{
-Marcel Ramos \email{marcel.ramos@roswellpark.org}, Martin Morgan, Lucas Schiffer
+Marcel Ramos, Martin Morgan, Lucas Schiffer
 }
