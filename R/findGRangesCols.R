@@ -164,16 +164,3 @@ findGRangesCols <- function (df_colnames,
     c(seqnames = seqnames_col, start_end_cols[[1L]], width = width_col,
       strand = strand_col)
 }
-
-.find_col <- function(df_colnames, field, xfix = "pre") {
-    FUN <- switch(xfix, pre = I, suf = rev)
-    name.field <- paste0(FUN(c(field, suf)), collapse = "")
-    idx <- which(df_colnames %in% name.field)
-    if (!length(idx))
-        idx <-  which(df_colnames %in% field)
-    if (!length(idx))
-        stop("cannnot find ", field, " column")
-    if (length(idx) >= 2L)
-        stop("cannnot determine seqnames column unambiguously")
-    idx
-}
