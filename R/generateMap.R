@@ -47,8 +47,9 @@ generateMap <- function(experiments, colData, idConverter = NULL, ...) {
     missingPrimary <- is.na(autoMap[["primary"]])
     if (nrow(autoMap) && any(missingPrimary)) {
         notFound <- autoMap[missingPrimary, ]
-        warning("[", sum(missingPrimary), "] rows dropped, no phenotype data:",
-                sprintf("\n %s - %s", notFound[, 2], notFound[, 3]))
+        warning("Data from rows:",
+                sprintf("\n %s - %s", notFound[, 2], notFound[, 3]),
+                "\ndropped due to missing phenotype data")
         autoMap <- autoMap[!is.na(autoMap$primary), ]
     }
     autoMap
