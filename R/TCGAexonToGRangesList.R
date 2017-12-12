@@ -1,40 +1,48 @@
-.parseFileNames <- function(filepaths) {
-    fileuuids <- basename(dirname(filepaths))
-    # fileNames <- basename(filepaths)
-    # fileuuids <- sapply(strsplit(fileNames, "\\."), "[", 3)
-    bcodes <- TCGAtranslateID(fileuuids)
+.parseFileName <- function(filepath) {
+    fileName <- basename(filepath)
+    splitFileName <- strsplit(fileName, "\\.")
+    fileuuid <- sapply(strsplit(fileName, "\\."), "[", 3L)
+    if (length(strsplit(fileuuid, "-")[[1]]) != 5L)
+        stop("Inconsistent UUID in file name")
+    bcode <- TCGAtranslateID(fileuuid, type = "file_name")
     # extraInfo <- TCGAbiospec(bcodes$barcode)
-    bcodes
+    bcode
 }
 
 #' Read Exon level files and create a GRangesList
 #'
-#' This function serves to read exon level data from a vector of file paths
-#' and to create a \linkS4class{GRangesList} object for representation. File
-#' name and structure requirements are as follows: The third atomic position
-#' of the parsed file name should be the universally unique identifier (UUID).
-#' File should use default separators (i.e., periods). The column containing
-#' ranged information should be named "exon."
+#' This function serves to read exon-level expression data. It works for exon
+#' quantification (raw counts and RPKM) and junction quantification
+#' (raw counts) files paths and represent such data as a
+#' \linkS4class{GRangesList}. The data can be downloaded
+#' via the TCGA Legacy Archive. File name and structure requirements are as
+#' follows: The third position delimited by dots (".") in the file name should
+#' be the universally unique identifier (UUID). The column containing the
+#' ranged information is labeled "exon."
 #'
 #' @param filepaths A vector of valid exon data file paths
-#' @param sampleNames A vector of TCGA barcodes
+#' @param sampleNames A vector of TCGA barcodes to be applied if not present in
+#' the data
 #' @return A \linkS4class{GRangesList} object
 #'
-#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
+#' @author Marcel Ramos
 #'
 #' @export TCGAexonToGRangesList
 TCGAexonToGRangesList <- function(filepaths, sampleNames=NULL) {
     btData <- lapply(filepaths, function(file) {
-        readr::read_delim(file, delim = "\t")
+        read_delim(file, delim = "\t")
     })
+    sampleNames <- lapply(filepaths, .parseFileNames)
     if (!is.null(sampleNames)) {
-        stopifnot(length(filepaths) == length(sampleNames))
+        if (length(filepaths) != length(sampleNames))
+            stop("Inconsistent sample names obtained from file names")
         names(btData) <- sampleNames
     }
-    newGRL <- GenomicRanges::GRangesList(lapply(btData, function(range) {
-        newGRanges <- GenomicRanges::GRanges(as.character(range[["exon"]]))
-        mcols(newGRanges) <- range[, -(which(names(range) == "exon"))]
+    GenomicRanges::GRangesList(
+        lapply(btData, function(range) {
+        newGRanges <- GenomicRanges::GRanges(as.character(range[[rangeCol]]))
+        mcols(newGRanges) <- range[, names(range) != rangeCol]
         newGRanges
-    }))
-    return(newGRL)
+        })
+    )
 }
