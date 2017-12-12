@@ -27,8 +27,10 @@
 #'
 #' @author Marcel Ramos
 #'
-#' @export TCGAexonToGRangesList
-TCGAexonToGRangesList <- function(filepaths, sampleNames=NULL) {
+#' @export makeGRangesListFromExonFiles
+makeGRangesListFromExonFiles <-
+    function(filepaths, sampleNames = NULL, rangeCol = "exon")
+{
     btData <- lapply(filepaths, function(file) {
         read_delim(file, delim = "\t")
     })
