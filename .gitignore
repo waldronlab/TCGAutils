@@ -6,6 +6,7 @@
 .RData
 *.txt
 *.tar.gz
+data-raw/*
 
 # Example code in package build process
 *-Ex.R
