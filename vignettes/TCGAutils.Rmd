@@ -1,0 +1,41 @@
+---
+title: "TCGAutils: Helper functions for working with TCGA datasets"
+author: "Waldron Lab"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{TCGAutils Essentials}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::html_document:
+    number_sections: yes
+    toc: true
+---
+
+```{r, echo=FALSE, warning=FALSE}
+suppressPackageStartupMessages({
+    library(TCGAutils)
+    library(curatedTCGAData)
+})
+```
+
+# Installation
+
+```{r, eval=FALSE}
+BiocInstaller::biocLite("TCGAutils")
+```
+
+Load some packages for the vignette:
+
+```{r, eval=FALSE}
+library(TCGAutils)
+library(curatedTCGAData)
+```
+
+# Overview
+
+The `TCGAutils` package provides some utility functions for working with
+data from `The Cancer Genome Atlas`. Some functions are geared towards working
+with existing tools and infrastructure such as `MultiAssayExperiment` and
+`curatedTCGAData`. Other functions are intended to work with flat data
+structures such as `data.frame` or `DataFrame`.
