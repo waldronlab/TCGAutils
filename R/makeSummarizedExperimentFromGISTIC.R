@@ -13,8 +13,10 @@
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #'
 #' @examples
+#'
 #' library(RTCGAToolbox)
-#' co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE)
+#' co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE,
+#'     destdir = tempdir())
 #' makeSummarizedExperimentFromGISTIC(co, "AllByGene")
 #'
 #' @export

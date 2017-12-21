@@ -18,9 +18,7 @@
 #'
 #' @export makeGRangesListFromTCGA
 makeGRangesListFromTCGA <-
-    function(df, split.field,
-             names.field = "Hugo_Symbol", ...)
-    {
+    function(df, split.field, names.field = "Hugo_Symbol", ...) {
         if (is.list(df) && !inherits(df, "data.frame"))
             df <- do.call(rbind, df)
 
