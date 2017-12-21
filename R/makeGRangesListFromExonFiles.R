@@ -25,31 +25,34 @@
 #' the data
 #' @return A \linkS4class{GRangesList} object
 #'
+#' @importFrom GenomicRanges GRanges GRangesList
+#'
 #' @author Marcel Ramos
 #'
 #' @examples
+#'
 #' pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
 #' exonFile <- list.files(pkgDir, pattern = "cation.txt$", full.names = TRUE)
 #' makeGRangesListFromExonFiles(exonFile)
 #'
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <-
-    function(filepaths, sampleNames = NULL, rangeCol = "exon")
-{
+    function(filepaths, sampleNames = NULL, rangeCol = "exon") {
     btData <- lapply(filepaths, function(file) {
         read_delim(file, delim = "\t")
     })
-    sampleNames <- lapply(filepaths, .parseFileName)
     if (!is.null(sampleNames)) {
         if (length(filepaths) != length(sampleNames))
             stop("Inconsistent sample names obtained from file names")
-        names(btData) <- sampleNames
+    } else {
+        sampleNames <- lapply(filepaths, .parseFileName)
     }
-    GenomicRanges::GRangesList(
+    names(btData) <- sampleNames
+    GRangesList(
         lapply(btData, function(range) {
-        newGRanges <- GenomicRanges::GRanges(as.character(range[[rangeCol]]))
-        mcols(newGRanges) <- range[, names(range) != rangeCol]
-        newGRanges
+            newGRanges <- GRanges(as.character(range[[rangeCol]]))
+            mcols(newGRanges) <- range[, names(range) != rangeCol]
+            newGRanges
         })
     )
 }
