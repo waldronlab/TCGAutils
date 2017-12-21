@@ -7,12 +7,16 @@
 #'
 #' @param barcodes Standard TCGA barcodes containing patient identifiers,
 #' sample, portion, plate, center codes.
-#' @param sampleCode Either a character or numeric vector of length one.
+#' @param sampleCode Either a character or numeric vector of length one. See
+#' the \code{sampleType} dataset.
 #'
 #' @return A logical vector of the same length as 'barcodes' indicating matches
+#'
 #' @examples
+#'
 #' example("TCGAbarcode")
-#' TCGAsampleSelect(barcodes, "11")
+#' TCGAsampleSelect(barcodes, 11)
+#'
 #' @importFrom utils data
 #' @export TCGAsampleSelect
 TCGAsampleSelect <- function(barcodes, sampleCode) {
