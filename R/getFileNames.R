@@ -35,12 +35,13 @@
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_attr
 #'
+#' @examples
+#'
+#' getFileNames("COAD", CNVSNP = TRUE)
+#'
 #' @export getFileNames
-getFileNames <- function(disease, runDate = "20160128",
-                         CNASNP = FALSE,
-                         CNVSNP = FALSE,
-                         CNASeq = FALSE,
-                         CNACGH = FALSE) {
+getFileNames <- function(disease, runDate = "20160128", CNASNP = FALSE,
+    CNVSNP = FALSE, CNASeq = FALSE, CNACGH = FALSE) {
     if (!any(c(CNASNP, CNVSNP, CNASeq, CNACGH)))
         stop("Set a data type to TRUE")
 
