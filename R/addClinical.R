@@ -12,6 +12,12 @@
 #'
 #' @return A \code{\link{MultiAssayExperiment}} object
 #'
+#' @examples
+#'
+#' library(MultiAssayExperiment)
+#'
+#' addClinical(MultiAssayExperiment(), DataFrame())
+#'
 #' @export addClinical
 addClinical <- function(MultiAssayExperiment, clinicalData) {
     if (!is(MultiAssayExperiment, "MultiAssayExperiment"))
