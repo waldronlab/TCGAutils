@@ -26,6 +26,12 @@ follows: The third position delimited by dots (".") in the file name should
 be the universally unique identifier (UUID). The column containing the
 ranged information is labeled "exon."
 }
+\examples{
+pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
+exonFile <- list.files(pkgDir, pattern = "cation.txt$", full.names = TRUE)
+makeGRangesListFromExonFiles(exonFile)
+
+}
 \author{
 Marcel Ramos
 }

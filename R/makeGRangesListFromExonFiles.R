@@ -4,7 +4,7 @@
     fileuuid <- sapply(strsplit(fileName, "\\."), "[", 3L)
     if (length(strsplit(fileuuid, "-")[[1]]) != 5L)
         stop("Inconsistent UUID in file name")
-    bcode <- TCGAtranslateID(fileuuid, type = "file_name")
+    bcode <- TCGAtranslateID(fileuuid, type = "entity_id")
     # extraInfo <- TCGAbiospec(bcodes$barcode)
     bcode
 }
@@ -27,6 +27,11 @@
 #'
 #' @author Marcel Ramos
 #'
+#' @examples
+#' pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
+#' exonFile <- list.files(pkgDir, pattern = "cation.txt$", full.names = TRUE)
+#' makeGRangesListFromExonFiles(exonFile)
+#'
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <-
     function(filepaths, sampleNames = NULL, rangeCol = "exon")
@@ -34,7 +39,7 @@ makeGRangesListFromExonFiles <-
     btData <- lapply(filepaths, function(file) {
         read_delim(file, delim = "\t")
     })
-    sampleNames <- lapply(filepaths, .parseFileNames)
+    sampleNames <- lapply(filepaths, .parseFileName)
     if (!is.null(sampleNames)) {
         if (length(filepaths) != length(sampleNames))
             stop("Inconsistent sample names obtained from file names")
