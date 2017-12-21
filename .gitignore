@@ -7,9 +7,8 @@
 *.txt
 *.tar.gz
 data-raw/*
-
-# Example code in package build process
-*-Ex.R
+!bt.exon_quant.R
+!grlTCGA.R
 
 # RStudio files
 .Rproj.user
