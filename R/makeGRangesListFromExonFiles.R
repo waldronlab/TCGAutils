@@ -4,9 +4,7 @@
     fileuuid <- sapply(strsplit(fileName, "\\."), "[", 3L)
     if (length(strsplit(fileuuid, "-")[[1]]) != 5L)
         stop("Inconsistent UUID in file name")
-    bcode <- TCGAtranslateID(fileuuid, type = "entity_id")
-    # extraInfo <- TCGAbiospec(bcodes$barcode)
-    bcode
+    TCGAtranslateID(fileuuid, type = "entity_id")
 }
 
 #' Read Exon level files and create a GRangesList
@@ -45,7 +43,9 @@ makeGRangesListFromExonFiles <-
         if (length(filepaths) != length(sampleNames))
             stop("Inconsistent sample names obtained from file names")
     } else {
-        sampleNames <- lapply(filepaths, .parseFileName)
+        sampleNames <- unlist(lapply(filepaths, .parseFileName))
+        if (!length(sampleNames))
+            sampleNames <- NULL
     }
     names(btData) <- sampleNames
     GRangesList(
