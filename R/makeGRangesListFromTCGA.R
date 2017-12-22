@@ -16,6 +16,15 @@
 #'
 #' @return A \link{GRangesList} class object
 #'
+#' @examples
+#' grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
+#' grl <- read.table(grlFile)
+#' head(grl)
+#'
+#' makeGRangesListFromTCGA(grl, split.field = "Sample")
+#'
+#' makeGRangesListFromTCGA(grl, split.field = "Sample", keep.extra.columns = TRUE)
+#'
 #' @export makeGRangesListFromTCGA
 makeGRangesListFromTCGA <-
     function(df, split.field, names.field = "Hugo_Symbol", ...) {
