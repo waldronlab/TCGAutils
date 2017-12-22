@@ -97,13 +97,11 @@ TCGAtranslateID <- function(identifier, type="file_id",
                             type = "text/tab-separated-values",
                             encoding = "UTF-8"))
     result <- as.data.frame(result, stringsAsFactors = FALSE)
-    if (identical(dim(result), c(0L, 0L)))
-        stop("No identifier data returned")
-    dataCol <- ifelse(urlEndpoint == "cases",
-                      "case_id",
-                      grep("submitter_id$",
-                           names(result),
-                           ignore.case = TRUE,
-                           value = TRUE))
+    if (identical(dim(result), c(0L, 0L))) {
+        warning("No identifier data returned")
+        return(character(0L))
+    }
+    dataCol <- ifelse(urlEndpoint == "cases", "case_id",
+        grep("submitter_id$", names(result), ignore.case = TRUE, value = TRUE))
     result[[dataCol]]
 }
