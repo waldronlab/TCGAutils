@@ -18,8 +18,10 @@ data, G-scores thresholded by gene, copy number by gene, and copy number by
 peak regions.
 }
 \examples{
+
 library(RTCGAToolbox)
-co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE)
+co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE,
+    destdir = tempdir())
 makeSummarizedExperimentFromGISTIC(co, "AllByGene")
 
 }

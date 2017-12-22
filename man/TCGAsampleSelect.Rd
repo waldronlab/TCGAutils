@@ -10,7 +10,8 @@ TCGAsampleSelect(barcodes, sampleCode)
 \item{barcodes}{Standard TCGA barcodes containing patient identifiers,
 sample, portion, plate, center codes.}
 
-\item{sampleCode}{Either a character or numeric vector of length one.}
+\item{sampleCode}{Either a character or numeric vector of length one. See
+the \code{sampleType} dataset.}
 }
 \value{
 A logical vector of the same length as 'barcodes' indicating matches
@@ -22,6 +23,8 @@ sample, enter the appropriate sampleCode argument from the lookup table.
 See lookup table in \code{data("sampleTypes")}.
 }
 \examples{
+
 example("TCGAbarcode")
-TCGAsampleSelect(barcodes, "11")
+TCGAsampleSelect(barcodes, 11)
+
 }

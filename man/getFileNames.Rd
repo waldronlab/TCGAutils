@@ -34,3 +34,8 @@ name used inside of the \link{getFirehoseData} function. The arguments of the
 function parallel those in the \link{getFirehoseData} function. It is only
 available for select data types.
 }
+\examples{
+
+getFileNames("COAD", CNVSNP = TRUE)
+
+}
