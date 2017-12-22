@@ -28,3 +28,13 @@ data.frame or DataFrame to a \linkS4class{GRangesList}. It includes
 additional features specific to TCGA data such as, hugo symbols,
 probe numbers, segment means, and ucsc build (if available).
 }
+\examples{
+grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
+grl <- read.table(grlFile)
+head(grl)
+
+makeGRangesListFromTCGA(grl, split.field = "Sample")
+
+makeGRangesListFromTCGA(grl, split.field = "Sample", keep.extra.columns = TRUE)
+
+}
