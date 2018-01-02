@@ -26,5 +26,5 @@ makeSummarizedExperimentFromGISTIC(co, "AllByGene")
 
 }
 \author{
-Ludwig Geistlinger, Marcel Ramos
+L. Geistlinger, M. Ramos
 }

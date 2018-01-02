@@ -24,5 +24,5 @@ TCGAbiospec(barcodes)
 
 }
 \author{
-Marcel Ramos \email{marcel.ramos@roswellpark.org}
+M. Ramos
 }

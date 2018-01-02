@@ -34,5 +34,5 @@ makeGRangesListFromExonFiles(exonFile)
 
 }
 \author{
-Marcel Ramos
+M. Ramos
 }

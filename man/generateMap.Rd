@@ -38,5 +38,5 @@ newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
 
 }
 \author{
-Marcel Ramos, Martin Morgan, Lucas Schiffer
+M. Ramos, M. Morgan, L. Schiffer
 }

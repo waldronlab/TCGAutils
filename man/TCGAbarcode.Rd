@@ -13,7 +13,7 @@ TCGAbarcode(barcodes, participant = TRUE, sample = FALSE, portion = FALSE,
 \item{participant}{Logical (default TRUE) participant identifier chunk}
 
 \item{sample}{Logical (default FALSE) includes the numeric sample code of
-the barcode}
+the barcode and the vial letter}
 
 \item{portion}{Logical (default FALSE) includes the portion and analyte
 codes of the barcode}
@@ -23,7 +23,8 @@ codes of the barcode}
 \item{center}{Logical (default FALSE) returns a matrix with the plate and
 center codes}
 
-\item{index}{A numerical vector of TCGA barcode positions desired}
+\item{index}{A numerical vector of TCGA barcode positions desired when
+split by the delimiter (i.e., hyphen '-')}
 }
 \value{
 A character vector or data matrix of TCGA barcode information
@@ -45,5 +46,5 @@ TCGAbarcode(barcodes, sample = TRUE)
 
 }
 \author{
-Marcel Ramos \email{marcel.ramos@roswellpark.org}
+M. Ramos
 }
