@@ -25,7 +25,7 @@
 #'
 #' @importFrom GenomicRanges GRanges GRangesList
 #'
-#' @author Marcel Ramos
+#' @author M. Ramos
 #'
 #' @examples
 #'
@@ -36,17 +36,21 @@
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <-
     function(filepaths, sampleNames = NULL, rangeCol = "exon") {
+    readr_avail <- requireNamespace("readr", quietly = TRUE)
     btData <- lapply(filepaths, function(file) {
-        read_delim(file, delim = "\t")
+        if (readr_avail)
+            readr::read_delim(file, delim = "\t")
+        else
+            read.delim(file, sep = "\t")
     })
     if (!is.null(sampleNames)) {
         if (length(filepaths) != length(sampleNames))
             stop("Inconsistent sample names obtained from file names")
     } else {
-        sampleNames <- unlist(lapply(filepaths, .parseFileName))
-        if (!length(sampleNames))
-            sampleNames <- NULL
+        sampleNames <- .FileNamesToBarcodes(filepaths)[["aliquots.submitter_id"]]
     }
+    if (!length(sampleNames))
+        sampleNames <- NULL
     names(btData) <- sampleNames
     GRangesList(
         lapply(btData, function(range) {
