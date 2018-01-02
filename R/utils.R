@@ -3,7 +3,7 @@
 .findBarcodeCol <- function(DF) {
     cnames <- names(DF)
     containsBC <- vapply(head(DF), function(column) {
-        all(grepl("^TCGA", column))
+        all(startsWith(column, "TCGA"))
     }, logical(1L))
     names(containsBC) <- cnames
     bcIdx <- which(containsBC)

@@ -16,7 +16,7 @@
 #'
 #' library(MultiAssayExperiment)
 #'
-#' addClinical(MultiAssayExperiment(), DataFrame())
+#' addClinical(MultiAssayExperiment(), S4Vectors::DataFrame())
 #'
 #' @export addClinical
 addClinical <- function(MultiAssayExperiment, clinicalData) {

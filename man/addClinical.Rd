@@ -26,6 +26,6 @@ of data. Please see the repository's README for more information.
 
 library(MultiAssayExperiment)
 
-addClinical(MultiAssayExperiment(), DataFrame())
+addClinical(MultiAssayExperiment(), S4Vectors::DataFrame())
 
 }

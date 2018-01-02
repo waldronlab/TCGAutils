@@ -10,7 +10,7 @@
     # so we can later expand to a data.frame of the right size
     barcodes_per_file <- sapply(id_list,length)
     # And build the data.frame
-    data.frame(file_name = rep(fnames, barcodes_per_file),
+    data.frame(file_name = rep(fileNames, barcodes_per_file),
         file_id = rep(ids(info), barcodes_per_file),
         aliquots.submitter_id = unlist(id_list), row.names = NULL,
         stringsAsFactors = FALSE)
