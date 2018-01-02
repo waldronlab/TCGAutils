@@ -3,7 +3,7 @@
 export(TCGAbarcode)
 export(TCGAbiospec)
 export(TCGAsampleSelect)
-export(TCGAtranslateID)
+export(UUID.barcode)
 export(addClinical)
 export(findGRangesCols)
 export(generateMap)

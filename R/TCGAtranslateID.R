@@ -1,42 +1,24 @@
-.build_json_request <- function(identifier, type="file_id",
-                                dataType = NULL,
-                                size = 1000000) {
-    options(scipen = 999)
-    if (grepl("^TCGA", sample(identifier, 1L), ignore.case = TRUE))
-        field <- "cases.submitter_id"
-    else
-        field <- switch(type, file_id = "files.file_id",
-                        file_name = "files.file_name",
-                        entity_id = "entity_id")
-    if (!is.null(dataType)) {
-        internalList <- structure(list(
-            op = "and",
-            content = structure(list(
-                op = c("in", "="),
-                content = structure(list(
-                    field = c(field, "files.data_type"),
-                    value = list(identifier, dataType)),
-                    .Names = c("field", "value"),
-                    class = "data.frame", row.names = 1:2)),
-                .Names = c("op", "content"),
-                class = "data.frame", row.names = 1:2)),
-            .Names = c("op", "content"))
-    } else {
-        internalList <- list(op = "in", content = list(field = field, value = identifier))
-    }
-    requestList <- list(filters = internalList, format = "TSV",
-                        fields = paste("file_id", "file_name",
-                                       "cases.samples.portions.analytes.aliquots.submitter_id",
-                                       sep = ","),
-                        size = as.character(size))
-    request <- jsonlite::toJSON(
-        requestList,
-        pretty = TRUE, auto_unbox = TRUE)
-    options(scipen = 0)
-    list(request = request, field = field)
+## function to figure out exact endpoint based on TCGA barcode
+.barcodeEndpoint <- function(sectionLimit = "participant") {
+    startPoint <- "cases"
+    p.analyte <- paste0(startPoint, ".samples.portions.analytes")
+    switch(sectionLimit,
+        participant = paste0(startPoint, ".submitter_id"),
+        sample = paste0(startPoint, ".samples.submitter_id"),
+        portion = p.analyte,
+        analyte = p.analyte,
+        plate = paste0(p.analyte, ".aliquots.submitter_id"),
+        center = paste0(p.analyte, ".aliquots.submitter_id")
+    )
 }
 
-#' Translate study identifiers from barcode to UUID and vice versa
+.findBarcodeLimit <- function(barcode) {
+    filler <- .uniqueDelim(barcode)
+    maxIndx <- unique(lengths(strsplit(barcode, filler)))
+    c(rep("participant", 3L), "sample", "portion", "plate", "center")[maxIndx]
+}
+
+#' Translate study identifiers from barcode to UUID
 #'
 #' This function allows the user to enter a character vector of identifiers
 #' and use the GDC API to translate from TCGA barcodes to Universally Unique
@@ -56,52 +38,73 @@
 #' "002c67f2-ff52-4246-9d65-a3f69df6789e",
 #' "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 #'
-#' TCGAtranslateID(uuids)
+#' UUID.barcode(uuids)
 #'
-#' ## Translate TCGA Barcode <--> UUIDs
-#' barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
-#' "TCGA-B0-5094-11A-01D-1421-08",
-#' "TCGA-E9-A295-10A-01D-A16D-09")
-#' pt_identifiers <- TCGAbarcode(barcodes)
-#' TCGAtranslateID(pt_identifiers, type="file_id")
+#' @author Sean Davis
 #'
-#' ## Complex Example
-#' exampleCodes <- c("TCGA-CK-4948",
-#' "TCGA-D1-A17N",
-#' "TCGA-4V-A9QX",
-#' "TCGA-4V-A9QM")
-#' exampleType <- "Gene Expression Quantification"
-#' TCGAtranslateID(exampleCodes, dataType = exampleType)
-#'
-#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
-#'
-#' @export TCGAtranslateID
-#' @importFrom httr POST content_type_json http_status
-#' @importFrom jsonlite toJSON
-TCGAtranslateID <- function(identifier, type="file_id",
-                            dataType = NULL) {
-    stopifnot(is(identifier, "character"))
-    resultingList <- .build_json_request(identifier, type=type,
-                                         dataType = dataType)
-    urlEndpoint <- strsplit(resultingList[["field"]], "\\.")[[1L]][1]
-    if (resultingList[["field"]] == "entity_id")
-        urlEndpoint <- "annotations"
-    response <- httr::POST(paste0("https://gdc-api.nci.nih.gov/",
-                                  urlEndpoint),
-                           body = resultingList[["request"]],
-                           encode = "json",
-                           httr::content_type_json())
-    if (httr::http_status(response)$category != "Success")
-        stop("Unsuccessful request")
-    result <- suppressMessages(httr::content(response,
-                            type = "text/tab-separated-values",
-                            encoding = "UTF-8"))
-    result <- as.data.frame(result, stringsAsFactors = FALSE)
-    if (identical(dim(result), c(0L, 0L))) {
-        warning("No identifier data returned")
-        return(character(0L))
-    }
-    dataCol <- ifelse(urlEndpoint == "cases", "case_id",
-        grep("submitter_id$", names(result), ignore.case = TRUE, value = TRUE))
-    result[[dataCol]]
+#' @export UUID.barcode
+UUID.barcode <-  function(file_ids, legacy = FALSE) {
+    filesres <- files(legacy = legacy)
+    info <- results_all(
+        select(filter(filesres, ~ file_id %in% file_ids),
+        "cases.samples.portions.analytes.aliquots.submitter_id")
+    )
+    # The mess of code below is to extract TCGA barcodes
+    # id_list will contain a list (one item for each file_id)
+    # of TCGA barcodes of the form 'TCGA-XX-YYYY-ZZZ'
+    id_list <- lapply(info[["cases"]], function(x) {
+        x[[1]][[1]][[1]]
+    })
+    # so we can later expand to a data.frame of the right size
+    barcodes_per_file <- sapply(id_list, length)
+    # And build the data.frame
+    data.frame(
+        file_id = rep(ids(info), barcodes_per_file),
+        submitter_id = unlist(id_list),
+        row.names = NULL,
+        stringsAsFactors = FALSE
+    )
+}
+
+## Still in alpha stage!
+
+# @examples
+# ## Translate TCGA Barcode <--> UUIDs
+# barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+# "TCGA-B0-5094-11A-01D-1421-08",
+# "TCGA-E9-A295-10A-01D-A16D-09")
+# pt_identifiers <- TCGAbarcode(barcodes)
+# barcode.UUID(pt_identifiers)
+#
+# ## Complex Example
+# exampleCodes <- c("TCGA-CK-4948", "TCGA-D1-A17N",
+# "TCGA-4V-A9QX", "TCGA-4V-A9QM")
+#
+# barcode.UUID(exampleCodes)
+#
+# @export
+barcode.UUID <-  function(barcodes, legacy = FALSE) {
+    .checkBarcodes(barcodes)
+    filesres <- files(legacy = legacy)
+    lastVal <- .findBarcodeLimit(barcodes)
+    selector <- .barcodeEndpoint(lastVal)
+    info <- results_all(
+        select(filter(filesres, as.formula(
+            paste("~ ", selector, "%in% barcodes")
+        )),
+        selector)
+    )
+
+    id_list <- lapply(info[["cases"]], function(x) {
+        x[[1]][[1]][[1]]
+    })
+
+    barcodes_per_file <- sapply(id_list, length)
+
+    data.frame(
+        file_id = rep(ids(info), barcodes_per_file),
+        barcode = unlist(id_list),
+        row.names = NULL,
+        stringsAsFactors = FALSE
+    )
 }
