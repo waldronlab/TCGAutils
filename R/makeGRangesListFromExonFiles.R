@@ -1,10 +1,20 @@
-.parseFileName <- function(filepath) {
-    fileName <- basename(filepath)
-    splitFileName <- strsplit(fileName, "\\.")
-    fileuuid <- sapply(strsplit(fileName, "\\."), "[", 3L)
-    if (length(strsplit(fileuuid, "-")[[1]]) != 5L)
-        stop("Inconsistent UUID in file name")
-    TCGAtranslateID(fileuuid, type = "entity_id")
+.FileNamesToBarcodes <- function(filepaths) {
+    fnames <- basename(filepaths)
+    filesres <- files(legacy = TRUE)
+    info <- results_all(
+        select(filter(filesres, ~ file_name %in% fnames),
+            "cases.samples.portions.analytes.aliquots.submitter_id")
+    )
+    id_list <- lapply(info[["cases"]], function(a) {
+        a[[1L]][[1L]][[1L]]
+    })
+    # so we can later expand to a data.frame of the right size
+    barcodes_per_file <- sapply(id_list,length)
+    # And build the data.frame
+    data.frame(file_name = rep(fnames, barcodes_per_file),
+        file_id = rep(ids(info), barcodes_per_file),
+        aliquots.submitter_id = unlist(id_list), row.names = NULL,
+        stringsAsFactors = FALSE)
 }
 
 #' Read Exon level files and create a GRangesList
