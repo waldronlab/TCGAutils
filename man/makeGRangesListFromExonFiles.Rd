@@ -8,13 +8,16 @@ makeGRangesListFromExonFiles(filepaths, sampleNames = NULL,
   fileNames = NULL, rangesColumn = "exon")
 }
 \arguments{
-\item{filepaths}{A vector of valid exon data file paths}
+\item{filepaths}{A \code{character} vector of valid exon data file paths}
 
-\item{sampleNames}{A vector of TCGA barcodes to be applied if not present in
-the data}
+\item{sampleNames}{A \code{character} vector of TCGA barcodes to be applied
+if not present in the data (default NULL)}
 
-\item{rangesColumn}{(default "exon") A single string indicating the name of the column in the
-data containing the ranges information}
+\item{fileNames}{A \code{character} vector of file names as downloaded from
+the Genomic Data Commons Legacy archive (default NULL)}
+
+\item{rangesColumn}{(default "exon") A single string indicating the name of
+the column in the data containing the ranges information}
 }
 \value{
 A \linkS4class{GRangesList} object
@@ -32,7 +35,7 @@ ranged information is labeled "exon."
 \examples{
 
 pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
-exonFile <- list.files(pkgDir, pattern = "cation.txt$", full.names = TRUE)
+exonFile <- list.files(pkgDir, pattern = "cation\\\\.txt$", full.names = TRUE)
 filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
 makeGRangesListFromExonFiles(exonFile,
     fileNames = paste0(filePrefix, basename(exonFile)))
