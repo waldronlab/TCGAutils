@@ -1,8 +1,7 @@
-.FileNamesToBarcodes <- function(filepaths) {
-    fnames <- basename(filepaths)
-    filesres <- files(legacy = TRUE)
+.FileNamesToBarcodes <- function(fileNames, legacy = FALSE) {
+    filesres <- files(legacy = legacy)
     info <- results_all(
-        select(filter(filesres, ~ file_name %in% fnames),
+        select(filter(filesres, ~ file_name %in% fileNames),
             "cases.samples.portions.analytes.aliquots.submitter_id")
     )
     id_list <- lapply(info[["cases"]], function(a) {
@@ -55,7 +54,8 @@ makeGRangesListFromExonFiles <-
         if (length(filepaths) != length(sampleNames))
             stop("Inconsistent sample names obtained from file names")
     } else {
-        sampleNames <- .FileNamesToBarcodes(filepaths)[["aliquots.submitter_id"]]
+        sampleNames <- .FileNamesToBarcodes(
+            basename(filepaths), TRUE)[["aliquots.submitter_id"]]
     }
     if (!length(sampleNames))
         sampleNames <- NULL
