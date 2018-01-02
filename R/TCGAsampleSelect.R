@@ -17,7 +17,6 @@
 #' example("TCGAbarcode")
 #' TCGAsampleSelect(barcodes, 11)
 #'
-#' @importFrom utils data
 #' @export TCGAsampleSelect
 TCGAsampleSelect <- function(barcodes, sampleCode) {
     bcodeCharLen <- unique(nchar(barcodes))

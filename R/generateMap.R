@@ -18,7 +18,6 @@
 #' @return A \code{DataFrame} class object of mapped samples and patient
 #' identifiers including assays
 #'
-#' @importFrom MultiAssayExperiment ExperimentList
 #' @author M. Ramos, M. Morgan, L. Schiffer
 #'
 #' @examples \dontrun{

@@ -1,9 +1,3 @@
-#' @import S4Vectors Biobase GenomicRanges methods BiocGenerics GenomeInfoDb
-#' SummarizedExperiment
-#' @importFrom readr read_delim
-#' @importFrom IRanges CharacterList
-NULL
-
 #' TCGA Cancer Disease Codes Table
 #'
 #' A dataset for obtaining the cancer codes in TCGA for about 13 different

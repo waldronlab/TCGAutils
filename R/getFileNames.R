@@ -32,9 +32,6 @@
 #'
 #' @return A \code{character} vector of length one indicating the file name
 #'
-#' @importFrom xml2 read_html
-#' @importFrom rvest html_nodes html_attr
-#'
 #' @examples
 #'
 #' getFileNames("COAD", CNVSNP = TRUE)

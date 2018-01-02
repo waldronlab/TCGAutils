@@ -10,8 +10,6 @@
 #'
 #' @author L. Geistlinger, M. Ramos
 #'
-#' @importFrom SummarizedExperiment SummarizedExperiment
-#'
 #' @examples
 #'
 #' library(RTCGAToolbox)

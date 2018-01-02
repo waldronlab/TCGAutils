@@ -23,8 +23,6 @@
 #' the data
 #' @return A \linkS4class{GRangesList} object
 #'
-#' @importFrom GenomicRanges GRanges GRangesList
-#'
 #' @author M. Ramos
 #'
 #' @examples
