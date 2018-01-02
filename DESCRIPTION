@@ -1,7 +1,7 @@
 Package: TCGAutils
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
     data
-Version: 0.3.89
+Version: 0.3.90
 Description: A suite of functions aimed at simplifying and making the use of
     TCGA data manageable.
 Authors@R: c(
@@ -17,13 +17,11 @@ Imports:
     BiocGenerics,
     GenomeInfoDb,
     GenomicRanges,
-    httr,
+    GenomicDataCommons,
     IRanges,
-    jsonlite,
     methods,
     MultiAssayExperiment,
     RaggedExperiment,
-    readr,
     RTCGAToolbox (>= 2.7.5),
     rvest,
     S4Vectors,
@@ -32,6 +30,7 @@ Imports:
 Suggests:
     BiocStyle,
     knitr,
+    readr,
     testthat
 License: GPL (>= 3)
 Encoding: UTF-8

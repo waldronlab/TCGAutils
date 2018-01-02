@@ -1,3 +1,13 @@
+.checkBarcodes <- function(barcodes) {
+    if (!all(nchar(barcodes) == 28L))
+        warning("Inconsistent barcode lengths")
+    if (!all(startsWith(toupper(barcodes), "TCGA")))
+        stop("Barcodes must start with 'TCGA'")
+    filler <- unique(substr(barcodes, 5L, 5L))
+    if (length(filler) != 1L)
+        stop("barcode delimiters not consistent")
+}
+
 #' Parse data from TCGA barcode
 #'
 #' This function returns the specified snippet of information obtained from
@@ -30,19 +40,12 @@
 #' TCGAbarcode(barcodes, sample = TRUE)
 #'
 #' @export TCGAbarcode
-TCGAbarcode <- function(barcodes, participant = TRUE,
-                        sample = FALSE, portion = FALSE,
-                        plate = FALSE, center = FALSE, index = NULL)
+TCGAbarcode <- function(barcodes, participant = TRUE, sample = FALSE,
+    portion = FALSE, plate = FALSE, center = FALSE, index = NULL)
 {
-    if (!all(nchar(barcodes) == 28L)) {
-        warning("inconsistent barcode lengths")
-    }
-    stopifnot(all(startsWith(toupper(barcodes), "TCGA")))
-
+    .checkBarcodes(barcodes)
     filler <- unique(substr(barcodes, 5L, 5L))
-    if (length(filler) != 1L)  stop("barcode delimiters not consistent")
-
-    barcodeMat <- do.call(rbind, strsplit(barcodes, "-"))
+    barcodeMat <- do.call(rbind, strsplit(barcodes, filler))
     if (is.null(index)) {
         if (participant) index <- c(index, 1L:3L)
         if (sample) index <- c(index, 4L)
