@@ -21,19 +21,19 @@ TCGAbiospec <- function(barcodes) {
     local_data_store <- new.env(parent = emptyenv())
     data("sampleTypes", envir = local_data_store)
     sampleTypes <- local_data_store[["sampleTypes"]]
+    sampCode <- substr(TCGAbarcode(barcodes, FALSE, TRUE), 1L, 2L)
     sample_type <- sampleTypes[["Definition"]][
-        match(substr(TCGAbarcode(barcodes, participant = FALSE, sample = TRUE), 1, 2),
-              sampleTypes[["Code"]])]
-    newBiospec <- data.frame(patient_id = TCGAbarcode(barcodes),
-                             sample_type,
-                             sample_code = TCGAbarcode(barcodes,
-                                                       participant = FALSE,
-                                                       sample = TRUE),
-                             stringsAsFactors = FALSE)
-    portPlateCent <- data.frame(
-        do.call(rbind,
-                strsplit(TCGAbarcode(barcodes, index = 5:7), filler)),
-        stringsAsFactors = FALSE)
+        match(sampCode, sampleTypes[["Code"]])]
+    newBiospec <-
+        data.frame(
+            patient_id = TCGAbarcode(barcodes),
+            sample_type,
+            sample_code = TCGAbarcode(barcodes, FALSE, TRUE),
+            stringsAsFactors = FALSE
+        )
+    portPlateCent <- do.call(rbind.data.frame,
+        args = c(strsplit(TCGAbarcode(barcodes, index = 5L:7L), filler),
+            list(stringsAsFactors = FALSE)))
     names(portPlateCent) <- c("portion", "plate", "center")
     cbind.data.frame(newBiospec, portPlateCent, stringsAsFactors = FALSE)
 }

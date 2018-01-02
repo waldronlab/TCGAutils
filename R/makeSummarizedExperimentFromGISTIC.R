@@ -8,7 +8,7 @@
 #' @param gistic A \linkS4class{FirehoseGISTIC} object
 #' @param dataType Either one of "ThresholdedByGene", "AllByGene", "Peaks"
 #'
-#' @author Ludwig Geistlinger, Marcel Ramos
+#' @author L. Geistlinger, M. Ramos
 #'
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #'
