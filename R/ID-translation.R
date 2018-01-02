@@ -18,19 +18,19 @@
     c(rep("participant", 3L), "sample", "portion", "plate", "center")[maxIndx]
 }
 
-#' Translate study identifiers from barcode to UUID
+#' @name ID-translation
 #'
-#' This function allows the user to enter a character vector of identifiers
+#' @title Translate study identifiers from barcode to UUID
+#'
+#' @description This function allows the user to enter a character vector of identifiers
 #' and use the GDC API to translate from TCGA barcodes to Universally Unique
 #' Identifiers (UUID) and vice versa.
 #'
-#' @param identifier A \code{character} vector of identifiers
-#' @param type A single \code{character} string indicating identifier type,
-#' can use "file_id" (default) or "file_name" ignored if translating TCGA
-#' barcodes
-#' @param dataType A single \code{character} string indicating data type
-#' used for searching (e.g., "Gene Expression Quantification")
-#' @return A \code{character} vector of alternate identifiers
+#' @param file_ids A \code{character} vector of UUIDs corresponding to
+#' files
+#' @param legacy (logical default FALSE) whether to search the legacy archives
+#'
+#' @return A \code{character} vector of TCGA barcode identifiers
 #'
 #' @examples
 #' ## Translate UUIDs <--> TCGA Barcode
@@ -68,6 +68,8 @@ UUID.barcode <-  function(file_ids, legacy = FALSE) {
 
 ## Still in alpha stage!
 
+# @rdname ID-translation
+#
 # @examples
 # ## Translate TCGA Barcode <--> UUIDs
 # barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
