@@ -30,6 +30,9 @@
 #' @param filepaths A vector of valid exon data file paths
 #' @param sampleNames A vector of TCGA barcodes to be applied if not present in
 #' the data
+#' @param rangesColumn (default "exon") A single string indicating the name of the column in the
+#' data containing the ranges information
+#'
 #' @return A \linkS4class{GRangesList} object
 #'
 #' @author M. Ramos
@@ -42,7 +45,7 @@
 #'
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <-
-    function(filepaths, sampleNames = NULL, rangeCol = "exon") {
+    function(filepaths, sampleNames = NULL, rangesColumn = "exon") {
     readr_avail <- requireNamespace("readr", quietly = TRUE)
     btData <- lapply(filepaths, function(file) {
         if (readr_avail)
@@ -62,8 +65,8 @@ makeGRangesListFromExonFiles <-
     names(btData) <- sampleNames
     GRangesList(
         lapply(btData, function(range) {
-            newGRanges <- GRanges(as.character(range[[rangeCol]]))
-            mcols(newGRanges) <- range[, names(range) != rangeCol]
+            newGRanges <- GRanges(as.character(range[[rangesColumn]]))
+            mcols(newGRanges) <- range[, names(range) != rangesColumn]
             newGRanges
         })
     )

@@ -5,13 +5,16 @@
 \title{Read Exon level files and create a GRangesList}
 \usage{
 makeGRangesListFromExonFiles(filepaths, sampleNames = NULL,
-  rangeCol = "exon")
+  rangesColumn = "exon")
 }
 \arguments{
 \item{filepaths}{A vector of valid exon data file paths}
 
 \item{sampleNames}{A vector of TCGA barcodes to be applied if not present in
 the data}
+
+\item{rangesColumn}{(default "exon") A single string indicating the name of the column in the
+data containing the ranges information}
 }
 \value{
 A \linkS4class{GRangesList} object
