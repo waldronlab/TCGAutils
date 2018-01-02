@@ -27,11 +27,13 @@
 #' be the universally unique identifier (UUID). The column containing the
 #' ranged information is labeled "exon."
 #'
-#' @param filepaths A vector of valid exon data file paths
-#' @param sampleNames A vector of TCGA barcodes to be applied if not present in
-#' the data
-#' @param rangesColumn (default "exon") A single string indicating the name of the column in the
-#' data containing the ranges information
+#' @param filepaths A \code{character} vector of valid exon data file paths
+#' @param sampleNames A \code{character} vector of TCGA barcodes to be applied
+#' if not present in the data (default NULL)
+#' @param fileNames A \code{character} vector of file names as downloaded from
+#' the Genomic Data Commons Legacy archive (default NULL)
+#' @param rangesColumn (default "exon") A single string indicating the name of
+#' the column in the data containing the ranges information
 #'
 #' @return A \linkS4class{GRangesList} object
 #'
@@ -41,11 +43,23 @@
 #'
 #' pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
 #' exonFile <- list.files(pkgDir, pattern = "cation.txt$", full.names = TRUE)
-#' makeGRangesListFromExonFiles(exonFile)
+#' filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
+#' makeGRangesListFromExonFiles(exonFile,
+#'     fileNames = paste0(filePrefix, basename(exonFile)))
 #'
 #' @export makeGRangesListFromExonFiles
-makeGRangesListFromExonFiles <-
-    function(filepaths, sampleNames = NULL, rangesColumn = "exon") {
+makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
+    fileNames = NULL, rangesColumn = "exon")
+{
+    if (!is.null(sampleNames)) {
+        if (length(filepaths) != length(sampleNames))
+            stop("Inconsistent sample names obtained from file names")
+    } else {
+        queryNames <- if (!is.null(fileNames)) {
+            fileNames } else { basename(filepaths) }
+        sampleNames <-
+            .FileNamesToBarcodes(queryNames, TRUE)[["aliquots.submitter_id"]]
+    }
     readr_avail <- requireNamespace("readr", quietly = TRUE)
     btData <- lapply(filepaths, function(file) {
         if (readr_avail)
@@ -53,13 +67,6 @@ makeGRangesListFromExonFiles <-
         else
             read.delim(file, sep = "\t")
     })
-    if (!is.null(sampleNames)) {
-        if (length(filepaths) != length(sampleNames))
-            stop("Inconsistent sample names obtained from file names")
-    } else {
-        sampleNames <- .FileNamesToBarcodes(
-            basename(filepaths), TRUE)[["aliquots.submitter_id"]]
-    }
     if (!length(sampleNames))
         sampleNames <- NULL
     names(btData) <- sampleNames

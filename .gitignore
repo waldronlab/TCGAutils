@@ -10,7 +10,7 @@ data-raw/*
 !bt.exon_quant.R
 !grlTCGA.R
 !grlTCGA.txt
-!unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371.bt.exon_quantification.txt
+!bt.exon_quantification.txt
 
 # RStudio files
 .Rproj.user

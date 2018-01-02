@@ -5,7 +5,7 @@
 \title{Read Exon level files and create a GRangesList}
 \usage{
 makeGRangesListFromExonFiles(filepaths, sampleNames = NULL,
-  rangesColumn = "exon")
+  fileNames = NULL, rangesColumn = "exon")
 }
 \arguments{
 \item{filepaths}{A vector of valid exon data file paths}
@@ -33,7 +33,9 @@ ranged information is labeled "exon."
 
 pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
 exonFile <- list.files(pkgDir, pattern = "cation.txt$", full.names = TRUE)
-makeGRangesListFromExonFiles(exonFile)
+filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
+makeGRangesListFromExonFiles(exonFile,
+    fileNames = paste0(filePrefix, basename(exonFile)))
 
 }
 \author{
