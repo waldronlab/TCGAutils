@@ -19,7 +19,7 @@
 #' identifiers including assays
 #'
 #' @importFrom MultiAssayExperiment ExperimentList
-#' @author Marcel Ramos, Martin Morgan, Lucas Schiffer
+#' @author M. Ramos, M. Morgan, L. Schiffer
 #'
 #' @examples \dontrun{
 #' ## For TCGA data

@@ -1,9 +1,15 @@
+.uniqueDelim <- function(ids) {
+    unique(unlist(
+        strsplit(gsub("[a-zA-Z0-9]", "", ids), "")
+    ))
+}
+
 .checkBarcodes <- function(barcodes) {
     if (!all(nchar(barcodes) == 28L))
         warning("Inconsistent barcode lengths")
     if (!all(startsWith(toupper(barcodes), "TCGA")))
         stop("Barcodes must start with 'TCGA'")
-    filler <- unique(substr(barcodes, 5L, 5L))
+    filler <- .uniqueDelim(barcodes)
     if (length(filler) != 1L)
         stop("barcode delimiters not consistent")
 }
@@ -16,17 +22,18 @@
 #' @param barcodes A character vector of TCGA barcodes
 #' @param participant Logical (default TRUE) participant identifier chunk
 #' @param sample Logical (default FALSE) includes the numeric sample code of
-#' the barcode
+#' the barcode and the vial letter
 #' @param portion Logical (default FALSE) includes the portion and analyte
 #' codes of the barcode
 #' @param plate Logical (default FALSE) returns the plate value
 #' @param center Logical (default FALSE) returns a matrix with the plate and
 #' center codes
-#' @param index A numerical vector of TCGA barcode positions desired
+#' @param index A numerical vector of TCGA barcode positions desired when
+#' split by the delimiter (i.e., hyphen '-')
 #'
 #' @return A character vector or data matrix of TCGA barcode information
 #'
-#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
+#' @author M. Ramos
 #'
 #' @examples
 #' barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
@@ -44,7 +51,7 @@ TCGAbarcode <- function(barcodes, participant = TRUE, sample = FALSE,
     portion = FALSE, plate = FALSE, center = FALSE, index = NULL)
 {
     .checkBarcodes(barcodes)
-    filler <- unique(substr(barcodes, 5L, 5L))
+    filler <- .uniqueDelim(barcodes)
     barcodeMat <- do.call(rbind, strsplit(barcodes, filler))
     if (is.null(index)) {
         if (participant) index <- c(index, 1L:3L)

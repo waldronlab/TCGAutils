@@ -8,7 +8,7 @@
 #' @return A \code{dataframe} with sample type, sample code, portion, plate,
 #' and center columns.
 #'
-#' @author Marcel Ramos \email{marcel.ramos@roswellpark.org}
+#' @author M. Ramos
 #'
 #' @examples
 #' example("TCGAbarcode")
@@ -16,14 +16,8 @@
 #'
 #' @export TCGAbiospec
 TCGAbiospec <- function(barcodes) {
-    if (!all(nchar(barcodes) == 28L)) {
-        stop("inconsistent barcode lengths")
-    }
-    stopifnot(all(startsWith(toupper(barcodes), "TCGA")))
-    filler <- unique(substr(barcodes, 5, 5))
-    if (length(filler) != 1L) {
-        stop("barcode delimiters not consistent")
-    }
+    .checkBarcodes(barcodes)
+    filler <- .uniqueDelim(barcodes)
     local_data_store <- new.env(parent = emptyenv())
     data("sampleTypes", envir = local_data_store)
     sampleTypes <- local_data_store[["sampleTypes"]]
@@ -41,6 +35,5 @@ TCGAbiospec <- function(barcodes) {
                 strsplit(TCGAbarcode(barcodes, index = 5:7), filler)),
         stringsAsFactors = FALSE)
     names(portPlateCent) <- c("portion", "plate", "center")
-    newBiospec <- cbind(newBiospec, portPlateCent)
-    return(newBiospec)
+    cbind.data.frame(newBiospec, portPlateCent, stringsAsFactors = FALSE)
 }
