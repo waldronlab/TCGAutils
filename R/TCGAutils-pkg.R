@@ -8,7 +8,7 @@
 #' @importFrom IRanges CharacterList
 #' @importFrom SummarizedExperiment SummarizedExperiment mcols mcols<- rowData
 #' rowData<-
-#' @importFrom GenomicDataCommons files results_all select filter ids
+#' @importFrom GenomicDataCommons files results_all select filter ids cases
 #' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
 #' DataFrame
 NULL
