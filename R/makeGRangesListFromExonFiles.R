@@ -41,9 +41,13 @@
 #'
 #' @examples
 #'
+#' ## Load example file found in package
 #' pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
 #' exonFile <- list.files(pkgDir, pattern = "cation\\.txt$", full.names = TRUE)
+#'
 #' filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
+#'
+#' ## Add actual file name manually (due to Windows OS restriction)
 #' makeGRangesListFromExonFiles(exonFile,
 #'     fileNames = paste0(filePrefix, basename(exonFile)))
 #'
