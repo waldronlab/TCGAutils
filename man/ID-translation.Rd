@@ -2,34 +2,74 @@
 % Please edit documentation in R/ID-translation.R
 \name{ID-translation}
 \alias{ID-translation}
-\alias{UUID.barcode}
-\title{Translate study identifiers from barcode to UUID}
+\alias{UUIDtoBarcode}
+\alias{barcodeToUUID}
+\title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
-UUID.barcode(file_ids, legacy = FALSE)
+UUIDtoBarcode(file_ids, end_point = "participant", legacy = FALSE)
+
+barcodeToUUID(barcodes, legacy = FALSE)
 }
 \arguments{
 \item{file_ids}{A \code{character} vector of UUIDs corresponding to
 files}
 
+\item{end_point}{The cutoff point of the barcode that should be returned.
+See details for options.}
+
 \item{legacy}{(logical default FALSE) whether to search the legacy archives}
+
+\item{barcodes}{A \code{character} vector of TCGA barcodes}
 }
 \value{
-A \code{character} vector of TCGA barcode identifiers
+A \code{data.frame} of TCGA barcode identifiers and UUIDs
 }
 \description{
-This function allows the user to enter a character vector of identifiers
-and use the GDC API to translate from TCGA barcodes to Universally Unique
-Identifiers (UUID) and vice versa.
+These functions allow the user to enter a character vector of
+identifiers and use the GDC API to translate from TCGA barcodes to
+Universally Unique Identifiers (UUID) and vice versa.
+}
+\details{
+The \code{end_point} options reflect endpoints in the Genomic Data Commons
+API. These are summarized as follows:
+\itemize{
+  \item{participant}: This default snippet of information includes project,
+  tissue source site (TSS), and participant number
+  (barcode format: TCGA-XX-XXXX)
+  \item{sample}: This adds the sample information to the participant barcode
+  (TCGA-XX-XXXX-11X)
+  \item{portion, analyte}: Either of these options adds the portion and
+  analyte information to the sample barcode (TCGA-XX-XXXX-11X-01X)
+  \item{plate, center}: Additional plate and center information is returned,
+  i.e., the full barcode (TCGA-XX-XXXX-11X-01X-XXXX-XX)
+}
+Only these keywords need to be used to target the specific barcode endpoint.
 }
 \examples{
-## Translate UUIDs <--> TCGA Barcode
+## Translate UUIDs >> TCGA Barcode
+
 uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
 "002c67f2-ff52-4246-9d65-a3f69df6789e",
 "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 
-UUID.barcode(uuids)
+UUIDtoBarcode(uuids, "sample")
+
+## Translate TCGA Barcode >> UUIDs
+
+fullBarcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+"TCGA-B0-5094-11A-01D-1421-08",
+"TCGA-E9-A295-10A-01D-A16D-09")
+
+sample_ids <- TCGAbarcode(fullBarcodes, sample = TRUE)
+
+barcodeToUUID(sample_ids)
+
+participant_ids <- c("TCGA-CK-4948", "TCGA-D1-A17N",
+"TCGA-4V-A9QX", "TCGA-4V-A9QM")
+
+barcodeToUUID(participant_ids)
 
 }
 \author{
-Sean Davis
+Sean Davis, M. Ramos
 }
