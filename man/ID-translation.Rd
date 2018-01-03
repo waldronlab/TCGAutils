@@ -6,16 +6,20 @@
 \alias{barcodeToUUID}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
-UUIDtoBarcode(file_ids, end_point = "participant", legacy = FALSE)
+UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
+  end_point = "participant", legacy = FALSE)
 
 barcodeToUUID(barcodes, legacy = FALSE)
 }
 \arguments{
-\item{file_ids}{A \code{character} vector of UUIDs corresponding to
+\item{id_vector}{A \code{character} vector of UUIDs corresponding to
 files}
 
-\item{end_point}{The cutoff point of the barcode that should be returned.
-See details for options.}
+\item{id_type}{Either \code{case_id} or \code{file_id} indicating the type of
+\code{id_vector} entered (default "case_id")}
+
+\item{end_point}{The cutoff point of the barcode that should be returned,
+only applies to \code{file_id} type queries. See details for options.}
 
 \item{legacy}{(logical default FALSE) whether to search the legacy archives}
 
@@ -27,7 +31,12 @@ A \code{data.frame} of TCGA barcode identifiers and UUIDs
 \description{
 These functions allow the user to enter a character vector of
 identifiers and use the GDC API to translate from TCGA barcodes to
-Universally Unique Identifiers (UUID) and vice versa.
+Universally Unique Identifiers (UUID) and vice versa. These relationships
+are not one-to-one. Therefore, a \code{data.frame} is returned for all
+inputs. The UUID to TCGA barcode translation only applies to file UUIDs.
+There are more types of UUIDs that are not supported. API queries for this
+translation service are not fully supported. Please double check any
+results before using these features for analysis.
 }
 \details{
 The \code{end_point} options reflect endpoints in the Genomic Data Commons
@@ -44,6 +53,8 @@ API. These are summarized as follows:
   i.e., the full barcode (TCGA-XX-XXXX-11X-01X-XXXX-XX)
 }
 Only these keywords need to be used to target the specific barcode endpoint.
+These endpoints only apply to "file_id" type translations to TCGA barcodes
+(see \code{id_type} argument).
 }
 \examples{
 ## Translate UUIDs >> TCGA Barcode
@@ -52,7 +63,9 @@ uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
 "002c67f2-ff52-4246-9d65-a3f69df6789e",
 "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 
-UUIDtoBarcode(uuids, "sample")
+UUIDtoBarcode(uuids, end_point = "sample")
+
+UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", "case_id")
 
 ## Translate TCGA Barcode >> UUIDs
 

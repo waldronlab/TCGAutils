@@ -24,7 +24,12 @@
 #'
 #' @description These functions allow the user to enter a character vector of
 #' identifiers and use the GDC API to translate from TCGA barcodes to
-#' Universally Unique Identifiers (UUID) and vice versa.
+#' Universally Unique Identifiers (UUID) and vice versa. These relationships
+#' are not one-to-one. Therefore, a \code{data.frame} is returned for all
+#' inputs. The UUID to TCGA barcode translation only applies to file and case
+#' UUIDs. There are more types of UUIDs that are not supported. API queries for
+#' this translation service are not fully supported. Please double check any
+#' results before using these features for analysis.
 #'
 #' @details
 #' The \code{end_point} options reflect endpoints in the Genomic Data Commons
@@ -41,11 +46,15 @@
 #'   i.e., the full barcode (TCGA-XX-XXXX-11X-01X-XXXX-XX)
 #' }
 #' Only these keywords need to be used to target the specific barcode endpoint.
+#' These endpoints only apply to "file_id" type translations to TCGA barcodes
+#' (see \code{id_type} argument).
 #'
-#' @param file_ids A \code{character} vector of UUIDs corresponding to
-#' files
-#' @param end_point The cutoff point of the barcode that should be returned.
-#' See details for options.
+#' @param id_vector A \code{character} vector of UUIDs corresponding to
+#' either files or cases
+#' @param id_type Either \code{case_id} or \code{file_id} indicating the type of
+#' \code{id_vector} entered (default "case_id")
+#' @param end_point The cutoff point of the barcode that should be returned,
+#' only applies to \code{file_id} type queries. See details for options.
 #' @param legacy (logical default FALSE) whether to search the legacy archives
 #'
 #' @return A \code{data.frame} of TCGA barcode identifiers and UUIDs
@@ -57,34 +66,47 @@
 #' "002c67f2-ff52-4246-9d65-a3f69df6789e",
 #' "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 #'
-#' UUIDtoBarcode(uuids, "sample")
+#' UUIDtoBarcode(uuids, id_type = "file_id", end_point = "sample")
+#'
+#' UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
 #'
 #' @author Sean Davis, M. Ramos
 #'
 #' @export UUIDtoBarcode
-UUIDtoBarcode <-  function(file_ids, end_point = "participant", legacy = FALSE) {
+UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
+    end_point = "participant", legacy = FALSE) {
+    id_type <- match.arg(id_type)
     APIendpoint <- .barcodeEndpoint(end_point)
-    filesres <- files(legacy = legacy)
+    if (id_type == "case_id") {
+        targetElement <- APIendpoint <- "submitter_id"
+    } else if (id_type == "file_id") {
+        targetElement <- "cases"
+    }
+    funcRes <- switch(id_type,
+        file_id = files(legacy = legacy),
+        case_id = cases(legacy = legacy))
     info <- results_all(
-        select(filter(filesres, ~ file_id %in% file_ids),
+        select(filter(funcRes, as.formula(
+            paste("~ ", id_type, "%in% id_vector")
+            )),
         APIendpoint)
     )
     # The mess of code below is to extract TCGA barcodes
     # id_list will contain a list (one item for each file_id)
     # of TCGA barcodes of the form 'TCGA-XX-YYYY-ZZZ'
-    id_list <- lapply(info[["cases"]], function(x) {
+    id_list <- lapply(info[[targetElement]], function(x) {
         x[[1]][[1]][[1]]
     })
     # so we can later expand to a data.frame of the right size
     barcodes_per_file <- sapply(id_list, length)
     # And build the data.frame
     resultFrame <- data.frame(
-        file_id = rep(ids(info), barcodes_per_file),
+        id = rep(ids(info), barcodes_per_file),
         barcode = if (!length(ids(info))) character(0L) else unlist(id_list),
         row.names = NULL,
         stringsAsFactors = FALSE
     )
-    names(resultFrame)[2L] <- APIendpoint
+    names(resultFrame) <- c(id_type, APIendpoint)
     resultFrame
 }
 
