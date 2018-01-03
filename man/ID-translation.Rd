@@ -13,7 +13,7 @@ barcodeToUUID(barcodes, legacy = FALSE)
 }
 \arguments{
 \item{id_vector}{A \code{character} vector of UUIDs corresponding to
-files}
+either files or cases}
 
 \item{id_type}{Either \code{case_id} or \code{file_id} indicating the type of
 \code{id_vector} entered (default "case_id")}
@@ -33,9 +33,9 @@ These functions allow the user to enter a character vector of
 identifiers and use the GDC API to translate from TCGA barcodes to
 Universally Unique Identifiers (UUID) and vice versa. These relationships
 are not one-to-one. Therefore, a \code{data.frame} is returned for all
-inputs. The UUID to TCGA barcode translation only applies to file UUIDs.
-There are more types of UUIDs that are not supported. API queries for this
-translation service are not fully supported. Please double check any
+inputs. The UUID to TCGA barcode translation only applies to file and case
+UUIDs. There are more types of UUIDs that are not supported. API queries for
+this translation service are not fully supported. Please double check any
 results before using these features for analysis.
 }
 \details{
@@ -63,9 +63,9 @@ uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
 "002c67f2-ff52-4246-9d65-a3f69df6789e",
 "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 
-UUIDtoBarcode(uuids, end_point = "sample")
+UUIDtoBarcode(uuids, id_type = "file_id", end_point = "sample")
 
-UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", "case_id")
+UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
 
 ## Translate TCGA Barcode >> UUIDs
 
