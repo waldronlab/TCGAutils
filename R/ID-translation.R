@@ -99,7 +99,7 @@ UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
         x[[1]][[1]][[1]]
     })
     # so we can later expand to a data.frame of the right size
-    barcodes_per_file <- sapply(id_list, length)
+    barcodes_per_file <- lengths(id_list)
     # And build the data.frame
     resultFrame <- data.frame(
         id = rep(ids(info), barcodes_per_file),
@@ -157,7 +157,7 @@ barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
         x[[1]][[1]][[1]]
     })
 
-    barcodes_per_file <- sapply(id_list, length)
+    barcodes_per_file <- lengths(id_list)
 
     resultFrame <- data.frame(
         barcode = if (!length(ids(info))) character(0L) else unlist(id_list),

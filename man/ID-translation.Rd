@@ -34,9 +34,10 @@ identifiers and use the GDC API to translate from TCGA barcodes to
 Universally Unique Identifiers (UUID) and vice versa. These relationships
 are not one-to-one. Therefore, a \code{data.frame} is returned for all
 inputs. The UUID to TCGA barcode translation only applies to file and case
-UUIDs. There are more types of UUIDs that are not supported. API queries for
-this translation service are not fully supported. Please double check any
-results before using these features for analysis.
+UUIDs. API queries for this translation service with other types of UUIDS
+are not fully supported. Please double check any results before using these
+features for analysis. Case / submitter identifiers are translated by
+default, see the \code{id_type} argument for details.
 }
 \details{
 The \code{end_point} options reflect endpoints in the Genomic Data Commons
