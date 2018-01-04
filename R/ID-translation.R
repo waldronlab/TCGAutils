@@ -138,7 +138,7 @@ barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
     id_type <- match.arg(id_type)
     if (id_type == "case_id") {
         targetElement <- APIendpoint <- "submitter_id"
-        barcodes <- TCGAbarcode(barcodes)
+        barcodes <- unique(TCGAbarcode(barcodes))
     } else if (id_type == "file_id") {
         targetElement <- "cases"
         APIendpoint <- .barcodeEndpoint(.findBarcodeLimit(barcodes))
@@ -166,7 +166,8 @@ barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
         stringsAsFactors = FALSE
     )
     names(resultFrame) <- c(APIendpoint, id_type)
-    resultFrame <- resultFrame[resultFrame[[APIendpoint]] %in% barcodes, ]
+    resultFrame <- resultFrame[
+        na.omit(match(barcodes, resultFrame[[APIendpoint]])), ]
     rownames(resultFrame) <- NULL
     resultFrame
 }
