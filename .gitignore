@@ -6,11 +6,6 @@
 .RData
 *.txt
 *.tar.gz
-data-raw/*
-!bt.exon_quant.R
-!grlTCGA.R
-!grlTCGA.txt
-!bt.exon_quantification.txt
 
 # RStudio files
 .Rproj.user

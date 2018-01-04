@@ -24,6 +24,9 @@ diseaseCodes <- diseaseCodes[,
     c("Study.Abbreviation", "Available", "SubtypeData", "Study.Name")]
 rownames(diseaseCodes) <- NULL
 
+## Coerce to standard data.frame (no tibble required)
+diseaseCodes <- as(diseaseCodes, "data.frame")
+
 ## Save dataset for exported use
 devtools::use_data(diseaseCodes, internal = FALSE, overwrite = TRUE)
 
