@@ -27,9 +27,10 @@
 #' Universally Unique Identifiers (UUID) and vice versa. These relationships
 #' are not one-to-one. Therefore, a \code{data.frame} is returned for all
 #' inputs. The UUID to TCGA barcode translation only applies to file and case
-#' UUIDs. There are more types of UUIDs that are not supported. API queries for
-#' this translation service are not fully supported. Please double check any
-#' results before using these features for analysis.
+#' UUIDs. API queries for this translation service with other types of UUIDS
+#' are not fully supported. Please double check any results before using these
+#' features for analysis. Case / submitter identifiers are translated by
+#' default, see the \code{id_type} argument for details.
 #'
 #' @details
 #' The \code{end_point} options reflect endpoints in the Genomic Data Commons
@@ -131,19 +132,28 @@ UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
 #' barcodeToUUID(participant_ids)
 #'
 #' @export barcodeToUUID
-barcodeToUUID <-  function(barcodes, legacy = FALSE) {
+barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
+    legacy = FALSE) {
     .checkBarcodes(barcodes)
-    filesres <- files(legacy = legacy)
-    lastVal <- .findBarcodeLimit(barcodes)
-    selector <- .barcodeEndpoint(lastVal)
+    id_type <- match.arg(id_type)
+    if (id_type == "case_id") {
+        targetElement <- APIendpoint <- "submitter_id"
+        barcodes <- TCGAbarcode(barcodes)
+    } else if (id_type == "file_id") {
+        targetElement <- "cases"
+        APIendpoint <- .barcodeEndpoint(.findBarcodeLimit(barcodes))
+    }
+    funcRes <- switch(id_type,
+        file_id = files(legacy = legacy),
+        case_id = cases(legacy = legacy))
     info <- results_all(
-        select(filter(filesres, as.formula(
-            paste("~ ", selector, "%in% barcodes")
+        select(filter(funcRes, as.formula(
+            paste("~ ", APIendpoint, "%in% barcodes")
         )),
-        selector)
+        APIendpoint)
     )
 
-    id_list <- lapply(info[["cases"]], function(x) {
+    id_list <- lapply(info[[targetElement]], function(x) {
         x[[1]][[1]][[1]]
     })
 
@@ -151,11 +161,12 @@ barcodeToUUID <-  function(barcodes, legacy = FALSE) {
 
     resultFrame <- data.frame(
         barcode = if (!length(ids(info))) character(0L) else unlist(id_list),
-        file_id = rep(ids(info), barcodes_per_file),
+        ids = rep(ids(info), barcodes_per_file),
         row.names = NULL,
         stringsAsFactors = FALSE
     )
-    resultFrame <- resultFrame[resultFrame[["barcode"]] %in% barcodes, ]
+    names(resultFrame) <- c(APIendpoint, id_type)
+    resultFrame <- resultFrame[resultFrame[[APIendpoint]] %in% barcodes, ]
     rownames(resultFrame) <- NULL
     resultFrame
 }

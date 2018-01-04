@@ -1,7 +1,7 @@
 Package: TCGAutils
 Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
     data
-Version: 0.4.10
+Version: 0.99.11
 Description: A suite of functions aimed at simplifying and making the use of
     TCGA data manageable.
 Authors@R: c(

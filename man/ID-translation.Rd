@@ -9,7 +9,7 @@
 UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
   end_point = "participant", legacy = FALSE)
 
-barcodeToUUID(barcodes, legacy = FALSE)
+barcodeToUUID(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
 }
 \arguments{
 \item{id_vector}{A \code{character} vector of UUIDs corresponding to
