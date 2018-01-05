@@ -17,6 +17,7 @@ suppressPackageStartupMessages({
     library(TCGAutils)
     library(curatedTCGAData)
     library(MultiAssayExperiment)
+    library(RTCGAToolbox)
 })
 ```
 
@@ -32,6 +33,7 @@ Load some packages for the vignette:
 library(TCGAutils)
 library(curatedTCGAData)
 library(MultiAssayExperiment)
+library(RTCGAToolbox)
 ```
 
 # Overview
@@ -70,6 +72,77 @@ subset the `MultiAssayExperiment` object obtained from `curatedTCGADAta`.
 
 ```{r}
 getClinicalNames("COAD")
+```
+
+## `addClinical`
+
+This function takes a `data.frame` or `DataFrame` and merges it with the
+`colData` from an existing `MultiAssayExperiment` object. It will match
+column names and row names to do a full merge of both data sets. This
+convenience function is especially useful when the user has additional
+subtype information to incorporate into the `colData` slot.
+
+```{r}
+addClinical(MultiAssayExperiment(), data.frame())
+```
+
+# Data to Bioconductor classes
+
+A few functions take either files, classes such as `data.frame` and
+`FirehoseGISTIC` and convert them to standard Bioconductor classes.
+
+## `makeGRangesListFromExonFiles`
+
+In this example we use a legacy exon quantification file from the Genomic
+Data Commons. Some adjustments have to me made to the file name to account for
+Windows operating system deficiencies. We then use
+`makeGRangesListFromExonFiles` to create a `GRangesList` from vectors of file
+paths and names (where necessary).
+
+```{r}
+## Load example file found in package
+pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
+exonFile <- list.files(pkgDir, pattern = "cation\\.txt$", full.names = TRUE)
+exonFile
+
+## We add the original file prefix to query for the UUID and get the 
+## TCGAbarcode
+filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
+
+## Add actual file name manually
+makeGRangesListFromExonFiles(exonFile,
+    fileNames = paste0(filePrefix, basename(exonFile)))
+```
+
+## `makeGRangesListFromTCGA`
+
+Alternatively, we obtain an example data set with ranged information and
+use `makeGRangesListFromTCGA` to convert the data to a `GRangesList`.
+
+```{r}
+grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
+grl <- read.table(grlFile)
+head(grl)
+
+makeGRangesListFromTCGA(grl, split.field = "Sample")
+
+makeGRangesListFromTCGA(grl, split.field = "Sample", keep.extra.columns = TRUE)
+```
+
+## `makeSummarizedExperimentFromGISTIC`
+
+The `FirehoseGISTIC` class from the `RTCGAToolbox` can be used as input
+for this function. It allows the user to obtain thresholded by gene data,
+probabilities and 
+
+```{r}
+co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE,
+    destdir = tempdir())
+
+selectType(co, "GISTIC")
+class(selectType(co, "GISTIC"))
+
+makeSummarizedExperimentFromGISTIC(co, "Peaks")
 ```
 
 # Identifiers
