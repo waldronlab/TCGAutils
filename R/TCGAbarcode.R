@@ -5,8 +5,6 @@
 }
 
 .checkBarcodes <- function(barcodes) {
-    if (!all(nchar(barcodes) == 28L))
-        warning("Inconsistent barcode lengths")
     if (!all(startsWith(toupper(barcodes), "TCGA")))
         stop("Barcodes must start with 'TCGA'")
     filler <- .uniqueDelim(barcodes)
