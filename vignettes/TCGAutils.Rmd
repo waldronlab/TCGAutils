@@ -16,6 +16,7 @@ output:
 suppressPackageStartupMessages({
     library(TCGAutils)
     library(curatedTCGAData)
+    library(MultiAssayExperiment)
 })
 ```
 
@@ -30,6 +31,7 @@ Load some packages for the vignette:
 ```{r, eval=FALSE}
 library(TCGAutils)
 library(curatedTCGAData)
+library(MultiAssayExperiment)
 ```
 
 # Overview
@@ -39,3 +41,159 @@ data from `The Cancer Genome Atlas`. Some functions are geared towards working
 with existing tools and infrastructure such as `MultiAssayExperiment` and
 `curatedTCGAData`. Other functions are intended to work with flat data
 structures such as `data.frame` or `DataFrame`.
+
+# `curatedTCGAData` helpers
+
+Functions such as `getSubtypeMap` and `getClinicalNames` allow the user to
+manage data inside a downloaded `MultiAssayExperiment` object from
+`curatedTCGAData`
+
+## `getSubtypeMap`
+
+Subtype information is saved within the `metadata` of the `colData` slot of
+a `MultiAssayExperiment` from `curatedTCGAData`. Easy access is provided by
+this convenience function.
+
+```{r}
+coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
+    assays = "CNA*", dry.run = FALSE)
+getSubtypeMap(coad)
+```
+
+## `getClinicalNames`
+
+Many of the `curatedTCGAData` `colData` datasets contain an inordinate amount
+of columns. In order to separate the standard run variables from the rest,
+this function will allow the user to pull up the names from the shortened
+list of variables obtained from `RTCGAToolbox`. This can then be used to
+subset the `MultiAssayExperiment` object obtained from `curatedTCGADAta`.
+
+```{r}
+getClinicalNames("COAD")
+```
+
+# Identifiers
+
+## Translation
+
+The TCGA project has generated massive amounts of data. Some data can be
+obtained with **U**niversally **U**nique **ID**entifiers (**UUID**) and other
+data with TCGA barcodes. `TCGAutils` makes functions available for two-way
+translation between identifiers.
+
+### TCGA barcode to UUID
+
+Here we take the first 2 TCGA barcodes for the copy-number alterations dataset
+we downloaded previously. 
+
+```{r}
+(xbarcode <- head(colnames(coad)[["COAD_CNASeq-20160128"]], 4L))
+barcodeToUUID(xbarcode)
+```
+
+### UUID to TCGA barcode
+
+Here we have a known case UUID that we want to translate into a TCGA barcode.
+
+```{r}
+UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
+```
+
+Where we have a known file UUID that we translate into the associated TCGA
+barcode. Optional information can include sample, portion/analyte and
+plate/center data.
+
+```{r}
+UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf",
+    id_type = "file_id", end_point = "center")
+```
+
+## Parsing
+
+Several functions exist for working with TCGA barcodes. The main function being
+`TCGAbarcode`. It takes a TCGA barcode and returns the requested data.
+
+```{r}
+## Return participant barcodes
+TCGAbarcode(xbarcode, participant = TRUE)
+
+## Just return samples
+TCGAbarcode(xbarcode, participant = FALSE, sample = TRUE)
+
+## Include sample data as well
+TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE)
+
+## Include portion and analyte data
+TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE, portion = TRUE)
+``` 
+
+## Sample select
+
+Sample selection is also possible with `TCGAsampleSelect`. Based on lookup
+table values, the user can select certain sample types from a vector of
+sample barcodes. Below we select "Primary Solid Tumors" from the supplied
+barcode vector. Such function returns a logical vector corresponding to
+barcodes that match the given sample code.
+
+```{r}
+## Select primary solid tumors
+TCGAsampleSelect(xbarcode, "01")
+
+## Select blood derived normals
+TCGAsampleSelect(xbarcode, "10")
+```
+
+## `data.frame` representation of barcode
+
+The straightforward `TCGAbiospec` function will take the information contained
+in the TCGA barcode and display it in `data.frame` format with appropriate
+column names. 
+
+```{r}
+TCGAbiospec(xbarcode)
+```
+
+
+# Helper data
+
+The `TCGAutils` package contains a couple of helper datasets for defining
+sample type codes that can be obtained from a TCGA barcode.
+
+## `sampleTypes`
+
+```{r}
+## Obtained previously
+sampleCodes <- TCGAbarcode(xbarcode, participant = FALSE, sample = TRUE)
+
+## Lookup table
+data("sampleTypes")
+head(sampleTypes)
+
+## Match codes found in the barcode to the lookup table
+sampleTypes[match(unique(substr(sampleCodes, 1L, 2L)), sampleTypes[["Code"]]), ]
+```
+
+## `clinicalNames`
+
+This dataset contains a list variable names accross all `colData` datasets found
+in `curatedTCGAData`. This allows the user to search for particular variables
+within this short list of essential variable names. Shipped `curatedTCGAData`
+`MultiAssayExperiment` objects contain several more variables than the ones
+listed here. These variables are provided by default by the `RTCGAToolbox`
+which pulls data from the Firehose pipeline.
+
+
+```{r}
+data("clinicalNames")
+
+clinicalNames
+
+lengths(clinicalNames)
+```
+
+# `sessionInfo`
+
+```{r}
+sessionInfo()
+```
+
