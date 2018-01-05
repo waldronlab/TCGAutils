@@ -1,10 +1,12 @@
 #' Take a MultiAssayExperiment and include curated variables
 #'
 #' This function works on the \code{colData} of a
-#' \code{\linkS4class{MultiAssayExperiment}} object to add curated variable
-#' columns. It is recommended that the user run the scripts in the
+#' \code{\linkS4class{MultiAssayExperiment}} object to merge curated variable
+#' columns or other clinical variables that would like to be added. It is
+#' recommended that the user run the scripts in the
 #' \code{MultiAssayExperiment-TCGA} repository that build the "enhanced" type
-#' of data. Please see the repository's README for more information.
+#' of data but not necessary if using different clinical data.
+#' Please see the repository's README for more information.
 #'
 #' @param MultiAssayExperiment A \linkS4class{MultiAssayExperiment} object
 #' @param clinicalData A \code{DataFrame} or {data.frame} to merge with
