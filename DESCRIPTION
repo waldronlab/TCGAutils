@@ -1,9 +1,9 @@
 Package: TCGAutils
-Title: Helper functions for creating a MultiAssayExperiment instance with TCGA
-    data
-Version: 0.99.20
-Description: A suite of functions aimed at simplifying and making the use of
-    TCGA data manageable.
+Title: TCGA utility functions for data management
+Version: 0.99.21
+Description: A suite of helper functions for checking and manipulating TCGA data
+    including data obtained from the curatedTCGAData experiment package. These
+    functions aim to simplify and make working with TCGA data more manageable.
 Authors@R: c(
     person("Marcel", "Ramos", email = "marcel.ramos@roswellpark.org",
     role = c("aut", "cre")),
@@ -11,21 +11,19 @@ Authors@R: c(
     person("WaldronLab", role = "ctb")
     )
 Depends:
-    R (>= 3.4.0)
+    R (>= 3.5)
 Imports:
-    Biobase,
-    BiocGenerics,
-    GenomeInfoDb,
     GenomicRanges,
     GenomicDataCommons,
     IRanges,
     methods,
     MultiAssayExperiment,
-    RaggedExperiment,
     RTCGAToolbox (>= 2.7.5),
     rvest,
     S4Vectors,
+    stats,
     SummarizedExperiment,
+    utils,
     xml2
 Suggests:
     BiocStyle,

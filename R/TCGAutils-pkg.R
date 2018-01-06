@@ -1,4 +1,4 @@
-#' @import Biobase methods BiocGenerics GenomeInfoDb
+#' @import methods
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_attr
 #' @importFrom GenomicRanges GRanges GRangesList makeGRangesListFromDataFrame
