@@ -11,6 +11,7 @@
 #' @importFrom GenomicDataCommons files results_all select filter ids cases
 #' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
 #' DataFrame
+#' @importFrom RTCGAToolbox getData
 NULL
 
 #' TCGAutils: Helper fucntions for working with TCGA and MultiAssayExperiment

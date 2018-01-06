@@ -27,6 +27,7 @@ Imports:
     xml2
 Suggests:
     BiocStyle,
+    curatedTCGAData,
     knitr,
     readr,
     testthat
