@@ -17,6 +17,7 @@
 #'     destdir = tempdir())
 #' makeSummarizedExperimentFromGISTIC(co, "AllByGene")
 #'
+#' @return A \code{SummarizedExperiment} object
 #' @export
 makeSummarizedExperimentFromGISTIC <- function(gistic, dataType) {
     gist <- RTCGAToolbox::getData(gistic, "GISTIC", dataType)

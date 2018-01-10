@@ -11,6 +11,9 @@ makeSummarizedExperimentFromGISTIC(gistic, dataType)
 
 \item{dataType}{Either one of "ThresholdedByGene", "AllByGene", "Peaks"}
 }
+\value{
+A \code{SummarizedExperiment} object
+}
 \description{
 Use the output of \code{getFirehoseData} to create a
 \linkS4class{SummarizedExperiment}. This can be done for three types of
