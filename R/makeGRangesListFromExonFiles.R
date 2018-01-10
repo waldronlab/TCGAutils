@@ -8,7 +8,7 @@
         a[[1L]][[1L]][[1L]]
     })
     # so we can later expand to a data.frame of the right size
-    barcodes_per_file <- sapply(id_list,length)
+    barcodes_per_file <- lengths(id_list)
     # And build the data.frame
     data.frame(file_name = rep(fileNames, barcodes_per_file),
         file_id = rep(ids(info), barcodes_per_file),
