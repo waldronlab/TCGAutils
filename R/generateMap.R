@@ -20,10 +20,21 @@
 #'
 #' @author M. Ramos, M. Morgan, L. Schiffer
 #'
-#' @examples \dontrun{
-#' ## For TCGA data
-#' newMap <- generateMap(myExpList, myPheno, TCGAbarcode)
-#' }
+#' @examples
+#' ## Minimal example
+#' expList <- list(assay1 = matrix(1:6, ncol = 2L,
+#'         dimnames = list(paste0("feature", 1:3), c("A-J", "B-J"))),
+#'     assay2 = matrix(1:4, ncol = 2,
+#'         dimnames = list(paste0("gene", 1:2), c("A-L", "B-L"))))
+#'
+#' ## A ficticious colData
+#' myPheno <- data.frame(var1 = c("Yes", "No"), var2 = c("High", "Low"),
+#'     row.names = c("a", "b"))
+#'
+#' ## Provide an idConverter function to take corresponding letter codes
+#' ## for each biological unit
+#' generateMap(expList, myPheno,
+#'     idConverter = function(x) substr(tolower(x), 1L, 1L))
 #'
 #' @export generateMap
 generateMap <- function(experiments, colData, idConverter = NULL, ...) {
