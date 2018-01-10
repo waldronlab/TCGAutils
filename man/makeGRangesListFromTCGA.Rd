@@ -35,6 +35,7 @@ head(grl)
 
 makeGRangesListFromTCGA(grl, split.field = "Sample")
 
-makeGRangesListFromTCGA(grl, split.field = "Sample", keep.extra.columns = TRUE)
+makeGRangesListFromTCGA(grl, split.field = "Sample",
+    keep.extra.columns = TRUE)
 
 }

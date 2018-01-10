@@ -54,8 +54,7 @@
     df_colnames_nc <- nchar(df_colnames)
     prefixes <- lapply(field, function(suf) {
         pref_nc <- df_colnames_nc - nchar(suf)
-        idx <- which(substr(df_colnames, pref_nc + 1L, df_colnames_nc) ==
-                         suf)
+        idx <- which(substr(df_colnames, pref_nc + 1L, df_colnames_nc) == suf)
         substr(df_colnames[idx], 1L, pref_nc[idx])
     })
     unique(unlist(prefixes))
@@ -65,7 +64,7 @@
     suffixes <- lapply(field, function(pre) {
         idx <- which(startsWith(df_colnames, pre))
         substr(df_colnames[idx], nchar(field) + 1L,
-               nchar(df_colnames[idx]))
+            nchar(df_colnames[idx]))
     })
     unique(unlist(suffixes))
 }
@@ -147,11 +146,12 @@ findGRangesCols <- function (df_colnames,
     ignore.strand = FALSE) {
 
     df_colnames0 <- tolower(df_colnames)
-    seqnames.field0 <- GenomicRanges:::.normarg_field(seqnames.field, "seqnames")
+    seqnames.field0 <-
+        GenomicRanges:::.normarg_field(seqnames.field, "seqnames")
     start.field0 <- GenomicRanges:::.normarg_field(start.field, "start")
     end.field0 <- GenomicRanges:::.normarg_field(end.field, "end")
     start_end_cols <- .find_start_end_cols(df_colnames0, start.field0,
-                                           end.field0)
+        end.field0)
     xfix <- start_end_cols[[2L]]
     width_col <- .find_width_col(df_colnames0, "width", xfix)
     seqnames_col <- .find_seqnames_col(df_colnames0, seqnames.field0, xfix)
@@ -162,5 +162,5 @@ findGRangesCols <- function (df_colnames,
         strand_col <- .find_strands_col(df_colnames0, strand.field0, xfix)
     }
     c(seqnames = seqnames_col, start_end_cols[[1L]], width = width_col,
-      strand = strand_col)
+        strand = strand_col)
 }
