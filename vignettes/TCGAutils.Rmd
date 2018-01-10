@@ -2,14 +2,14 @@
 title: "TCGAutils: Helper functions for working with TCGA datasets"
 author: "Waldron Lab"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{TCGAutils Essentials}
-  %\VignetteEncoding{UTF-8}
 output:
   BiocStyle::html_document:
     number_sections: yes
     toc: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{TCGAutils Essentials}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, echo=FALSE, warning=FALSE}
@@ -56,9 +56,24 @@ Subtype information is saved within the `metadata` of the `colData` slot of
 a `MultiAssayExperiment` from `curatedTCGAData`. Easy access is provided by
 this convenience function.
 
-```{r}
+```{r, echo = FALSE}
+suppressMessages({
 coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
     assays = "CNA*", dry.run = FALSE)
+})
+```
+
+First we download part of the COAD MultiAssayExperiment object from
+`ExperimentHub`:
+
+```{r, eval = FALSE}
+coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
+    assays = "CNA*", dry.run = FALSE)
+```
+
+We get the subtype information from the object with the helper:
+
+```{r}
 getSubtypeMap(coad)
 ```
 
@@ -136,8 +151,9 @@ for this function. It allows the user to obtain thresholded by gene data,
 probabilities and 
 
 ```{r}
+tempDIR <- tempdir()
 co <- getFirehoseData("COAD", clinical = FALSE, GISTIC = TRUE,
-    destdir = tempdir())
+    destdir = tempDIR)
 
 selectType(co, "GISTIC")
 class(selectType(co, "GISTIC"))
