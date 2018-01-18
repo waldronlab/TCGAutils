@@ -38,7 +38,7 @@
     suffixes1 <- .collect_suffixes(df_colnames, start.field)
     suffixes2 <- .collect_suffixes(df_colnames, end.field)
     if (length(idx1) == 1L && length(idx2) == 1L) {
-        return(list(c(start = idx1, end = idx2), ""))
+        return(list(c(start = idx1, end = idx2), list(c(none = ""))))
     }
     if (length(idx1) != 1L && length(prefixes1) ||
         length(idx2) != 1L && length(prefixes2)) {
@@ -47,7 +47,8 @@
     idx1 <- which(df_colnames %in% startend.fields[[1L]][["start.field"]])
     idx2 <- which(df_colnames %in% startend.fields[[1L]][["end.field"]])
     }
-    if (!length(idx1) && !length(idx2)) {
+    if (length(idx1) != 1L && length(suffixes1) ||
+        length(idx2) != 1L && length(suffixes2)) {
     startend.fields <- .find_with_xfix(df_colnames, suffixes1, suffixes2,
         start.field, end.field, "suf")
     idx1 <- which(df_colnames %in% startend.fields[[1L]][["start.field"]])
@@ -56,7 +57,7 @@
     if (length(idx1) == 1L && length(idx2) == 1L) {
         list(c(start = idx1, end = idx2), startend.fields[2L])
     } else {
-        list(c(start = NA_integer_, end = NA_integer_), "")
+        list(c(start = NA_integer_, end = NA_integer_), list(c(none = "")))
     }
 }
 
@@ -80,7 +81,7 @@
 }
 
 .find_strands_col <- function(df_colnames, strand.field, xfix) {
-    fixFUN <- switch(names(xfix[[1]]), pre = I, suf = rev)
+    fixFUN <- switch(names(xfix[[1]]), pre = I, suf = rev, none = I)
     idx <- which(df_colnames %in%
         paste(fixFUN(c(xfix, strand.field)), collapse = ""))
     if (length(idx) == 0L)
@@ -95,7 +96,7 @@
 }
 
 .find_seqnames_col <- function (df_colnames, seqnames.field, xfix) {
-    fixFUN <- switch(names(xfix[[1]]), pre = I, suf = rev)
+    fixFUN <- switch(names(xfix[[1]]), pre = I, suf = rev, none = I)
     idx <- which(df_colnames %in%
         paste(fixFUN(c(xfix, seqnames.field)), collapse = ""))
     if (length(idx) == 0L)
@@ -109,7 +110,7 @@
 }
 
 .find_width_col <- function (df_colnames, width.field, xfix) {
-    fixFUN <- switch(names(xfix[[1]]), pre = I, suf = rev)
+    fixFUN <- switch(names(xfix[[1]]), pre = I, suf = rev, none = I)
     idx <- which(df_colnames %in%
         paste(fixFUN(c(xfix, width.field)), collapse = ""))
     if (length(idx) == 0L)
