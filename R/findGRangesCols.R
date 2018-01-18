@@ -2,7 +2,17 @@
         start.field, end.field, xfixType = "pre") {
     fixint <- intersect(xfix1, xfix2)
     fixint <- fixint[fixint != ""]
-    if (!S4Vectors::isSingleString(fixint))
+    if (length(fixint) > 1L) {
+        kword <- "region"
+        warning(" Multiple ", xfixType, "fixes found, using keyword '", kword,
+                "' or taking first one")
+        ## keywords to keep, else take first one
+        gfix <- grep(kword, fixint, value = TRUE)
+        if (length(gfix) && isSingleString(gfix))
+            fixint <- gfix
+        fixint <- fixint[[1L]]
+    }
+    if (!isSingleString(fixint))
         stop("'start.field' and 'end.field' ", xfixType, "fixes do not match")
     names(fixint) <- xfixType
 
@@ -139,7 +149,7 @@
 #' @export findGRangesCols
 findGRangesCols <- function (df_colnames,
     seqnames.field = c("seqnames", "seqname", "chromosome",
-                    "chrom", "chr", "chromosome_name", "seqid"),
+        "chrom", "chr", "chromosome_name", "seqid"),
     start.field = "start",
     end.field = c("end", "stop"),
     strand.field = "strand",
