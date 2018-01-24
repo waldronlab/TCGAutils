@@ -60,3 +60,61 @@ getClinicalNames <- function(diseaseCode) {
     clinNames <- env[["clinicalNames"]]
     clinNames[[diseaseCode]]
 }
+
+#' @rdname curatedTCGAData-helpers
+#'
+#' @param sampleCodes A string of sample type codes
+#' (refer to \code{data(sampleTypes)}; default "01", "11")
+#'
+#' @section separateSamples:
+#'     Separates samples by indicated sample codes into different assays
+#'     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
+#'     data object for a list of available codes. This operation generates
+#'     \strong{n} times the number of assays based on the number of sample codes
+#'     entered. By default, primary solid tumors ("01") and solid tissue
+#'     normals ("11") are seperated out.
+#' @export
+separateSamples <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
+    if (!is(multiassayexperiment, "MultiAssayExperiment"))
+        stop("Provide a 'MultiAssayExperiment' object")
+
+    env <- new.env(parent = emptyenv())
+    data("sampleTypes", envir = env)
+    sampleTypes <- env[["sampleTypes"]]
+    if (!sampleCodes %in% sampleTypes[["Code"]] || !is.character(sampleCodes))
+        stop("Provide valid sample types string")
+
+    exgrid <- expand.grid(names(multiassayexperiment), sampleCodes)[, 2L:1L]
+    elistnames <- apply(exgrid, 1L, paste, collapse = "_")
+    setelist <- vector("list", length(elistnames))
+
+    egroups <- lapply(sampleCodes, function(scode) {
+        logitype <- relist(TCGAsampleSelect(unlist(colnames(multiassayexperiment),
+            use.names = FALSE), scode), colnames(multiassayexperiment))
+        explist <- subsetByColumn(experiments(coad), logitype)
+        names(explist) <- paste0(scode, "_", names(explist))
+        explist
+    })
+    egroups <- do.call(c, egroups)
+    sampmap <- generateMap(egroups, colData(multiassayexperiment),
+        idConverter = TCGAbarcode)
+    BiocGenerics:::replaceSlots(multiassayexperiment,
+        ExperimentList = egroups,
+        sampleMap = sampmap)
+}
+
+#' @rdname curatedTCGAData-helpers
+#' @param vial (logical default FALSE) whether to display vials in the
+#' table output
+#'
+#' @section sampleTables:
+#'     Display all the available samples in each of the assays
+#' @export
+sampleTables <- function(multiassayexperiment, vial = FALSE) {
+    lapply(colnames(multiassayexperiment), function(x) {
+        scodes <- TCGAbarcode(x, participant = FALSE, sample = TRUE)
+        if (!vial)
+            scodes <- substr(scodes, 1L, 2L)
+        table(unname(scodes))
+   })
+}
