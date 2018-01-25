@@ -48,7 +48,41 @@ structures such as `data.frame` or `DataFrame`.
 
 Functions such as `getSubtypeMap` and `getClinicalNames` allow the user to
 manage data inside a downloaded `MultiAssayExperiment` object from
-`curatedTCGAData`
+`curatedTCGAData`. `sampleTables` and `separateSamples` allow the user to
+work with TCGA samples already present in the data.
+
+## `sampleTables`
+
+What sample types are present in the data?
+
+```{r}
+sampleTables(coad)
+```
+
+For reference, see `sampleTypes` table contained in the package.
+
+```{r}
+data("sampleTypes")
+sampleTypes
+```
+
+## `separateSamples`
+
+Now, `separateSamples` takes a vector of sample codes and creates separate
+assays.
+
+```{r}
+(tnmae <- separateSamples(coad, c("01", "11")))
+```
+
+To truly see what biological units are present across all datasets,
+the `MultiAssayExperiment` object can be coerced to a `MatchedAssayExperiment`.
+
+```{r}
+(matchmae <- as(tnmae, "MatchedAssayExperiment"))
+```
+
+Only about 12 participants have a matched tumor and solid normal samples.
 
 ## `getSubtypeMap`
 
@@ -59,7 +93,7 @@ this convenience function.
 ```{r, echo = FALSE}
 suppressMessages({
 coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = "CNA*", dry.run = FALSE)
+    assays = "CN*", dry.run = FALSE)
 })
 ```
 
@@ -68,7 +102,7 @@ First we download part of the COAD MultiAssayExperiment object from
 
 ```{r, eval = FALSE}
 coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = "CNA*", dry.run = FALSE)
+    assays = "CN*", dry.run = FALSE)
 ```
 
 We get the subtype information from the object with the helper:
@@ -250,12 +284,14 @@ sample type codes that can be obtained from a TCGA barcode.
 
 ## `sampleTypes`
 
+As shown previously, the reference dataset `sampleTypes` is available as
+obtained from the TCGA website. See `?sampleTypes` for source url.
+
 ```{r}
 ## Obtained previously
 sampleCodes <- TCGAbarcode(xbarcode, participant = FALSE, sample = TRUE)
 
 ## Lookup table
-data("sampleTypes")
 head(sampleTypes)
 
 ## Match codes found in the barcode to the lookup table
