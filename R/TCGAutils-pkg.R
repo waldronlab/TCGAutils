@@ -3,7 +3,8 @@
 #' @importFrom rvest html_nodes html_attr
 #' @importFrom GenomicRanges GRanges GRangesList makeGRangesListFromDataFrame
 #' @importFrom MultiAssayExperiment ExperimentList colData colData<- metadata
-#' @importFrom utils data head read.delim
+#' subsetByColumn experiments
+#' @importFrom utils data head read.delim relist
 #' @importFrom stats as.formula na.omit
 #' @importFrom IRanges CharacterList
 #' @importFrom SummarizedExperiment SummarizedExperiment mcols mcols<- rowData

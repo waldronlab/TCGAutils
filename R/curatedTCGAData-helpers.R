@@ -87,11 +87,13 @@ separateSamples <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
     exgrid <- expand.grid(names(multiassayexperiment), sampleCodes)[, 2L:1L]
     elistnames <- apply(exgrid, 1L, paste, collapse = "_")
     setelist <- vector("list", length(elistnames))
+    cnames <- colnames(multiassayexperiment)
+    exps <- experiments(multiassayexperiment)
 
     egroups <- lapply(sampleCodes, function(scode) {
-        logitype <- relist(TCGAsampleSelect(unlist(colnames(multiassayexperiment),
-            use.names = FALSE), scode), colnames(multiassayexperiment))
-        explist <- subsetByColumn(experiments(multiassayexperiment), logitype)
+        logitype <- relist(TCGAsampleSelect(
+            unlist(cnames, use.names = FALSE), scode), cnames)
+        explist <- subsetByColumn(exps, logitype)
         names(explist) <- paste0(scode, "_", names(explist))
         explist
     })
