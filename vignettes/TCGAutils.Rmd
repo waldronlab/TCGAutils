@@ -21,13 +21,20 @@ suppressPackageStartupMessages({
 })
 ```
 
+# Overview
+
+The `TCGAutils` package completes a suite of Bioconductor packages for convenient access, integration, and analysis of *The Cancer Genome Atlas*. It includes:
+	0.	helpers for working with TCGA through the Bioconductor packages `r Biocpkg("MultiAssayExperiment")` (for coordinated representation and manipulation of multi-omits experiments) and `r Biocpkg("curatedTCGAData")`, which provides unrestricted TCGA data as `MultiAssayExperiment` objects,
+	0.	helpers for importing TCGA data as from flat data structures such as `data.frame` or `DataFrame` read from delimited data structures provided by the Broad Institute’s Firehose, and
+	0.	functions for interpreting TCGA barcodes and for mapping between barcodes and Universally Unique Identifiers (UUIDs).
+
 # Installation
 
 ```{r, eval=FALSE}
 BiocInstaller::biocLite("TCGAutils")
 ```
 
-Load some packages for the vignette:
+Required packages for this vignette:
 
 ```{r, eval=FALSE}
 library(TCGAutils)
@@ -36,25 +43,14 @@ library(MultiAssayExperiment)
 library(RTCGAToolbox)
 ```
 
-# Overview
-
-The `TCGAutils` package provides some utility functions for working with
-data from `The Cancer Genome Atlas`. Some functions are geared towards working
-with existing tools and infrastructure such as `MultiAssayExperiment` and
-`curatedTCGAData`. Other functions are intended to work with flat data
-structures such as `data.frame` or `DataFrame`.
-
 # `curatedTCGAData` helpers
 
-Functions such as `getSubtypeMap` and `getClinicalNames` allow the user to
-manage data inside a downloaded `MultiAssayExperiment` object from
-`curatedTCGAData`. `sampleTables` and `separateSamples` allow the user to
-work with TCGA samples already present in the data.
+Functions such as `getSubtypeMap` and `getClinicalNames` provide information on data inside a `r Biocpkg("MultiAssayExperiment")` object downloaded from
+`r Biocpkg("curatedTCGAData")`. `sampleTables` and `separateSamples` support useful operations on these `MultiAssayExperiment` objects.
 
-## `MultiAssayExperiment` from `curatedTCGAData`
+## obtaining TCGA as `MultiAssayExperiment` objects from `curatedTCGAData`
 
-First, download the a part Colon Adenocarcinoma (COAD) dataset using
-`curatedTCGAData` via `ExperimentHub`. The command will download any
+For demonstration we download part of the Colon Adenocarcinoma (COAD) dataset using`curatedTCGAData` via `ExperimentHub`. This command download any
 data type that starts with `CN*` such as `CNASeq`:
 
 ```{r, echo = FALSE}
@@ -76,70 +72,61 @@ asterisk `*` as the assay input value:
 curatedTCGAData("COAD", "*")
 ```
 
-## `sampleTables`
+## `sampleTables`: what sample types are present in the data?
 
-What sample types are present in the data?
+The `sampleTables` function gives a tally of available
+samples in the dataset based on the TCGA barcode information. 
 
 ```{r}
 sampleTables(coad)
 ```
 
-The `sampleTables` will give you a tally of all the available
-samples based on the TCGA barcode information. 
-
-For reference, see `sampleTypes` table contained in the package.
+For reference in interpreting the sample type codes, see the `sampleTypes` table:
 
 ```{r}
 data("sampleTypes")
 sampleTypes
 ```
 
-## `separateSamples`
+## `separateSamples`: separate the data from different tissue types
 
-Now, `separateSamples` takes a vector of sample codes and partitions the current
-assays into assays with an appended sample code.
+TCGA datasets include multiple -omics for solid tumors, adjacent normal tissues, blood-derived cancers and normals, and other tissue types, which may  be mixed together in a single dataset. The `MultiAssayExperiment` object generated here has one patient per row of its `colData`, but each patient may have two or more -omics profiles by any assay, whether due to assaying of different types of tissues or to technical replication. `separateSamples` separates profiles from different tissue types (such as tumor and adjacent normal) into different assays of the `MultiAssayExperiment` by taking a vector of sample codes, and partitioning the current assays into assays with an appended sample code:
 
 ```{r}
 (tnmae <- separateSamples(coad, c("01", "11")))
 ```
 
-To match tumors to adjacent normals, `MatchedAssayExperiment` will ensure
-that every biological unit / patient is represented across all datasets.
+The `r Biocpkg("MultiAssayExperiment")` package then provides functionality to merge replicate profiles for a single patient (`mergeReplicates()`), which would now be appropriate but would **not** have been appropriate before splitting different tissue types into different assays, because that would average measurements  from tumors and normal tissues.
+
+`MultiAssayExperiment` also defines the `MatchedAssayExperiment` class, which eliminates any profiles not present across all assays and ensures identical ordering of profiles (columns) in each assay. In this example, it will match tumors to adjacent normals in subsequent assays:
 
 ```{r}
 (matchmae <- as(tnmae, "MatchedAssayExperiment"))
 ```
 
-Only about 12 participants have a matched tumor and solid normal samples.
+Only about 12 participants have both a matched tumor and solid normal sample.
 
-## `getSubtypeMap` - subtype information
+## `getSubtypeMap`: manually curated molecular subtypes
 
-Subtype mapping information is saved within the `metadata` of the `colData`
-slot of a `MultiAssayExperiment` downloaded from `curatedTCGAData`.
-Easy access is provided by this convenience function. These mappings refer to
-the curation efforts to categorize each subtype variable into a general
-category.
-
-Using the helper, one can obtain the subtype map:
+Per-tumor subtypes are saved in the `metadata` of the `colData`
+slot of `MultiAssayExperiment` objects downloaded from `curatedTCGAData`.
+These subtypes were manually curated from the supplemental tables of all primary TCGA publications:
 
 ```{r}
 getSubtypeMap(coad)
 ```
 
-## `getClinicalNames`
+## `getClinicalNames`: key “level 4” clinical &  pathological data
 
-Many of the `curatedTCGAData` `colData` datasets contain an inordinate amount
-of columns. In order to separate the standard run variables from the rest,
-this function will allow the user to pull up the names from a shortened
-list of variables obtained from `RTCGAToolbox` and the Firehose pipeline.
-This can then be used to subset the `MultiAssayExperiment` object obtained
-from `curatedTCGADAta`.
+The `curatedTCGAData` `colData` contain hundreds of columns, obtained from merging all unrestricted levels of clinical, pathological, and biospecimen data.
+This function provides the names of “level 4” clinical/pathological variables, which are the only ones provided by most other TCGA analysis tools. 
+Users may then use these variable names for subsetting or analysis, and may even want to subset the `colData` to only these commonly used variables.
 
 ```{r}
 getClinicalNames("COAD")
 ```
 
-Some names may not exactly match the `colData` names in the object due
+*Warning*: some names may not exactly match the `colData` names in the object due
 to differences in variable types. These variables are kept separate and
 differentiated with `x` and `y`. For example, `vital_status` in this case
 corresponds to two different variables obtained from the pipeline. One variable
@@ -153,33 +140,34 @@ table(colData(coad)[["vital_status.x"]])
 table(colData(coad)[["vital_status.y"]])
 ```
 
-These conflicts can be resolved with further curation.
+Such conflicts should be inspected in this manner, and conflicts resolved by choosing the more complete variable, or by treating any conflicting values as unknown (“NA”).
 
-## `addClinical`
+## `addClinical`: expanding the `colData` of a `MultiAssayExperiment`
 
-This function takes a `data.frame` or `DataFrame` and merges it with the
-`colData` from an existing `MultiAssayExperiment` object. It will match
+This function merges a `data.frame` or `DataFrame` into the
+`colData` of an existing `MultiAssayExperiment` object. It will match
 column names and row names to do a full merge of both data sets. This
-convenience function is especially useful when the user has additional
-subtype information to incorporate into the `colData` slot.
+convenience function can be used, for example, to add subtype information available for a subset of patients to the `colData`. Here is an example on an empty `MultiAssayExperiment` just to demonstrate its usage:
 
 ```{r}
 addClinical(MultiAssayExperiment(), data.frame())
 ```
 
-# Data to Bioconductor classes - from files or data classes
+# Importing TCGA text data files to Bioconductor classes
 
 A few functions in the package accept either files or classes such as
-`data.frame` and `FirehoseGISTIC` as input and return to standard Bioconductor
-classes.
+`data.frame` and `FirehoseGISTIC` as input and return standard Bioconductor
+classes. 
 
 ## `makeGRangesListFromExonFiles`
 
+% % Could you use the GenomicDataCommons library to get an example file instead, or show the GDC command that would be used to obtain the file?
+
+The `GRangesList` class from the `r Biocpkg("GenomicRanges")` package is suitable for grouping `GRanges` vectors as a list, such as for grouping exons by gene. 
 In this example we use a legacy exon quantification file from the Genomic
-Data Commons. Some adjustments have to me made to the file name to account for
-Windows operating system limitations. We then use
+Data Commons. We then use
 `makeGRangesListFromExonFiles` to create a `GRangesList` from vectors of file
-paths and names (where necessary).
+paths and names (where necessary). Some adjustments have been made to the file name for cross-platform compatibility with Windows operating system limitations. 
 
 ```{r}
 ## Load example file found in package
@@ -196,12 +184,12 @@ makeGRangesListFromExonFiles(exonFile,
     fileNames = paste0(filePrefix, basename(exonFile)))
 ```
 
+Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")` class to incorporate them into a `MultiAssayExperiment`.
+
 ## `makeGRangesListFromTCGA`
 
-Alternatively, we obtain an example copy number dataset with ranged information
-and use `makeGRangesListFromTCGA` to convert the data to a `GRangesList`.
-The data file can be obtained from the Genomic Data Commons. This example
-uses a copy number alterations dataset from Bladder Urothelial Carcinoma (BLCA). 
+Other processed, genomic range-based data from TCGA data can be imported using `makeGRangesListFromTCGA`.
+This tab-delimited data file of copy number alterations from *bladder urothelial *arcinoma* (BLCA) was obtained from the Genomic Data Commons and is included in `TCGAUtils` as an example:
 
 ```{r}
 grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
@@ -215,9 +203,7 @@ makeGRangesListFromTCGA(grl, split.field = "Sample", keep.extra.columns = TRUE)
 
 ## `makeSummarizedExperimentFromGISTIC`
 
-The `FirehoseGISTIC` class from the `RTCGAToolbox` can be used as input
-for this function. It allows the user to obtain thresholded by gene data,
-probabilities and peak regions.
+This function is only used for converting the `FirehoseGISTIC` class of the `r Biocpkg("RTCGAToolbox")` package. It allows the user to obtain thresholded by gene data, probabilities and peak regions.
 
 ```{r}
 tempDIR <- tempdir()
@@ -230,19 +216,18 @@ class(selectType(co, "GISTIC"))
 makeSummarizedExperimentFromGISTIC(co, "Peaks")
 ```
 
-# Identifiers
+# Translating and interpreting TCGA identifiers
 
 ## Translation
 
 The TCGA project has generated massive amounts of data. Some data can be
 obtained with **U**niversally **U**nique **ID**entifiers (**UUID**) and other
-data with TCGA barcodes. `TCGAutils` makes functions available for two-way
-translation between identifiers.
+data with TCGA barcodes. The Genomic Data Commons provides a JSON API for mapping between UUID and barcode, but it is difficult for many people to understand. `TCGAutils` makes simple functions available for two-way
+translation between vectors of these identifiers.
 
 ### TCGA barcode to UUID
 
-Here we take the first 2 TCGA barcodes for the copy-number alterations dataset
-we downloaded previously. 
+Here we translate the first two TCGA barcodes of the previous copy-number alterations dataset to UUID:
 
 ```{r}
 (xbarcode <- head(colnames(coad)[["COAD_CNASeq-20160128"]], 4L))
@@ -258,18 +243,17 @@ UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
 ```
 
 Where we have a known file UUID that we translate into the associated TCGA
-barcode. Optional information can include sample, portion/analyte and
-plate/center data.
+barcode. Optional barcode information can be included for sample, portion/analyte, and plate/center.
 
 ```{r}
 UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf",
     id_type = "file_id", end_point = "center")
 ```
 
-## Parsing
+## Parsing TCGA barcodes
 
-Several functions exist for working with TCGA barcodes. The main function being
-`TCGAbarcode`. It takes a TCGA barcode and returns the requested data.
+Several functions exist for working with TCGA barcodes, the main function being
+`TCGAbarcode`. It takes a TCGA barcode and returns information about participant, sample, and/or portion.
 
 ```{r}
 ## Return participant barcodes
@@ -287,11 +271,9 @@ TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE, portion = TRUE)
 
 ## Sample select
 
-Sample selection is also possible with `TCGAsampleSelect`. Based on lookup
+Based on lookup
 table values, the user can select certain sample types from a vector of
-sample barcodes. Below we select "Primary Solid Tumors" from the supplied
-barcode vector. Such function returns a logical vector corresponding to
-barcodes that match the given sample code.
+sample barcodes. Below we select "Primary Solid Tumors" from a vector of barcodes, returning a logical vector identifying the matching samples.
 
 ```{r}
 ## Select primary solid tumors
@@ -313,13 +295,11 @@ TCGAbiospec(xbarcode)
 
 # Reference data
 
-The `TCGAutils` package contains a couple of helper datasets for defining
-sample type codes that can be obtained from a TCGA barcode.
+The `TCGAutils` package provides several helper datasets for working with TCGA barcodes.
 
 ## `sampleTypes`
 
-As shown previously, the reference dataset `sampleTypes` is available as
-obtained from the TCGA website. See `?sampleTypes` for source url.
+As shown previously, the reference dataset `sampleTypes` defines sample codes and their sample types (see `?sampleTypes` for source url).
 
 ```{r}
 ## Obtained previously
@@ -336,12 +316,9 @@ Source: https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type
 
 ## `clinicalNames` - Firehose pipeline clinical variables
 
-This dataset contains a list variable names accross all `colData` datasets found
-in `curatedTCGAData`. This allows the user to search for particular variables
-within this short list of common variable names. Shipped `curatedTCGAData`
-`MultiAssayExperiment` objects contain several more variables than the ones
-listed here. These variables are provided by default by the `RTCGAToolbox`
-which pulls data from the Firehose pipeline.
+`clinicalNames` is a list of the level 4 variable names (the most commonly used clinical and pathological variables, with follow-ups merged) from each `colData` datasets in `curatedTCGAData`. Shipped `curatedTCGAData`
+`MultiAssayExperiment` objects merge additional levels 1-3 clinical, pathological, and biospecimen data and contain many more variables than the ones
+listed here.
 
 ```{r}
 data("clinicalNames")
@@ -356,4 +333,3 @@ lengths(clinicalNames)
 ```{r}
 sessionInfo()
 ```
-
