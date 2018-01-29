@@ -24,9 +24,9 @@ suppressPackageStartupMessages({
 # Overview
 
 The `TCGAutils` package completes a suite of Bioconductor packages for convenient access, integration, and analysis of *The Cancer Genome Atlas*. It includes:
-	0.	helpers for working with TCGA through the Bioconductor packages `r Biocpkg("MultiAssayExperiment")` (for coordinated representation and manipulation of multi-omits experiments) and `r Biocpkg("curatedTCGAData")`, which provides unrestricted TCGA data as `MultiAssayExperiment` objects,
-	0.	helpers for importing TCGA data as from flat data structures such as `data.frame` or `DataFrame` read from delimited data structures provided by the Broad Institute’s Firehose, and
-	0.	functions for interpreting TCGA barcodes and for mapping between barcodes and Universally Unique Identifiers (UUIDs).
+    0.    helpers for working with TCGA through the Bioconductor packages `r Biocpkg("MultiAssayExperiment")` (for coordinated representation and manipulation of multi-omits experiments) and `r Biocpkg("curatedTCGAData")`, which provides unrestricted TCGA data as `MultiAssayExperiment` objects,
+    0.    helpers for importing TCGA data as from flat data structures such as `data.frame` or `DataFrame` read from delimited data structures provided by the Broad Institute’s Firehose, and
+    0.    functions for interpreting TCGA barcodes and for mapping between barcodes and Universally Unique Identifiers (UUIDs).
 
 # Installation
 
@@ -50,7 +50,7 @@ Functions such as `getSubtypeMap` and `getClinicalNames` provide information on 
 
 ## obtaining TCGA as `MultiAssayExperiment` objects from `curatedTCGAData`
 
-For demonstration we download part of the Colon Adenocarcinoma (COAD) dataset using`curatedTCGAData` via `ExperimentHub`. This command download any
+For demonstration we download part of the Colon Adenocarcinoma (COAD) dataset using`curatedTCGAData` via `ExperimentHub`. This command will download any
 data type that starts with `CN*` such as `CNASeq`:
 
 ```{r, echo = FALSE}
@@ -75,7 +75,7 @@ curatedTCGAData("COAD", "*")
 ## `sampleTables`: what sample types are present in the data?
 
 The `sampleTables` function gives a tally of available
-samples in the dataset based on the TCGA barcode information. 
+samples in the dataset based on the TCGA barcode information.
 
 ```{r}
 sampleTables(coad)
@@ -116,10 +116,10 @@ These subtypes were manually curated from the supplemental tables of all primary
 getSubtypeMap(coad)
 ```
 
-## `getClinicalNames`: key “level 4” clinical &  pathological data
+## `getClinicalNames`: key "level 4" clinical &  pathological data
 
 The `curatedTCGAData` `colData` contain hundreds of columns, obtained from merging all unrestricted levels of clinical, pathological, and biospecimen data.
-This function provides the names of “level 4” clinical/pathological variables, which are the only ones provided by most other TCGA analysis tools. 
+This function provides the names of "level 4" clinical/pathological variables, which are the only ones provided by most other TCGA analysis tools.
 Users may then use these variable names for subsetting or analysis, and may even want to subset the `colData` to only these commonly used variables.
 
 ```{r}
@@ -140,7 +140,7 @@ table(colData(coad)[["vital_status.x"]])
 table(colData(coad)[["vital_status.y"]])
 ```
 
-Such conflicts should be inspected in this manner, and conflicts resolved by choosing the more complete variable, or by treating any conflicting values as unknown (“NA”).
+Such conflicts should be inspected in this manner, and conflicts resolved by choosing the more complete variable, or by treating any conflicting values as unknown ("NA").
 
 ## `addClinical`: expanding the `colData` of a `MultiAssayExperiment`
 
@@ -157,17 +157,17 @@ addClinical(MultiAssayExperiment(), data.frame())
 
 A few functions in the package accept either files or classes such as
 `data.frame` and `FirehoseGISTIC` as input and return standard Bioconductor
-classes. 
+classes.
 
 ## `makeGRangesListFromExonFiles`
 
 % % Could you use the GenomicDataCommons library to get an example file instead, or show the GDC command that would be used to obtain the file?
 
-The `GRangesList` class from the `r Biocpkg("GenomicRanges")` package is suitable for grouping `GRanges` vectors as a list, such as for grouping exons by gene. 
+The `GRangesList` class from the `r Biocpkg("GenomicRanges")` package is suitable for grouping `GRanges` vectors as a list, such as for grouping exons by gene.
 In this example we use a legacy exon quantification file from the Genomic
 Data Commons. We then use
 `makeGRangesListFromExonFiles` to create a `GRangesList` from vectors of file
-paths and names (where necessary). Some adjustments have been made to the file name for cross-platform compatibility with Windows operating system limitations. 
+paths and names (where necessary). Some adjustments have been made to the file name for cross-platform compatibility with Windows operating system limitations.
 
 ```{r}
 ## Load example file found in package
@@ -175,7 +175,7 @@ pkgDir <- system.file("extdata", package = "TCGAutils", mustWork = TRUE)
 exonFile <- list.files(pkgDir, pattern = "cation\\.txt$", full.names = TRUE)
 exonFile
 
-## We add the original file prefix to query for the UUID and get the 
+## We add the original file prefix to query for the UUID and get the
 ## TCGAbarcode
 filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
 
@@ -267,7 +267,7 @@ TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE)
 
 ## Include portion and analyte data
 TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE, portion = TRUE)
-``` 
+```
 
 ## Sample select
 
@@ -287,7 +287,7 @@ TCGAsampleSelect(xbarcode, "10")
 
 The straightforward `TCGAbiospec` function will take the information contained
 in the TCGA barcode and display it in `data.frame` format with appropriate
-column names. 
+column names.
 
 ```{r}
 TCGAbiospec(xbarcode)
