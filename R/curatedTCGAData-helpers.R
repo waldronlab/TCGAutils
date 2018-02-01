@@ -91,7 +91,7 @@ separateSamples <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
     exps <- experiments(multiassayexperiment)
 
     egroups <- lapply(sampleCodes, function(scode) {
-        logitype <- relist(TCGAsampleSelect(
+        logitype <- BiocGenerics::relist(TCGAsampleSelect(
             unlist(cnames, use.names = FALSE), scode), cnames)
         explist <- subsetByColumn(exps, logitype)
         names(explist) <- paste0(scode, "_", names(explist))
