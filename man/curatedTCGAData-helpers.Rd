@@ -4,7 +4,7 @@
 \alias{curatedTCGAData-helpers}
 \alias{getSubtypeMap}
 \alias{getClinicalNames}
-\alias{separateSamples}
+\alias{splitAssays}
 \alias{sampleTables}
 \title{Helper functions for managing MultiAssayExperiment from
 curatedTCGAData}
@@ -13,7 +13,7 @@ getSubtypeMap(multiassayexperiment)
 
 getClinicalNames(diseaseCode)
 
-separateSamples(multiassayexperiment, sampleCodes = c("01", "11"))
+splitAssays(multiassayexperiment, sampleCodes = c("01", "11"))
 
 sampleTables(multiassayexperiment, vial = FALSE)
 }
@@ -47,7 +47,7 @@ object. These variables are obtained from
 \link[RTCGAToolbox]{getFirehoseData} by default and tend to be present
 across most cancer codes.
 }
-\section{separateSamples}{
+\section{splitAssays}{
 
     Separates samples by indicated sample codes into different assays
     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}

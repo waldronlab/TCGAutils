@@ -66,7 +66,7 @@ getClinicalNames <- function(diseaseCode) {
 #' @param sampleCodes A string of sample type codes
 #' (refer to \code{data(sampleTypes)}; default "01", "11")
 #'
-#' @section separateSamples:
+#' @section splitAssays:
 #'     Separates samples by indicated sample codes into different assays
 #'     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
 #'     data object for a list of available codes. This operation generates
@@ -74,7 +74,7 @@ getClinicalNames <- function(diseaseCode) {
 #'     entered. By default, primary solid tumors ("01") and solid tissue
 #'     normals ("11") are seperated out.
 #' @export
-separateSamples <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
+splitAssays <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")
 
@@ -84,9 +84,6 @@ separateSamples <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
     if (!sampleCodes %in% sampleTypes[["Code"]] || !is.character(sampleCodes))
         stop("Provide valid sample types string")
 
-    exgrid <- expand.grid(names(multiassayexperiment), sampleCodes)[, 2L:1L]
-    elistnames <- apply(exgrid, 1L, paste, collapse = "_")
-    setelist <- vector("list", length(elistnames))
     cnames <- colnames(multiassayexperiment)
     exps <- experiments(multiassayexperiment)
 
