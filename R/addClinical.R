@@ -9,7 +9,7 @@
 #' Please see the repository's README for more information.
 #'
 #' @param MultiAssayExperiment A \linkS4class{MultiAssayExperiment} object
-#' @param clinicalData A \code{DataFrame} or {data.frame} to merge with
+#' @param colData A \code{DataFrame} or {data.frame} to merge with
 #' clinical data in the MultiAssayExperiment object
 #'
 #' @return A \code{\link{MultiAssayExperiment}} object
@@ -18,17 +18,17 @@
 #'
 #' library(MultiAssayExperiment)
 #'
-#' addClinical(MultiAssayExperiment(), S4Vectors::DataFrame())
+#' mergeColData(MultiAssayExperiment(), S4Vectors::DataFrame())
 #'
-#' @export addClinical
-addClinical <- function(MultiAssayExperiment, clinicalData) {
+#' @export mergeColData
+mergeColData <- function(MultiAssayExperiment, colData) {
     if (!is(MultiAssayExperiment, "MultiAssayExperiment"))
         stop("Provide a valid MultiAssayExperiment object")
-    if (!is(clinicalData, "DataFrame") && !is.data.frame(clinicalData))
+    if (!is(colData, "DataFrame") && !is.data.frame(colData))
         stop("Clinical data must be 'DataFrame' or 'data.frame'")
 
     maeClinical <- colData(MultiAssayExperiment)
-    mergedClin <- merge(maeClinical, clinicalData,
+    mergedClin <- merge(maeClinical, colData,
         by = "row.names", all = TRUE, sort = FALSE, stringsAsFactors = FALSE)
     rownames(mergedClin) <- mergedClin[["Row.names"]]
     mergedClin <- mergedClin[, names(mergedClin) != "Row.names", drop = FALSE]
