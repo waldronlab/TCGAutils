@@ -1,6 +1,6 @@
 Package: TCGAutils
 Title: TCGA utility functions for data management
-Version: 0.99.41
+Version: 0.99.42
 Description: A suite of helper functions for checking and manipulating TCGA data
     including data obtained from the curatedTCGAData experiment package. These
     functions aim to simplify and make working with TCGA data more manageable.
@@ -14,6 +14,7 @@ Depends:
     R (>= 3.5)
 Imports:
     BiocGenerics,
+    GenomeInfoDb,
     GenomicRanges,
     GenomicDataCommons,
     IRanges,
