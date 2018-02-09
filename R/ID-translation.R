@@ -171,3 +171,36 @@ barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
     rownames(resultFrame) <- NULL
     resultFrame
 }
+
+translateBuild <- function(fromBuild, toBuild = "UCSC") {
+    buildDF <- S4Vectors::DataFrame(
+        Date = c("July 2004", "May 2004", "March 2006", "February 2009",
+            "December 2013"),
+        NCBI = c("34", "35", "36", "37", "38"),
+        UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
+    )
+    if (toBuild == "UCSC")
+        fromBuild <- gsub("[GgRrCcHh]", "", fromBuild)
+    matchBuild <- switch (toBuild, UCSC = "NCBI", NCBI = "UCSC" )
+    buildIndex <- match(fromBuild, buildDF[[matchBuild]])
+    if (is.na(buildIndex)) {
+        warning("build could not be matched")
+        return(NA_character_)
+    }
+    buildDF[[toBuild]][buildIndex]
+}
+
+extractBuild <- function(fname, type = c("UCSC", "NCBI")) {
+    builds <- vector(mode = "character", length(type))
+    names(builds) <- type
+    for (i in type) {
+        pattrn <- switch(i, UCSC = "[Hh][Gg][0-9]{2}",
+            NCBI = "[Gg][Rr][Cc][Hh][0-9]{2}")
+        builds[[i]] <- stringr::str_extract(fname, pattrn)
+    }
+    builds <- Filter(function(x) !is.na(x), builds)
+    if (!length(builds))
+        NA_character_
+    else if (length(builds))
+        builds[1L]
+}
