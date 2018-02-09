@@ -4,12 +4,18 @@
 \alias{ID-translation}
 \alias{UUIDtoBarcode}
 \alias{barcodeToUUID}
+\alias{translateBuild}
+\alias{extractBuild}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
 UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
   end_point = "participant", legacy = FALSE)
 
 barcodeToUUID(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
+
+translateBuild(from, to = "UCSC")
+
+extractBuild(string, build = c("UCSC", "NCBI"))
 }
 \arguments{
 \item{id_vector}{A \code{character} vector of UUIDs corresponding to
@@ -24,6 +30,14 @@ only applies to \code{file_id} type queries. See details for options.}
 \item{legacy}{(logical default FALSE) whether to search the legacy archives}
 
 \item{barcodes}{A \code{character} vector of TCGA barcodes}
+
+\item{from}{A build version name}
+
+\item{to}{The name of the desired version}
+
+\item{string}{A single character string}
+
+\item{build}{A vector of build version names (default UCSC, NCBI)}
 }
 \value{
 A \code{data.frame} of TCGA barcode identifiers and UUIDs
@@ -57,6 +71,15 @@ Only these keywords need to be used to target the specific barcode endpoint.
 These endpoints only apply to "file_id" type translations to TCGA barcodes
 (see \code{id_type} argument).
 }
+\section{builds}{
+
+
+A couple of functions are available to search for build versions, either from
+NCBI or UCSC. \code{translateBuild} will translate between UCSC and NCBI
+build versions. \code{extractBuild} will use grep patterns to find the first
+build within a string.
+}
+
 \examples{
 ## Translate UUIDs >> TCGA Barcode
 
@@ -82,6 +105,14 @@ participant_ids <- c("TCGA-CK-4948", "TCGA-D1-A17N",
 "TCGA-4V-A9QX", "TCGA-4V-A9QM")
 
 barcodeToUUID(participant_ids)
+
+
+translateBuild("GRCh35", "UCSC")
+
+
+extractBuild(
+"SCENA_p_TCGAb29and30_SNP_N_GenomeWideSNP_6_G05_569110.nocnv_grch38.seg.txt"
+)
 
 }
 \author{
