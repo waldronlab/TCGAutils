@@ -17,17 +17,30 @@
 #' @return A \link{GRangesList} class object
 #'
 #' @examples
-#' grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
-#' grl <- read.table(grlFile)
-#' head(grl)
+#' library(GenomicDataCommons)
+#' library(magrittr)
 #'
-#' makeGRangesListFromTCGA(grl, split.field = "Sample")
+#' manif <- files() %>%
+#'     filter(~ cases.project.project_id == "TCGA-COAD" &
+#'         file_id == "7d55325c-42b1-494b-a781-6a453a635e43") %>%
+#'     manifest()
 #'
-#' makeGRangesListFromTCGA(grl, split.field = "Sample",
+#' destdir <- tempdir()
+#' fname <- gdcdata(manif$id, destdir)
+#'
+#' barcode <- UUIDtoBarcode(names(fname), id_type = "file_id")$cases.submitter_id
+#'
+#' cndata <- read.delim(fname)
+#'
+#' cngrl <- makeGRangesListFromCopyNumber(cndata, split.field = "Sample",
 #'     keep.extra.columns = TRUE)
 #'
-#' @export makeGRangesListFromTCGA
-makeGRangesListFromTCGA <-
+#' names(cngrl) <- barcode
+#' genome(cngrl) <- extractBuild(fname)
+#' cngrl
+#'
+#' @export makeGRangesListFromCopyNumber
+makeGRangesListFromCopyNumber <-
     function(df, split.field, names.field = "Hugo_Symbol", ...) {
         if (is.list(df) && !inherits(df, "data.frame"))
             df <- do.call(rbind, df)
