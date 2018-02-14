@@ -4,7 +4,8 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(experiments, colData, idConverter = NULL, ...)
+generateMap(experiments, colData, idConverter = identity, sampleCol,
+  patientCol, ...)
 }
 \arguments{
 \item{experiments}{A named \code{list} of experiments compatible with the
@@ -16,6 +17,12 @@ as rownames}
 \item{idConverter}{A function to be used against the sample or specimen
 identifiers to match those in the rownames of the \code{colData}
 (default NULL)}
+
+\item{sampleCol}{A single string indicating the sample identifiers
+column in the colData dataset}
+
+\item{patientCol}{A single string indicating the patient identifiers
+in colData, "row.names" extracts the colData row names}
 
 \item{...}{Additonal arguments to pass to the 'idConverter' function.}
 }
@@ -37,12 +44,15 @@ expList <- list(assay1 = matrix(1:6, ncol = 2L,
     assay2 = matrix(1:4, ncol = 2,
         dimnames = list(paste0("gene", 1:2), c("A-L", "B-L"))))
 
-## A ficticious colData
+## Mock colData
 myPheno <- data.frame(var1 = c("Yes", "No"), var2 = c("High", "Low"),
     row.names = c("a", "b"))
 
-## Provide an idConverter function to take corresponding letter codes
-## for each biological unit
+## A look at the identifiers
+vapply(expList, colnames, character(2L))
+rownames(myPheno)
+
+## Use 'idConverter' to correspond sample names to patient identifiers
 generateMap(expList, myPheno,
     idConverter = function(x) substr(tolower(x), 1L, 1L))
 
