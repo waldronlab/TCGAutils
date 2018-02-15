@@ -22,7 +22,7 @@ TCGAsampleSelect <- function(barcodes, sampleCode) {
     bcodeCharLen <- unique(nchar(barcodes))
     if (!S4Vectors::isSingleNumber(bcodeCharLen))
         stop("Inconsistent barcode lengths")
-     if (bcodeCharLen < 15)
+     if (bcodeCharLen < 15L)
         stop("'barcodes' should be at least 15 characters ",
                 "with sample information")
     local_data_store <- new.env(parent = emptyenv())

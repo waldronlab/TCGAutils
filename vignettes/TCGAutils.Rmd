@@ -1,6 +1,6 @@
 ---
 title: "TCGAutils: Helper functions for working with TCGA datasets"
-author: "Waldron Lab"
+author: "Marcel Ramos & Levi Waldron"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
   BiocStyle::html_document:
@@ -218,10 +218,10 @@ makeGRangesListFromExonFiles(exonFile,
 Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")`
 class to incorporate them into a `MultiAssayExperiment`.
 
-## `makeGRangesListFromTCGA`
+## `makeGRangesListFromCopyNumber`
 
 Other processed, genomic range-based data from TCGA data can be imported using
-`makeGRangesListFromTCGA`. This tab-delimited data file of copy number
+`makeGRangesListFromCopyNumber`. This tab-delimited data file of copy number
 alterations from *bladder urothelial *arcinoma* (BLCA) was obtained from the
 Genomic Data Commons and is included in `TCGAUtils` as an example:
 
@@ -230,9 +230,10 @@ grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
 grl <- read.table(grlFile)
 head(grl)
 
-makeGRangesListFromTCGA(grl, split.field = "Sample")
+makeGRangesListFromCopyNumber(grl, split.field = "Sample")
 
-makeGRangesListFromTCGA(grl, split.field = "Sample", keep.extra.columns = TRUE)
+makeGRangesListFromCopyNumber(grl, split.field = "Sample",
+    keep.extra.columns = TRUE)
 ```
 
 ## `makeSummarizedExperimentFromGISTIC`
