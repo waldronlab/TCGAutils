@@ -49,7 +49,7 @@ cngrl <- makeGRangesListFromCopyNumber(cndata, split.field = "Sample",
     keep.extra.columns = TRUE)
 
 names(cngrl) <- barcode
-genome(cngrl) <- extractBuild(fname)
+GenomeInfoDb::genome(cngrl) <- extractBuild(fname)
 cngrl
 
 }

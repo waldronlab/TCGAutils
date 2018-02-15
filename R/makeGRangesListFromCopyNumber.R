@@ -36,7 +36,7 @@
 #'     keep.extra.columns = TRUE)
 #'
 #' names(cngrl) <- barcode
-#' genome(cngrl) <- extractBuild(fname)
+#' GenomeInfoDb::genome(cngrl) <- extractBuild(fname)
 #' cngrl
 #'
 #' @export makeGRangesListFromCopyNumber

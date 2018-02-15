@@ -8,6 +8,7 @@
 #' subsetByColumn experiments
 #' @importFrom utils data head read.delim
 #' @importFrom stats as.formula na.omit
+#' @importFrom stringr str_extract
 #' @importFrom IRanges CharacterList
 #' @importFrom SummarizedExperiment SummarizedExperiment mcols mcols<- rowData
 #' rowData<-
