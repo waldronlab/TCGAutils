@@ -226,7 +226,7 @@ alterations from *bladder urothelial *arcinoma* (BLCA) was obtained from the
 Genomic Data Commons and is included in `TCGAUtils` as an example:
 
 ```{r}
-grlFile <- system.file("extdata", "grlTCGA.txt", package = "TCGAutils")
+grlFile <- system.file("extdata", "blca_cnaseq.txt", package = "TCGAutils")
 grl <- read.table(grlFile)
 head(grl)
 
