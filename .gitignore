@@ -6,6 +6,7 @@
 .RData
 *.txt
 *.tar.gz
+!blca_cnaseq.txt
 
 # RStudio files
 .Rproj.user
