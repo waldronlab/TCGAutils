@@ -49,7 +49,8 @@
 #'
 #' ## Add actual file name manually (due to Windows OS restriction)
 #' makeGRangesListFromExonFiles(exonFile,
-#'     fileNames = paste0(filePrefix, basename(exonFile)))
+#'     fileNames = paste0(filePrefix, basename(exonFile)),
+#'     sampleNames = "TCGA-AA-3678-01A-01R-0905-07")
 #'
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,

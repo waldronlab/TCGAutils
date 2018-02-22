@@ -42,7 +42,8 @@ filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
 
 ## Add actual file name manually (due to Windows OS restriction)
 makeGRangesListFromExonFiles(exonFile,
-    fileNames = paste0(filePrefix, basename(exonFile)))
+    fileNames = paste0(filePrefix, basename(exonFile)),
+    sampleNames = "TCGA-AA-3678-01A-01R-0905-07")
 
 }
 \author{
