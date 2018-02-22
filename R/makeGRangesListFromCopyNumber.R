@@ -75,7 +75,7 @@ makeGRangesListFromCopyNumber <-
             if (length(build_name) != 1L) {
                 warning("inconsistent ncbi_build values in data")
             } else {
-                ucscBuild <- .translateBuild(build_name, "UCSC")
+                ucscBuild <- translateBuild(build_name, "UCSC")
                 GenomeInfoDb::genome(grl) <- ucscBuild
             }
         }
