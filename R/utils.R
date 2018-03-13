@@ -29,3 +29,37 @@
         all(is.na(column))
     })
 }
+
+#' @importFrom BiocFileCache BiocFileCache bfcquery bfcnew
+#' @importFrom httr cache_info HEAD
+#' @importFrom rappdirs user_cache_dir
+#'
+#' @keywords internal
+.cacheNeedsUpdate <- function(url) {
+    message("updating resource from ", url)
+    needsUpdate <- TRUE
+    cache <- rappdirs::user_cache_dir(appname = "TCGAutils")
+
+    tryCatch({
+        bfc <- BiocFileCache::BiocFileCache(cache, ask = FALSE)
+        query <- bfcquery(bfc, url, "rname")
+
+        if (!nrow(query)) {
+            file <- bfcnew(bfc, url)
+            needsUpdate <- TRUE
+        } else {
+            file <- query$rpath
+            id <- query$rid
+            mtime <- file.mtime(query$rpath)
+            expires <- httr::cache_info(httr::HEAD(url))$expires
+            needsUpdate <- expires < Sys.Date()
+        }
+    }, error = function(err) {
+        stop(
+            "could not connect or cache url ", url,
+            "\n reason: ", conditionMessage(err)
+        )
+    })
+
+    setNames(needsUpdate, file)
+}
