@@ -1,6 +1,6 @@
 Package: TCGAutils
 Title: TCGA utility functions for data management
-Version: 0.99.55
+Version: 0.99.56
 Description: A suite of helper functions for checking and manipulating TCGA data
     including data obtained from the curatedTCGAData experiment package. These
     functions aim to simplify and make working with TCGA data more manageable.
@@ -14,13 +14,15 @@ Depends:
     R (>= 3.5)
 Imports:
     BiocGenerics,
+    BiocFileCache,
     GenomeInfoDb,
     GenomicRanges,
     GenomicDataCommons,
+    httr,
     IRanges,
     methods,
     MultiAssayExperiment,
-    RTCGAToolbox (>= 2.7.5),
+    rappdirs,
     rvest,
     S4Vectors,
     stats,
@@ -31,9 +33,11 @@ Imports:
 Suggests:
     BiocStyle,
     curatedTCGAData,
+    devtools,
     knitr,
     magrittr,
     readr,
+    RTCGAToolbox (>= 2.7.5),
     testthat
 License: Artistic-2.0
 Encoding: UTF-8
