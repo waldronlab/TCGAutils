@@ -1,24 +1,4 @@
-#' @import methods
-#' @importFrom BiocGenerics relist
-#' @importFrom xml2 read_html
-#' @importFrom rvest html_nodes html_attr
-#' @importFrom GenomicRanges GRanges GRangesList makeGRangesListFromDataFrame
-#' @importFrom GenomeInfoDb genome
-#' @importFrom MultiAssayExperiment ExperimentList colData colData<- metadata
-#' subsetByColumn experiments
-#' @importFrom utils data head read.delim
-#' @importFrom stats as.formula na.omit
-#' @importFrom stringr str_extract
-#' @importFrom IRanges CharacterList
-#' @importFrom SummarizedExperiment SummarizedExperiment mcols mcols<- rowData
-#' rowData<-
-#' @importFrom GenomicDataCommons files results_all select filter ids cases
-#' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
-#' DataFrame
-#' @importFrom RTCGAToolbox getData
-NULL
-
-#' TCGAutils: Helper fucntions for working with TCGA and MultiAssayExperiment
+#' TCGAutils: Helper functions for working with TCGA and MultiAssayExperiment
 #' data
 #'
 #' TCGAutils is a toolbox to work with TCGA specific datasets. It allows the

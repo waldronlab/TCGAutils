@@ -4,7 +4,7 @@
 \name{TCGAutils-package}
 \alias{TCGAutils}
 \alias{TCGAutils-package}
-\title{TCGAutils: Helper fucntions for working with TCGA and MultiAssayExperiment
+\title{TCGAutils: Helper functions for working with TCGA and MultiAssayExperiment
 data}
 \description{
 TCGAutils is a toolbox to work with TCGA specific datasets. It allows the
