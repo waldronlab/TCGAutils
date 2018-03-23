@@ -5,7 +5,7 @@
 #' data, G-scores thresholded by gene, copy number by gene, and copy number by
 #' peak regions.
 #'
-#' @param gistic A \linkS4class{FirehoseGISTIC} object
+#' @param gistic A \link[RTCGAToolbox]{FirehoseGISTIC-class} object
 #' @param dataType Either one of "ThresholdedByGene", "AllByGene", "Peaks"
 #'
 #' @author L. Geistlinger, M. Ramos

@@ -14,9 +14,10 @@
 #' Find the file names used in RTCGAToolbox
 #'
 #' Part of this function is from the RTCGAToolbox. It aims to extract the file
-#' name used inside of the \link{getFirehoseData} function. The arguments of the
-#' function parallel those in the \link{getFirehoseData} function. It is only
-#' available for select data types.
+#' name used inside of the \link[RTCGAToolbox]{getFirehoseData} function.
+#' The arguments of the function parallel those in the
+#' \link[RTCGAToolbox]{getFirehoseData} function. It is only available for
+#' select data types.
 #'
 #' @param disease The TCGA cancer disease code, e.g., "COAD"
 #' @param runDate The single \code{string} used in the \code{getFirehoseData}

@@ -88,7 +88,7 @@ update_data_file <- function(fileURL, verbose = FALSE , resource) {
 .parseSampleTypes <- function(from, to = "./data/sampleTypes.rda") {
     stcc <- read_html(from)
 
-    sampleTypes <- html_table(stcc, fill = TRUE)[[2L]]
+    sampleTypes <- rvest::html_table(stcc, fill = TRUE)[[2L]]
     names(sampleTypes) <- make.names(colnames(sampleTypes))
 
     ## Coerce to standard data.frame (no tibble required)

@@ -7,7 +7,7 @@
 makeSummarizedExperimentFromGISTIC(gistic, dataType)
 }
 \arguments{
-\item{gistic}{A \linkS4class{FirehoseGISTIC} object}
+\item{gistic}{A \link[RTCGAToolbox]{FirehoseGISTIC-class} object}
 
 \item{dataType}{Either one of "ThresholdedByGene", "AllByGene", "Peaks"}
 }
