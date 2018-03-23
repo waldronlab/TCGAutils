@@ -1,6 +1,35 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+# R for travis documentation: https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
 sudo: false
 cache: packages
-after_success: - Rscript -e 'covr::codecov()'
+
+r: bioc-devel
+
+# Strict checks in place
+warnings_are_errors: false
+
+branches:
+  only:
+    - test
+
+bioc_packages:
+  - BiocGenerics
+  - GenomeInfoDb
+  - GenomicRanges
+  - GenomicDataCommons
+  - IRanges
+  - MultiAssayExperiment
+  - RTCGAToolbox
+  - SummarizedExperiment
+  - S4Vectors
+  - BiocStyle
+  - curatedTCGAData
+
+# Test code coverage
+r_github_packages:
+  - jimhester/covr
+
+after_success:
+  - Rscript -e 'library(covr);codecov()'
+  - R CMD BiocCheck --new-package --no-check-vignettes TCGAutils*.tar.gz
