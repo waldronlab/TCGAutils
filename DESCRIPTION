@@ -18,7 +18,6 @@ Imports:
     GenomeInfoDb,
     GenomicRanges,
     GenomicDataCommons,
-    httr,
     IRanges,
     methods,
     MultiAssayExperiment,
