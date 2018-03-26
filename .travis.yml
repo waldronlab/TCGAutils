@@ -11,6 +11,7 @@ warnings_are_errors: false
 
 branches:
   only:
+    - master
     - cache
 
 bioc_packages:
