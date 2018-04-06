@@ -3,6 +3,13 @@
     stcc <- xml2::read_html(from)
 
     sampleTypes <- rvest::html_table(stcc, fill = TRUE)[[2L]]
+
+    ## convert code column to character
+    codeCol <- sampleTypes[["Code"]]
+    singleDigit <- codeCol < 10L
+    sampleTypes[["Code"]][singleDigit] <-
+        paste0("0", sampleTypes[["Code"]][singleDigit])
+
     names(sampleTypes) <- make.names(colnames(sampleTypes))
 
     ## Coerce to standard data.frame (no tibble required)
