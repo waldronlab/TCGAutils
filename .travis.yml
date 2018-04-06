@@ -32,7 +32,7 @@ bioc_packages:
 r_github_packages:
   - jimhester/covr
 
-script:
+before_script:
   - R CMD BiocCheck --new-package --no-check-vignettes ../TCGAutils
 
 after_success:
