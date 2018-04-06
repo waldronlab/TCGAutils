@@ -1,5 +1,6 @@
+library(BiocFileCache)
 ## Extract cancer codes from TCGA project
-.parseDiseaseCodes <- function(from, to = "./data/diseaseCodes.rda") {
+.parseDiseaseCodes <- function(from, to) {
     htcc <- xml2::read_html(from)
     diseaseCodes <- rvest::html_table(htcc, fill = TRUE)[[2L]]
     names(diseaseCodes) <- make.names(colnames(diseaseCodes))
@@ -39,23 +40,30 @@
     BiocFileCache::BiocFileCache(cache)
 }
 
-update_data_file <- function(fileURL, verbose = FALSE , resource) {
+update_data_file <-
+    function(fileURL, verbose = FALSE , resource, ext = ".rda", FUN) {
     bfc <- .get_cache()
     rid <- BiocFileCache::bfcquery(bfc, fileURL, "rname")$rid
     if (!length(rid)) {
         if (verbose)
             message( "Downloading ", resource, " file" )
-        rid <- names(BiocFileCache::bfcadd(bfc, fileURL, download = FALSE))
+        rid <- names(BiocFileCache::bfcadd(bfc, fileURL, download = FALSE,
+            ext = ".rda"))
     }
-    if (!isFALSE(BiocFileCache::bfcneedsupdate(bfc, rid)))
-        BiocFileCache::bfcdownload(bfc, rid, ask = FALSE, FUN = .parseDiseaseCodes)
+    if (!isFALSE(BiocFileCache::bfcneedsupdate(bfc, rid))) {
+        rpath <- BiocFileCache::bfcdownload(bfc, rid, ask = FALSE,
+            FUN = FUN, ext = ".rda")
+        ## copy to data dir after updating
+        file.copy(rpath, file.path("data", paste0(resource, ext)),
+            overwrite = TRUE)
+    }
     if (verbose)
         message(resource, " update complete")
 
     bfcrpath(bfc, rids = rid)
 }
 
-## move to installation dir after updating
-
-url1 <- "https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations"
-update_data_file(url1, verbose = FALSE, resource = "diseaseCodes")
+url1 <- paste0("https://gdc.cancer.gov/resources-tcga-users/",
+    "tcga-code-tables/tcga-study-abbreviations")
+update_data_file(url1, verbose = FALSE,
+    resource = "diseaseCodes", FUN = .parseDiseaseCodes)

@@ -1,6 +1,6 @@
 ## Extract sample types table from TCGA website
-.parseSampleTypes <- function(from, to = "./data/sampleTypes.rda") {
-    stcc <- read_html(from)
+.parseSampleTypes <- function(from, to) {
+    stcc <- xml2::read_html(from)
 
     sampleTypes <- rvest::html_table(stcc, fill = TRUE)[[2L]]
     names(sampleTypes) <- make.names(colnames(sampleTypes))
@@ -13,6 +13,8 @@
     TRUE
 }
 
-url2 <- "https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type-codes"
+url2 <-
+"https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type-codes"
 ## update_data_file in data-raw/diseaseCodes.R
-update_data_file(url2, verbose = FALSE, resource = "sampleTypes")
+update_data_file(url2, verbose = FALSE, resource = "sampleTypes",
+    FUN = .parseSampleTypes)
