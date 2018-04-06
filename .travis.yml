@@ -33,7 +33,7 @@ r_github_packages:
   - jimhester/covr
 
 script:
-  - R CMD BiocCheck --new-package --no-check-vignettes TCGAutils*.tar.gz
+  - R CMD BiocCheck --new-package --no-check-vignettes ../TCGAutils
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
