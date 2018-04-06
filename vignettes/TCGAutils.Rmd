@@ -23,10 +23,18 @@ suppressPackageStartupMessages({
 
 # Overview
 
-The `TCGAutils` package completes a suite of Bioconductor packages for convenient access, integration, and analysis of *The Cancer Genome Atlas*. It includes:
-    0.    helpers for working with TCGA through the Bioconductor packages `r Biocpkg("MultiAssayExperiment")` (for coordinated representation and manipulation of multi-omits experiments) and `r Biocpkg("curatedTCGAData")`, which provides unrestricted TCGA data as `MultiAssayExperiment` objects,
-    0.    helpers for importing TCGA data as from flat data structures such as `data.frame` or `DataFrame` read from delimited data structures provided by the Broad Institute’s Firehose, and
-    0.    functions for interpreting TCGA barcodes and for mapping between barcodes and Universally Unique Identifiers (UUIDs).
+The `TCGAutils` package completes a suite of Bioconductor packages for
+convenient access, integration, and analysis of *The Cancer Genome Atlas*.
+It includes:
+    0.    helpers for working with TCGA through the Bioconductor packages
+    `r Biocpkg("MultiAssayExperiment")` (for coordinated representation and
+    manipulation of multi-omits experiments) and `r Biocpkg("curatedTCGAData")`,
+    which provides unrestricted TCGA data as `MultiAssayExperiment` objects,
+    0.    helpers for importing TCGA data as from flat data structures such as
+    `data.frame` or `DataFrame` read from delimited data structures provided by
+    the Broad Institute’s Firehose, and
+    0.    functions for interpreting TCGA barcodes and for mapping between
+    barcodes and Universally Unique Identifiers (UUIDs).
 
 # Installation
 
