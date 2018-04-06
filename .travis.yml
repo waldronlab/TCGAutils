@@ -32,6 +32,12 @@ bioc_packages:
 r_github_packages:
   - jimhester/covr
 
+script:
+  - R CMD BiocCheck --new-package --no-check-vignettes TCGAutils*.tar.gz
+
 after_success:
   - Rscript -e 'library(covr);codecov()'
-  - R CMD BiocCheck --new-package --no-check-vignettes TCGAutils*.tar.gz
+
+notifications:
+  slack:
+    secure: RXnFd77/4+A+pYnHuuThG8ux9a9Q6+fpH2Q02As4CRkcggWvTGSiN3o791HvnYrjxEcwnOkfIoUwROqjZ1JGI0/PKR8yeCmDs4HJZ84nvla1JzFzvom9FeFUK0UgdayZzmJ/qoOnsTtEwBCzCMRynHptGS9mfAVMnycKHJ99cGkAlq3SDBVmI0tTN01iwS6Zsw7israqIFKhYhmdkg+pz8IgJwSVX2k1G8qpLFuXz7J2iTyJWzcDCR5+D5VPhC/AzLWvVvLlG4wZqq+608Hu6pK82CyaOMxgyEFX/OKjZP+Z+udsQCNocOuSnWjJcZu8CW01ibHSTj9b8aOHgYqez9LDLq7LSc2lUH8zCEQWJlctqJTUf9+a/PCLB6gH8NG/FdnfaOmPtFLg+2YVILm59736a3V/pwKurhcL6E1nbR8yBWxgQa5mzzRsVIoI72J4H3JlcyJsOzXEIlhN/W6qOdJ02B2GdwVc2hiMJgZ7URu0wwPyZYP68Atw2uSmuG+Hna3+T+Li1hTJOG6dP60nAH8q/KTokCKV/gSJLN7GPT7JNQDGFuOlTwx+reJYiR/EVb5qmffiInmOpVXpPoxdjB9zhAxFfAzvKTuJ+EAcR3LmsNfgjtag4xVvqNmcbgwWfUmq1Lx4NiBBKmV/aTM6kyS2YsQIp1wcYOUzTu+IpKo=
