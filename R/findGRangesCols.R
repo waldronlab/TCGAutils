@@ -26,7 +26,7 @@
     if (!length(start.field) && !length(end.field))
         list(c(start.field = "", end.field = ""), "")
     else
-    list(c(start.field = start.field, end.field = end.field), fixint)
+        list(c(start.field = start.field, end.field = end.field), fixint)
 }
 
 ## Helper functions
