@@ -26,7 +26,7 @@
     if (!length(start.field) && !length(end.field))
         list(c(start.field = "", end.field = ""), "")
     else
-    list(c(start.field = start.field, end.field = end.field), fixint)
+        list(c(start.field = start.field, end.field = end.field), fixint)
 }
 
 ## Helper functions
@@ -65,7 +65,7 @@
     df_colnames_nc <- nchar(df_colnames)
     prefixes <- lapply(field, function(suf) {
         pref_nc <- df_colnames_nc - nchar(suf)
-        idx <- which(substr(df_colnames, pref_nc + 1L, df_colnames_nc) == suf)
+        idx <- substr(df_colnames, pref_nc + 1L, df_colnames_nc) == suf
         substr(df_colnames[idx], 1L, pref_nc[idx])
     })
     unique(unlist(prefixes))
@@ -73,7 +73,7 @@
 
 .collect_suffixes <- function(df_colnames, field) {
     suffixes <- lapply(field, function(pre) {
-        idx <- which(startsWith(df_colnames, pre))
+        idx <- startsWith(df_colnames, pre)
         substr(df_colnames[idx], nchar(field) + 1L,
             nchar(df_colnames[idx]))
     })

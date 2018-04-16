@@ -13,9 +13,13 @@ branches:
   only:
     - master
 
+r_binary_packages:
+  - testthat
+
 bioc_packages:
   - BiocGenerics
   - BiocCheck
+  - BiocFileCache
   - GenomeInfoDb
   - GenomicRanges
   - GenomicDataCommons
@@ -31,7 +35,9 @@ bioc_packages:
 r_github_packages:
   - jimhester/covr
 
-before_script:
+script:
+  - R CMD build --keep-empty-dirs --no-resave-data ../TCGAutils
+  - R CMD check --no-vignettes --timings --no-multiarch TCGAutils_*.tar.gz
   - R CMD BiocCheck --new-package --no-check-vignettes ../TCGAutils
 
 after_success:

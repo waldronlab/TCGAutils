@@ -1,26 +1,24 @@
 # Locate Clinical datasets for each cancer
 # Script used with https://github.com/waldronlab/MultiAssayExperiment-TCGA
 
-library(TCGAutils)
-library(RTCGAToolbox)
-data(diseaseCodes)
+if (!requireNamespace("RTCGAToolbox"))
+    stop("Install `RTCGAToolbox` to generate 'clinicalNames' data")
 
 TCGAcodes <- RTCGAToolbox::getFirehoseDatasets()
+
 excludedCodes <- c("COADREAD", "GBMLGG", "KIPAN", "STES", "FPPP", "CNTL",
-                   "LCML", "MISC")
+    "LCML", "MISC")
 TCGAcodes <- TCGAcodes[-which(TCGAcodes %in% excludedCodes)]
 
-myDataDir <- "data/Clinical"
-
-if (!dir.exists(myDataDir))
-    dir.create(myDataDir, recursive = TRUE)
+myDataDir <- tempdir()
 
 lapply(TCGAcodes, function(cancer) {
     if (!file.exists(file.path(myDataDir, cancer, "clinical.csv"))) {
         clinDat <- RTCGAToolbox::getFirehoseData(dataset = cancer,
-                                                 destdir = tempfile())
+            destdir = myDataDir)
         clinFrame <- RTCGAToolbox::getData(clinDat, "clinical")
-        rownames(clinFrame) <- .standardBarcodes(rownames(clinFrame))
+        rownames(clinFrame) <-
+            TCGAutils:::.standardBarcodes(rownames(clinFrame))
 
         dir.create(file.path(myDataDir, cancer))
 
@@ -41,4 +39,4 @@ clinicalNames <- IRanges::CharacterList(lapply(TCGAcodes, function(cancer) {
     names(clinDat)[names(clinDat) != "Composite.Element.REF"]
 }))
 
-devtools::use_data(clinicalNames)
+devtools::use_data(clinicalNames, overwrite = TRUE)
