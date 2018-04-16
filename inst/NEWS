@@ -1,6 +1,16 @@
 # TCGAutils
 ------------------------------------------------------------
 
+## Changes in version 0.99.68
+
+### Minor changes and bug fixes
+
+* Minor changes in response to review, avoid switching from logical to numeric
+index, updated vignette introduction
+* Fix examples to updated `GenomicDataCommons` interface
+* Move `RTCGAToolbox` to `Suggests` field in DESCRIPTION
+* Removed `BiocFileCache` from `Imports` field
+
 ## Changes in version 0.99.51
 
 ### New features
