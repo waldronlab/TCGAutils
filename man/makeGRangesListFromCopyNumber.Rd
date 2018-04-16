@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeGRangesListFromCopyNumber.R
 \name{makeGRangesListFromCopyNumber}
 \alias{makeGRangesListFromCopyNumber}
-\title{Make a GRangesList from TCGA data}
+\title{Make a GRangesList from TCGA Copy Number data}
 \usage{
 makeGRangesListFromCopyNumber(df, split.field, names.field = "Hugo_Symbol",
   ...)
@@ -24,10 +24,11 @@ column to be used as names for each of the ranges in the data}
 A \link{GRangesList} class object
 }
 \description{
-\code{makeGRangesListFromTCGA} allows the user to convert objects of class
-data.frame or DataFrame to a \linkS4class{GRangesList}. It includes
-additional features specific to TCGA data such as, hugo symbols,
-probe numbers, segment means, and ucsc build (if available).
+\code{makeGRangesListFromCopyNumber} allows the user to convert objects of
+class \code{data.frame} or \linkS4class{DataFrame} to a
+\linkS4class{GRangesList}. It includes additional features specific to TCGA
+data such as, hugo symbols, probe numbers, segment means, and
+ucsc build (if available).
 }
 \examples{
 library(GenomicDataCommons)
