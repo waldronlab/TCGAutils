@@ -1,6 +1,6 @@
 ## Download example dataset from legacy archive
 if (!requireNamespace("GenomicDataCommons"))
-    stop("Please download 'GenomicDataCommons' to update file")
+    stop("Please install 'GenomicDataCommons' to update file")
 
 manifile <- files(legacy = TRUE) %>%
     filter(~ file_id == "d56a5dec-cb55-457f-8d93-dd1f3911ae9f") %>%

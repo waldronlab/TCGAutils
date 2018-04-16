@@ -1,4 +1,6 @@
-library(BiocFileCache)
+if (!requireNamespace("BiocFileCache"))
+    stop("Please install 'BiocFileCache' to manage and generate data")
+
 ## Extract cancer codes from TCGA project
 .parseDiseaseCodes <- function(from, to) {
     htcc <- xml2::read_html(from)
