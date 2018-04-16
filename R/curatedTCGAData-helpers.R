@@ -15,8 +15,6 @@
 #' @importFrom GenomicDataCommons files results_all select filter ids cases
 #' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
 #' DataFrame
-#' @importFrom BiocFileCache bfcquery bfcadd bfcneedsupdate bfcdownload
-#' BiocFileCache
 NULL
 
 ## Helpers for downloaded objects
