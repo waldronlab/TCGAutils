@@ -1,4 +1,42 @@
 # TCGAutils
+------------------------------------------------------------
+
+## Changes in version 0.99.68
+
+### Minor changes and bug fixes
+
+* Minor changes in response to review, avoid switching from logical to numeric
+index, updated vignette introduction
+* Fix examples to updated `GenomicDataCommons` interface
+* Move `RTCGAToolbox` to `Suggests` field in DESCRIPTION
+* Removed `BiocFileCache` from `Imports` field
+
+## Changes in version 0.99.51
+
+### New features
+
+* Added a group of ID translation helper functions (see ?ID-translation)
+* Added a group of helper functions that work with `curatedTCGAData`
+* `UUIDtoBarcode` function added thanks to @seandavi
+* Renamed `makeGRangesListFromTCGA` to `makeGRangesListFromCopyNumber`
+* `makeSummarizedExperimentFromGISTIC` is now available to convert
+`RTCGAToolbox`'s `FirehoseGISTIC` data class to `SummarizedExperiment`
+* Created a function to merge external `colData` to a `MultiAssayExperiment`
+`colData` slot
+* Revamped vignette documentation
+
+### Minor changes and bug fixes
+
+* Improvements to `TCGAbiospec` and `TCGAbarcode`
+* Updated `sampleTypes` and `clinicalNames` datasets
+* Updated DESCRIPTION file with appropriate imports and exports
+* Various improvements to `findGRangesCols`
+* `generateMap` is now updated to the recent `MultiAssayExperiment` API with
+improved example
+* Updated `getFileNames` to most recent `RTCGAToolbox` API
+* Various updates to data generating scripts in `data-raw` folder
+* Format updates to NEWS file
+* Added tests
 
 ## Changes in version 0.2.0
 
@@ -12,7 +50,7 @@
 
 * `TCGAtranslateID` now works with GDC API
 
-### Minor changes and bug fixes 
+### Minor changes and bug fixes
 
 * Code cleaned up
 * Added proper import directives
@@ -38,14 +76,16 @@ conventions
 ## Changes in version 0.0.60
 
 * `makeGRangesListFromTCGA` data builds on `makeGRangesListFromDataFrame`
-* `makeGRangesListFromDataFrame` and `makeRangedSummarizedExperimentFromDataFrame` will be
-moving to standard Bioconductor packages soon. 
-* `tcga` and `ccle` functions soon to be deprecated. 
+* `makeGRangesListFromDataFrame` and
+`makeRangedSummarizedExperimentFromDataFrame` will be moving to standard
+Bioconductor packages soon.
+* `tcga` and `ccle` functions soon to be deprecated.
 * Upcoming: `TCGAbarcode` will be modified for efficiency
 
 ## Changes in version 0.0.50
 
-* Add your own identifier parsing function for generating a `sampleMap` in `generateMap`!
+* Add your own identifier parsing function for generating a `sampleMap` in
+`generateMap`!
 * Add proper genome build to ranged based objects.
 * Return `SummarizedExperiment` class for certain data types.
 * Fix genome build bugs
@@ -53,15 +93,15 @@ moving to standard Bioconductor packages soon.
 ## Changes in version 0.0.46
 
 * `makeRSE` function for creating a `RangedSummarizedExperiment` object from a
-data frame. 
-* Bug fixes to `getRangeNames` including the option to enter a regular expression
-vector for finding ranged column names. 
+data frame.
+* Bug fixes to `getRangeNames` including the option to enter a regular
+expression vector for finding ranged column names.
 * `matchClinical` renamed to `TCGAmatchClinical`
 
 ## Changes in version 0.0.44
 
-* `getRangedNames` function will try to extract minimum necessary names for creating ranges 
-(works on a vector of names)
+* `getRangedNames` function will try to extract minimum necessary names for
+creating ranges (works on a vector of names)
 * minor bug fixes to `TCGAbiospec`, `TCGAextract`, `makeGRangesList`
 
 ## Changes in version 0.0.40
