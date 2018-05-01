@@ -1,21 +1,3 @@
-.FileNamesToBarcodes <- function(fileNames, legacy = FALSE) {
-    filesres <- files(legacy = legacy)
-    info <- results_all(
-        select(filter(filesres, ~ file_name %in% fileNames),
-            "cases.samples.portions.analytes.aliquots.submitter_id")
-    )
-    id_list <- lapply(info[["cases"]], function(a) {
-        a[[1L]][[1L]][[1L]]
-    })
-    # so we can later expand to a data.frame of the right size
-    barcodes_per_file <- lengths(id_list)
-    # And build the data.frame
-    data.frame(file_name = rep(fileNames, barcodes_per_file),
-        file_id = rep(ids(info), barcodes_per_file),
-        aliquots.submitter_id = unlist(id_list), row.names = NULL,
-        stringsAsFactors = FALSE)
-}
-
 #' Read Exon level files and create a GRangesList
 #'
 #' This function serves to read exon-level expression data. It works for exon
@@ -63,7 +45,7 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
         queryNames <- if (!is.null(fileNames)) {
             fileNames } else { basename(filepaths) }
         sampleNames <-
-            .FileNamesToBarcodes(queryNames, TRUE)[["aliquots.submitter_id"]]
+            filenameToBarcode(queryNames, TRUE)[["aliquots.submitter_id"]]
     }
     readr_avail <- requireNamespace("readr", quietly = TRUE)
     btData <- lapply(filepaths, function(file) {

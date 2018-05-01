@@ -4,6 +4,7 @@
 \alias{ID-translation}
 \alias{UUIDtoBarcode}
 \alias{barcodeToUUID}
+\alias{filenameToBarcode}
 \alias{translateBuild}
 \alias{extractBuild}
 \title{Translate study identifiers from barcode to UUID and vice versa}
@@ -12,6 +13,8 @@ UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
   end_point = "participant", legacy = FALSE)
 
 barcodeToUUID(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
+
+filenameToBarcode(filenames, legacy = FALSE)
 
 translateBuild(from, to = "UCSC")
 
@@ -30,6 +33,9 @@ only applies to \code{file_id} type queries. See details for options.}
 \item{legacy}{(logical default FALSE) whether to search the legacy archives}
 
 \item{barcodes}{A \code{character} vector of TCGA barcodes}
+
+\item{filenames}{A \code{character} vector of filenames obtained from
+the GenomicDataCommons}
 
 \item{from}{A build version name}
 
@@ -105,6 +111,17 @@ participant_ids <- c("TCGA-CK-4948", "TCGA-D1-A17N",
 "TCGA-4V-A9QX", "TCGA-4V-A9QM")
 
 barcodeToUUID(participant_ids)
+
+library(GenomicDataCommons)
+
+fquery <- files() \%>\%
+    filter(~ cases.project.project_id == "TCGA-COAD" &
+        data_category == "Copy Number Variation" &
+        data_type == "Copy Number Segment")
+
+fnames <- results(fquery)$file_name[1:6]
+
+filenameToBarcode(fnames)
 
 
 translateBuild("GRCh35", "UCSC")

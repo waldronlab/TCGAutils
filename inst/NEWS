@@ -1,6 +1,12 @@
 # TCGAutils
 ------------------------------------------------------------
 
+## Changes in version 1.1.1
+
+### New features
+
+* exported the internal helper, `filenameToBarcode`. See examples
+
 ## Changes in version 0.99.68
 
 ### Minor changes and bug fixes

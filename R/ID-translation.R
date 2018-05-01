@@ -174,6 +174,42 @@ barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
 
 #' @rdname ID-translation
 #'
+#' @param filenames A \code{character} vector of filenames obtained from
+#' the GenomicDataCommons
+#'
+#' @examples
+#' library(GenomicDataCommons)
+#'
+#' fquery <- files() %>%
+#'     filter(~ cases.project.project_id == "TCGA-COAD" &
+#'         data_category == "Copy Number Variation" &
+#'         data_type == "Copy Number Segment")
+#'
+#' fnames <- results(fquery)$file_name[1:6]
+#'
+#' filenameToBarcode(fnames)
+#'
+#' @export filenameToBarcode
+filenameToBarcode <- function(filenames, legacy = FALSE) {
+    filesres <- files(legacy = legacy)
+    info <- results_all(
+        select(filter(filesres, ~ file_name %in% filenames),
+            "cases.samples.portions.analytes.aliquots.submitter_id")
+    )
+    id_list <- lapply(info[["cases"]], function(a) {
+        a[[1L]][[1L]][[1L]]
+    })
+    # so we can later expand to a data.frame of the right size
+    barcodes_per_file <- lengths(id_list)
+    # And build the data.frame
+    data.frame(file_name = rep(filenames, barcodes_per_file),
+        file_id = rep(ids(info), barcodes_per_file),
+        aliquots.submitter_id = unlist(id_list), row.names = NULL,
+        stringsAsFactors = FALSE)
+}
+
+#' @rdname ID-translation
+#'
 #' @section builds:
 #'
 #' A couple of functions are available to search for build versions, either from
