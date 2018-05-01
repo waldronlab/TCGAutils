@@ -11,7 +11,7 @@ Authors@R: c(
     person("WaldronLab", role = "ctb")
     )
 Depends:
-    R (>= 3.5)
+    R (>= 3.5.0)
 Imports:
     BiocGenerics,
     GenomeInfoDb,
