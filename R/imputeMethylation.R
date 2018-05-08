@@ -31,7 +31,7 @@ imputeMethylation <- function(multiassayexperiment, i, ...) {
         stop("Install the 'impute' package to run 'imputeMethylation'")
 
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
-        stop("Methylation values has to be a matrix")
+        stop("Input has to be a MultiAssayExperiment")
     if (!any(is.character(i), is.numeric(i), is.logical(i)))
         stop("'i' has to be character or integer or logical")
 
