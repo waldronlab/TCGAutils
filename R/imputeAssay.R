@@ -1,16 +1,16 @@
-#' @name imputeMethylation
+#' @name imputeAssay
 #'
-#' @title This function imputes Methylation values inside a \code{MultiAssayExperiment}
+#' @title This function imputes assays values inside a \code{MultiAssayExperiment}
 #'
-#' @description These function allow the user to enter a \code{multiAssayExperiment} and impute all
-#' the NA values inside Methylation.
+#' @description These function allow the user to enter a \code{MultiAssayExperiment} and impute all
+#' the NA values inside assays.
 #'
 #' @param multiassayexperiment A \code{MultiAssayExperiment} with genes in the rows, samples in the columns
 #' @param i A \code{vector} of indices indicating the position inside \code{MultiAssayExperiment} of the
-#' Methylation experiments.
+#' assays experiments to impute, default = 1.
 #' @inheritDotParams impute::impute.knn
 #'
-#' @return MultiAssayExperiment with imputed Methylation values
+#' @return MultiAssayExperiment with imputed assays values
 #'
 #' @examples
 #' library(curatedTCGAData)
@@ -23,12 +23,12 @@
 #'   mae[[i]] <- newmat
 #' }
 #'
-#' results <- imputeMethylation(mae, c(1,2))
+#' results <- imputeAssay(mae, c(1,2))
 #'
 #' @export
-imputeMethylation <- function(multiassayexperiment, i, ...) {
+imputeAssay <- function(multiassayexperiment, i = 1, ...) {
     if (!requireNamespace("impute"))
-        stop("Install the 'impute' package to run 'imputeMethylation'")
+        stop("Install the 'impute' package to run 'imputeAssay'")
 
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Input has to be a MultiAssayExperiment")
