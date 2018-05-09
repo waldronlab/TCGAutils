@@ -37,7 +37,7 @@ imputeAssay <- function(multiassayexperiment, i = 1, ...) {
 
     sub.multiassayexperiment <- multiassayexperiment[,,i]
     assays <- assays(sub.multiassayexperiment)
-    data.imputed <- lapply(assays, function(mat) {impute.knn(mat, ...)$data})
+    data.imputed <- lapply(assays, function(mat) {impute::impute.knn(mat, ...)$data})
 
     for (x in i) {
         multiassayexperiment[[x]] <- data.imputed[[x]]
