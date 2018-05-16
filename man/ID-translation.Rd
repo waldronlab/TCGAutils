@@ -3,6 +3,7 @@
 \name{ID-translation}
 \alias{ID-translation}
 \alias{UUIDtoBarcode}
+\alias{UUIDtoUUID}
 \alias{barcodeToUUID}
 \alias{filenameToBarcode}
 \alias{translateBuild}
@@ -11,6 +12,8 @@
 \usage{
 UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
   end_point = "participant", legacy = FALSE)
+
+UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"), legacy = FALSE)
 
 barcodeToUUID(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
 
@@ -31,6 +34,9 @@ either files or cases}
 only applies to \code{file_id} type queries. See details for options.}
 
 \item{legacy}{(logical default FALSE) whether to search the legacy archives}
+
+\item{to_type}{The desired UUID type to obtain, can either be "case_id" or
+"file_id"}
 
 \item{barcodes}{A \code{character} vector of TCGA barcodes}
 
@@ -54,8 +60,8 @@ identifiers and use the GDC API to translate from TCGA barcodes to
 Universally Unique Identifiers (UUID) and vice versa. These relationships
 are not one-to-one. Therefore, a \code{data.frame} is returned for all
 inputs. The UUID to TCGA barcode translation only applies to file and case
-UUIDs. API queries for this translation service with other types of UUIDS
-are not fully supported. Please double check any results before using these
+UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
+and vice versa. Please double check any results before using these
 features for analysis. Case / submitter identifiers are translated by
 default, see the \code{id_type} argument for details.
 }
@@ -96,6 +102,14 @@ uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
 UUIDtoBarcode(uuids, id_type = "file_id", end_point = "sample")
 
 UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
+
+## Translate file UUIDs >> case UUIDs
+
+uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
+"002c67f2-ff52-4246-9d65-a3f69df6789e",
+"003143c8-bbbf-46b9-a96f-f58530f4bb82")
+
+UUIDtoUUID(uuids)
 
 ## Translate TCGA Barcode >> UUIDs
 

@@ -18,6 +18,17 @@
     c(rep("participant", 3L), "sample", "portion", "plate", "center")[maxIndx]
 }
 
+.buildIDframe <- function(info, id_list) {
+    barcodes_per_file <- lengths(id_list)
+    # And build the data.frame
+    data.frame(
+        id = rep(ids(info), barcodes_per_file),
+        barcode = if (!length(ids(info))) character(0L) else unlist(id_list),
+        row.names = NULL,
+        stringsAsFactors = FALSE
+    )
+}
+
 #' @name ID-translation
 #'
 #' @title Translate study identifiers from barcode to UUID and vice versa
@@ -27,8 +38,8 @@
 #' Universally Unique Identifiers (UUID) and vice versa. These relationships
 #' are not one-to-one. Therefore, a \code{data.frame} is returned for all
 #' inputs. The UUID to TCGA barcode translation only applies to file and case
-#' UUIDs. API queries for this translation service with other types of UUIDS
-#' are not fully supported. Please double check any results before using these
+#' UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
+#' and vice versa. Please double check any results before using these
 #' features for analysis. Case / submitter identifiers are translated by
 #' default, see the \code{id_type} argument for details.
 #'
@@ -98,16 +109,53 @@ UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
     id_list <- lapply(info[[targetElement]], function(x) {
         x[[1]][[1]][[1]]
     })
-    # so we can later expand to a data.frame of the right size
-    barcodes_per_file <- lengths(id_list)
-    # And build the data.frame
-    resultFrame <- data.frame(
-        id = rep(ids(info), barcodes_per_file),
-        barcode = if (!length(ids(info))) character(0L) else unlist(id_list),
-        row.names = NULL,
-        stringsAsFactors = FALSE
-    )
+
+    resultFrame <- .buildIDframe(info, id_list)
     names(resultFrame) <- c(id_type, APIendpoint)
+    resultFrame
+}
+
+#' @rdname ID-translation
+#'
+#' @param to_type The desired UUID type to obtain, can either be "case_id" or
+#' "file_id"
+#'
+#' @examples
+#' ## Translate file UUIDs >> case UUIDs
+#'
+#' uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
+#' "002c67f2-ff52-4246-9d65-a3f69df6789e",
+#' "003143c8-bbbf-46b9-a96f-f58530f4bb82")
+#'
+#' UUIDtoUUID(uuids)
+#'
+#' @export UUIDtoUUID
+UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
+    legacy = FALSE) {
+
+    type_ops <- c("case_id", "file_id")
+    to_type <- match.arg(to_type)
+    from_type <- type_ops[!type_ops %in% to_type]
+    if (!length(from_type))
+        stop("Provide a valid UUID type")
+
+    endpoint <- switch(to_type,
+        case_id = "cases.case_id",
+        file_id = "files.file_id")
+    apifun <- switch(to_type,
+        file_id = cases(legacy = legacy),
+        case_id = files(legacy = legacy))
+    info <- results_all(
+        select(filter(apifun, as.formula(
+            paste("~ ", from_type, "%in% id_vector")
+            )),
+        endpoint)
+    )
+    targetElement <- gsub("(\\w+).*", "\\1", endpoint)
+    id_list <- lapply(info[[targetElement]], function(x) {x[[1]]})
+
+    resultFrame <- .buildIDframe(info, id_list)
+    names(resultFrame) <- c(from_type, endpoint)
     resultFrame
 }
 
