@@ -1,6 +1,15 @@
 # TCGAutils
 ------------------------------------------------------------
 
+## Changes in version 1.1.4
+
+### New features
+
+* The `UUIDtoUUID` function can translate from case to file UUIDs and vice
+versa
+* `imputeAssay` allows missing data imputation using KNN for
+`MultiAssayExperiment` assays
+
 ## Changes in version 1.1.1
 
 ### New features

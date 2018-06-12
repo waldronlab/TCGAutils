@@ -290,14 +290,35 @@ Here we have a known case UUID that we want to translate into a TCGA barcode.
 UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
 ```
 
-Where we have a known file UUID that we translate into the associated TCGA
-barcode. Optional barcode information can be included for sample,
-portion/analyte, and plate/center.
+In cases where we want to translate a known file UUID to the associated TCGA
+patient barcode, we can use `UUIDtoBarcode`. Optional barcode information can
+be included for sample, portion/analyte, and plate/center by specifying the
+`end_point` argument.
 
 ```{r}
 UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf",
     id_type = "file_id", end_point = "center")
 ```
+
+### UUID to UUID
+
+We can also translate from file UUIDs to case UUIDs and vice versa as long as
+we know the input type. We can use the case UUID from the previous example to
+get the associated file UUIDs using `UUIDtoUUID`. Note that this translation
+is a one to many relationship, thus yielding a `data.frame` of file UUIDs for a
+single case UUID.
+
+```{r}
+head(UUIDtoUUID("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", to_type = "file_id"))
+```
+
+One possible way to verify that file IDs are matching case UUIDS is to
+browse to the Genomic Data Commons webpage with the specific file UUID.
+Here we look at the first file UUID entry in the output `data.frame`:
+
+https://portal.gdc.cancer.gov/files/0ff55a5e-6058-4e0b-9641-e3cb375ff214
+
+In the page we check that the case UUID matches the input.
 
 ## Parsing TCGA barcodes
 
