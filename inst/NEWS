@@ -1,6 +1,11 @@
 # TCGAutils
 ------------------------------------------------------------
 
+## Changes in version 1.1.5
+
+* `uniformBuilds` cleans up a vector of inconsistently labelled builds by
+changing the build with the lowest frequency
+
 ## Changes in version 1.1.4
 
 ### New features
