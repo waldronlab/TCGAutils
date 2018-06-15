@@ -19,7 +19,7 @@ filenameToBarcode(filenames, legacy = FALSE)
 }
 \arguments{
 \item{id_vector}{A \code{character} vector of UUIDs corresponding to
-either files or cases}
+either files or cases (default assumes case_ids)}
 
 \item{id_type}{Either \code{case_id} or \code{file_id} indicating the type of
 \code{id_vector} entered (default "case_id")}
@@ -49,7 +49,8 @@ inputs. The UUID to TCGA barcode translation only applies to file and case
 UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
 and vice versa. Please double check any results before using these
 features for analysis. Case / submitter identifiers are translated by
-default, see the \code{id_type} argument for details.
+default, see the \code{id_type} argument for details. All identifiers are
+converted to lower case.
 }
 \details{
 The \code{end_point} options reflect endpoints in the Genomic Data Commons

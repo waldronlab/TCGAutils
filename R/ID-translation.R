@@ -41,7 +41,8 @@
 #' UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
 #' and vice versa. Please double check any results before using these
 #' features for analysis. Case / submitter identifiers are translated by
-#' default, see the \code{id_type} argument for details.
+#' default, see the \code{id_type} argument for details. All identifiers are
+#' converted to lower case.
 #'
 #' @details
 #' The \code{end_point} options reflect endpoints in the Genomic Data Commons
@@ -62,7 +63,7 @@
 #' (see \code{id_type} argument).
 #'
 #' @param id_vector A \code{character} vector of UUIDs corresponding to
-#' either files or cases
+#' either files or cases (default assumes case_ids)
 #' @param id_type Either \code{case_id} or \code{file_id} indicating the type of
 #' \code{id_vector} entered (default "case_id")
 #' @param end_point The cutoff point of the barcode that should be returned,
@@ -132,7 +133,7 @@ UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
 #' @export UUIDtoUUID
 UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
     legacy = FALSE) {
-
+    id_vector <- tolower(id_vector)
     type_ops <- c("case_id", "file_id")
     to_type <- match.arg(to_type)
     from_type <- type_ops[!type_ops %in% to_type]
