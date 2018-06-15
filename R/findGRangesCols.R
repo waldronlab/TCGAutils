@@ -33,13 +33,13 @@
 .find_start_end_cols <- function (df_colnames, start.field, end.field) {
     idx1 <- which(df_colnames %in% start.field)
     idx2 <- which(df_colnames %in% end.field)
+    if (length(idx1) == 1L && length(idx2) == 1L) {
+        return(list(c(start = idx1, end = idx2), list(c(none = ""))))
+    }
     prefixes1 <- .collect_prefixes(df_colnames, start.field)
     prefixes2 <- .collect_prefixes(df_colnames, end.field)
     suffixes1 <- .collect_suffixes(df_colnames, start.field)
     suffixes2 <- .collect_suffixes(df_colnames, end.field)
-    if (length(idx1) == 1L && length(idx2) == 1L) {
-        return(list(c(start = idx1, end = idx2), list(c(none = ""))))
-    }
     if (length(idx1) != 1L && length(prefixes1) ||
         length(idx2) != 1L && length(prefixes2)) {
     startend.fields <- .find_with_xfix(df_colnames, prefixes1, prefixes2,
@@ -65,19 +65,21 @@
     df_colnames_nc <- nchar(df_colnames)
     prefixes <- lapply(field, function(suf) {
         pref_nc <- df_colnames_nc - nchar(suf)
-        idx <- substr(df_colnames, pref_nc + 1L, df_colnames_nc) == suf
+        idx <- which(substr(df_colnames, pref_nc + 1L, df_colnames_nc) == suf)
         substr(df_colnames[idx], 1L, pref_nc[idx])
     })
-    unique(unlist(prefixes))
+    pref <- unique(unlist(prefixes))
+    pref[pref != ""]
 }
 
 .collect_suffixes <- function(df_colnames, field) {
     suffixes <- lapply(field, function(pre) {
-        idx <- startsWith(df_colnames, pre)
+        idx <- which(startsWith(df_colnames, pre))
         substr(df_colnames[idx], nchar(field) + 1L,
             nchar(df_colnames[idx]))
     })
-    unique(unlist(suffixes))
+    suff <- unique(unlist(suffixes))
+    suff[suff != ""]
 }
 
 .find_strands_col <- function(df_colnames, strand.field, xfix) {
