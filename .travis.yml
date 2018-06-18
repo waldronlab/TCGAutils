@@ -11,6 +11,7 @@ warnings_are_errors: false
 
 branches:
   only:
+    - RELEASE_3_7
     - master
 
 r_binary_packages:
