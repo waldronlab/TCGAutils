@@ -152,7 +152,7 @@
 #' @export findGRangesCols
 findGRangesCols <- function (df_colnames,
     seqnames.field = c("seqnames", "seqname", "chromosome",
-        "chrom", "chr", "chromosome_name", "seqid"),
+        "chrom", "chr", "chromosome_name", "seqid", "om"),
     start.field = "start",
     end.field = c("end", "stop"),
     strand.field = "strand",
