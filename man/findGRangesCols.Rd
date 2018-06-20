@@ -5,7 +5,7 @@
 \title{Obtain minimum necessary names for the creation of a GRangesList object}
 \usage{
 findGRangesCols(df_colnames, seqnames.field = c("seqnames", "seqname",
-  "chromosome", "chrom", "chr", "chromosome_name", "seqid"),
+  "chromosome", "chrom", "chr", "chromosome_name", "seqid", "om"),
   start.field = "start", end.field = c("end", "stop"),
   strand.field = "strand", ignore.strand = FALSE)
 }

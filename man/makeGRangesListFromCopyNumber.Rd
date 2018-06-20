@@ -36,8 +36,8 @@ library(magrittr)
 
 manif <- files() \%>\%
     filter(~ cases.project.project_id == "TCGA-COAD" &
-        file_id == "7d55325c-42b1-494b-a781-6a453a635e43") \%>\%
-    manifest()
+        data_type == "Copy Number Segment") \%>\%
+    manifest(size = 1)
 
 fname <- gdcdata(manif$id)
 
@@ -45,7 +45,7 @@ barcode <- UUIDtoBarcode(names(fname), id_type = "file_id")$cases.submitter_id
 
 cndata <- read.delim(fname[[1L]], nrows = 10L)
 
-cngrl <- makeGRangesListFromCopyNumber(cndata, split.field = "Sample",
+cngrl <- makeGRangesListFromCopyNumber(cndata, split.field = "GDC_Aliquot",
     keep.extra.columns = TRUE)
 
 names(cngrl) <- barcode
