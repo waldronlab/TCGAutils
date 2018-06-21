@@ -230,7 +230,7 @@ class to incorporate them into a `MultiAssayExperiment`.
 
 Other processed, genomic range-based data from TCGA data can be imported using
 `makeGRangesListFromCopyNumber`. This tab-delimited data file of copy number
-alterations from *bladder urothelial *arcinoma* (BLCA) was obtained from the
+alterations from *bladder urothelial carcinoma* (BLCA) was obtained from the
 Genomic Data Commons and is included in `TCGAUtils` as an example:
 
 ```{r}
