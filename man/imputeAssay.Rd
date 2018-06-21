@@ -2,15 +2,17 @@
 % Please edit documentation in R/imputeAssay.R
 \name{imputeAssay}
 \alias{imputeAssay}
-\title{This function imputes assays values inside a \code{MultiAssayExperiment}}
+\title{This function imputes assays values inside a
+\code{MultiAssayExperiment}}
 \usage{
 imputeAssay(multiassayexperiment, i = 1, ...)
 }
 \arguments{
-\item{multiassayexperiment}{A \code{MultiAssayExperiment} with genes in the rows, samples in the columns}
+\item{multiassayexperiment}{A \code{MultiAssayExperiment} with genes in the
+rows, samples in the columns}
 
-\item{i}{A \code{vector} of indices indicating the position inside \code{MultiAssayExperiment} of the
-assays experiments to impute, default = 1.}
+\item{i}{A numeric, logical, or character \code{vector} indicating the
+assays to perform imputation on (default 1L)}
 
 \item{...}{Arguments passed on to \code{impute::impute.knn}
 \describe{
@@ -36,20 +38,17 @@ assays experiments to impute, default = 1.}
 MultiAssayExperiment with imputed assays values
 }
 \description{
-These function allow the user to enter a \code{MultiAssayExperiment} and impute all
-the NA values inside assays.
+These function allow the user to enter a
+\code{MultiAssayExperiment} and impute all the NA values inside assays.
 }
 \examples{
 library(curatedTCGAData)
 
-mae <- curatedTCGAData("GBM", "Methylation", FALSE)
+gbm <- curatedTCGAData("GBM", "RPPA*", FALSE)
 
-for (i in seq_along(experiments(mae))) {
-  newmat <- assay(mae[[i]])
-  mode(newmat) <- "numeric"
-  mae[[i]] <- newmat
-}
+## replace DataFrame with "matrix"
+gbm[[1L]] <- as.matrix(assay(gbm[[1L]]))
 
-results <- imputeAssay(mae, c(1,2))
+gbm <- imputeAssay(gbm, i = 1L)
 
 }
