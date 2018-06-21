@@ -1,13 +1,15 @@
 #' @name imputeAssay
 #'
-#' @title This function imputes assays values inside a \code{MultiAssayExperiment}
+#' @title This function imputes assays values inside a
+#' \code{MultiAssayExperiment}
 #'
-#' @description These function allow the user to enter a \code{MultiAssayExperiment} and impute all
-#' the NA values inside assays.
+#' @description These function allow the user to enter a
+#' \code{MultiAssayExperiment} and impute all the NA values inside assays.
 #'
-#' @param multiassayexperiment A \code{MultiAssayExperiment} with genes in the rows, samples in the columns
-#' @param i A \code{vector} of indices indicating the position inside \code{MultiAssayExperiment} of the
-#' assays experiments to impute, default = 1.
+#' @param multiassayexperiment A \code{MultiAssayExperiment} with genes in the
+#' rows, samples in the columns
+#' @param i A numeric, logical, or character \code{vector} indicating the
+#' assays to perform imputation on (default 1L)
 #' @inheritDotParams impute::impute.knn
 #'
 #' @return MultiAssayExperiment with imputed assays values
@@ -15,15 +17,12 @@
 #' @examples
 #' library(curatedTCGAData)
 #'
-#' mae <- curatedTCGAData("GBM", "Methylation", FALSE)
+#' gbm <- curatedTCGAData("GBM", "RPPA*", FALSE)
 #'
-#' for (i in seq_along(experiments(mae))) {
-#'   newmat <- assay(mae[[i]])
-#'   mode(newmat) <- "numeric"
-#'   mae[[i]] <- newmat
-#' }
+#' ## replace DataFrame with "matrix"
+#' gbm[[1L]] <- as.matrix(assay(gbm[[1L]]))
 #'
-#' results <- imputeAssay(mae, c(1,2))
+#' gbm <- imputeAssay(gbm, i = 1L)
 #'
 #' @export
 imputeAssay <- function(multiassayexperiment, i = 1, ...) {
@@ -33,11 +32,16 @@ imputeAssay <- function(multiassayexperiment, i = 1, ...) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Input has to be a MultiAssayExperiment")
     if (!any(is.character(i), is.numeric(i), is.logical(i)))
-        stop("'i' has to be character or integer or logical")
+        stop("'i' has to be character or numeric or logical")
 
     sub.multiassayexperiment <- multiassayexperiment[,,i]
     assays <- assays(sub.multiassayexperiment)
-    data.imputed <- lapply(assays, function(mat) {impute::impute.knn(mat, ...)$data})
+    assayclasses <- vapply(assays, is.matrix, logical(1L))
+    if (!all(assayclasses))
+        stop("Only matrix assay(s) can be imputed")
+    data.imputed <- lapply(assays, function(mat) {
+        impute::impute.knn(mat, ...)$data
+    })
 
     for (x in i) {
         multiassayexperiment[[x]] <- data.imputed[[x]]
