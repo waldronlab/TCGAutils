@@ -11,7 +11,13 @@ Please make sure to download the latest version of `RTCGAToolbox`
 from Bioconductor.
 
 ```
-BiocInstaller::biocLite("RTCGAToolbox")
+if (!require("BiocManager"))
+    install.packages("BiocManager")
+
+library(BiocManager)
+
+install(version = "devel")
+install("RTCGAToolbox")
 ```
 
 Functions like `RTCGAToolbox::biocExtract` interact with derived data classes

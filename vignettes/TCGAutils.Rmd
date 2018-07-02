@@ -39,7 +39,9 @@ It includes:
 # Installation
 
 ```{r, eval=FALSE}
-BiocInstaller::biocLite("TCGAutils")
+if (!require("BiocManager"))
+    install.packages("BiocManager")
+BiocManager::install("TCGAutils")
 ```
 
 Required packages for this vignette:
