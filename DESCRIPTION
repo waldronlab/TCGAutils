@@ -13,13 +13,16 @@ Authors@R: c(
 Depends:
     R (>= 3.5.0)
 Imports:
+    AnnotationDbi,
     BiocGenerics,
     GenomeInfoDb,
+    GenomicFeatures,
     GenomicRanges,
     GenomicDataCommons,
     IRanges,
     methods,
     MultiAssayExperiment,
+    RaggedExperiment,
     rvest,
     S4Vectors,
     stats,
@@ -34,9 +37,12 @@ Suggests:
     impute,
     knitr,
     magrittr,
+    mirbase.db,
+    org.Hs.eg.db,
     readr,
     RTCGAToolbox (>= 2.7.5),
-    testthat
+    testthat,
+    TxDb.Hsapiens.UCSC.hg19.knownGene,
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
