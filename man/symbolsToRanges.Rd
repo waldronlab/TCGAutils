@@ -29,7 +29,12 @@ Any SummarizedExperiment elements with gene symbols as rownames will
   SummarizedExperiment.
 }
 \examples{
+library(MultiAssayExperiment)
+
+data(miniACC)
+
 symbolsToRanges(miniACC)
+
 }
 \seealso{
 mirToRanges

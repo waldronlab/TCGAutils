@@ -186,7 +186,12 @@ qReduceTCGA <- function(obj, removeOriginals = TRUE) {
 #' @author L. Waldron
 #'
 #' @examples
+#' library(MultiAssayExperiment)
+#'
+#' data(miniACC)
+#'
 #' symbolsToRanges(miniACC)
+#'
 #' @export
 symbolsToRanges <- function(obj, removeOriginals = TRUE) {
   can.fix <- vapply(experiments(obj), function(y) {
@@ -197,7 +202,7 @@ symbolsToRanges <- function(obj, removeOriginals = TRUE) {
   for (i in which(can.fix)) {
     lookup <- .getRangesOfSYMBOLS(rownames(obj[[i]]))
     rse <- obj[[i]][names(lookup$mapped),]
-    SummarizedExperiment::`rowRanges<-`(rse, lookup$mapped)
+    SummarizedExperiment::rowRanges(rse) <- lookup$mapped
     obj <- .cMAE(obj, rse, name = paste0(names(obj)[i], "_ranged"))
     if (length(lookup$unmapped > 0)) {
       se <- obj[[i]][lookup$unmapped,]
@@ -239,7 +244,7 @@ mirToRanges <- function(obj, removeOriginals = TRUE) {
   for (i in which(can.fix)) {
     lookup <- .getRangesOfMir(rownames(obj[[i]]))
     rse <- obj[[i]][names(lookup$mapped), ]
-    SummarizedExperiment::`rowRanges<-`(rse, lookup$mapped)
+    SummarizedExperiment::rowRanges(rse) <- lookup$mapped
     obj <- .cMAE(obj, rse, paste0(names(obj)[i], "_ranged"))
     if (length(lookup$unmapped > 0)) {
       se <- obj[[i]][lookup$unmapped, ]
