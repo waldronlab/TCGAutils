@@ -66,6 +66,7 @@
     vapply(pkgnames, function(pkgname) {
     if (!requireNamespace(pkgname, quietly = TRUE)) {
         func <- as.character(sys.call(1L)[[1L]])
+        func <- func[!(func %in% c("::", "TCGAutils"))]
         stop("Install the '", pkgname, "' package to use '", func, "'",
             call. = FALSE)
     } else
