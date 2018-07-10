@@ -30,7 +30,7 @@ simplifyTCGA(accmae)
 
 }
 \seealso{
-mirToRanges, symbolsToRanges, qReduceTCGA
+mirToRanges, symbolsToRanges, qreduceTCGA
 }
 \author{
 L. Waldron

@@ -77,8 +77,10 @@
 #' Simplify curatedTCGAData objects by replacing RaggedExperiment objects
 #'
 #' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
-#' @param removeOriginals logical (default TRUE) whether to remove
+#' @param keep logical (default FALSE) whether to remove the original
 #'   RaggedExperiment objects from the returned MultiAssayExperiment
+#' @param suffix character (default "_simplified") A character string to append
+#' to the newly modified assay.
 #'
 #' @return
 #' A MultiAssayExperiment object with RaggedExperiments converted to
@@ -97,7 +99,7 @@
 #' accmae <-
 #'     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
 #'
-#' qReduceTCGA(accmae)
+#' qreduceTCGA(accmae)
 #' @importFrom GenomicFeatures genes microRNAs
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
@@ -107,7 +109,7 @@
 #' @author L. Waldron
 #'
 #' @export
-qReduceTCGA <- function(obj, removeOriginals = TRUE) {
+qreduceTCGA <- function(obj, keep = FALSE, suffix = "_simplified") {
     .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     gn <- genes(
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
@@ -125,10 +127,9 @@ qReduceTCGA <- function(obj, removeOriginals = TRUE) {
         any(scores != "Silent")
 
     isRE <- function(x) vapply(experiments(x), function(y)
-          is(y, "RaggedExperiment"), TRUE)
+          is(y, "RaggedExperiment"), logical(1L))
 
-    isMut <- function(x)
-        grepl("Mutation", names(x))
+    isMut <- function(x) grepl("Mutation", names(x))
 
     for (i in which(isMut(obj))) {
         mutations <- RaggedExperiment::qreduceAssay(obj[[i]], gn, nonsilent,
@@ -139,7 +140,7 @@ qReduceTCGA <- function(obj, removeOriginals = TRUE) {
         mutations <- SummarizedExperiment(mutations[!remove.rows,],
             rowRanges = gn[!remove.rows])
         el <- ExperimentList(x = mutations)
-        names(el) <- paste0(names(obj)[i], "_simplified")
+        names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)
     }
     for (i in which(isRE(obj) & !isMut(obj))) {
@@ -151,10 +152,10 @@ qReduceTCGA <- function(obj, removeOriginals = TRUE) {
         remove.rows <- is.na(rownames(cn))
         cn <- SummarizedExperiment(cn[!remove.rows, ], rowRanges = gn[!remove.rows])
         el <- ExperimentList(x = cn)
-        names(el) <- paste0(names(obj)[i], "_simplified")
+        names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)
     }
-    if (removeOriginals) {
+    if (!keep) {
         obj <- obj[, , !isRE(obj)]
     }
     return(obj)
@@ -262,7 +263,7 @@ mirToRanges <- function(obj, removeOriginals = TRUE) {
 #'
 #' @author L. Waldron
 #'
-#' @seealso mirToRanges, symbolsToRanges, qReduceTCGA
+#' @seealso mirToRanges, symbolsToRanges, qreduceTCGA
 #' @examples
 #' library(curatedTCGAData)
 #'
@@ -274,7 +275,7 @@ mirToRanges <- function(obj, removeOriginals = TRUE) {
 #'
 #' @export
 simplifyTCGA <- function(obj, removeOriginals=TRUE){
-    obj <- qReduceTCGA(obj, removeOriginals)
+    obj <- qreduceTCGA(obj, removeOriginals)
     obj <- mirToRanges(obj, removeOriginals)
     obj <- symbolsToRanges(obj, removeOriginals)
     return(obj)
