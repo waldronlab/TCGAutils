@@ -165,7 +165,7 @@ qreduceTCGA <- function(obj, keep = FALSE, suffix = "_simplified") {
 #' RangedSummarizedExperiment
 #'
 #' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
-#' @param removeOriginals If TRUE (default), remove the SummarizedExperiment objects
+#' @param keep If FALSE (default), remove the SummarizedExperiment objects
 #' that have been converted to RangedSummarizedExperiment
 #'
 #' @return a MultiAssayExperiment where any of the original SummarizedExperiment
@@ -189,7 +189,7 @@ qreduceTCGA <- function(obj, keep = FALSE, suffix = "_simplified") {
 #' symbolsToRanges(miniACC)
 #'
 #' @export
-symbolsToRanges <- function(obj, removeOriginals = TRUE) {
+symbolsToRanges <- function(obj, keep = FALSE) {
     can.fix <- vapply(experiments(obj), function(y) {
         .hasSymbols(y) & .isSummarizedExperiment(y)
     }, TRUE)
@@ -205,7 +205,7 @@ symbolsToRanges <- function(obj, removeOriginals = TRUE) {
             obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
         }
     }
-    if (removeOriginals & any(can.fix))
+    if (!keep & any(can.fix))
         obj <- obj[, ,-which(can.fix)]
     return(obj)
 }
@@ -214,7 +214,7 @@ symbolsToRanges <- function(obj, removeOriginals = TRUE) {
 #' RangedSummarizedExperiment
 #'
 #' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
-#' @param removeOriginals If TRUE (default), remove the SummarizedExperiment
+#' @param keep If FALSE (default), remove the SummarizedExperiment
 #'   objects that have been converted to RangedSummarizedExperiment
 #' @return a MultiAssayExperiment where any of the original SummarizedExperiment
 #'   containing gene symbols as rownames have been replaced or supplemented by a
@@ -231,7 +231,7 @@ symbolsToRanges <- function(obj, removeOriginals = TRUE) {
 #'
 #' mirToRanges(accmae)
 #' @export
-mirToRanges <- function(obj, removeOriginals = TRUE) {
+mirToRanges <- function(obj, keep = FALSE) {
     can.fix <- vapply(experiments(obj), function(y) {
         .hasMir(y) & .isSummarizedExperiment(y)
     }, TRUE)
@@ -246,7 +246,7 @@ mirToRanges <- function(obj, removeOriginals = TRUE) {
             se <- obj[[i]][lookup$unmapped, ]
             obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
         }
-        if (removeOriginals & any(can.fix))
+        if (!keep & any(can.fix))
             obj <- obj[, , -which(can.fix)]
     }
     return(obj)
@@ -255,7 +255,7 @@ mirToRanges <- function(obj, removeOriginals = TRUE) {
 #' Title All-in-one simplification of curatedTCGAData objects
 #'
 #' @param obj A MultiAssayExperiment from curatedTCGAData
-#' @param removeOriginals If TRUE (default), remove the original
+#' @param keep If FALSE (default), remove the original
 #'   MultiAssayExperiment elements that have simplified versions in the output.
 #'
 #' @return a MultiAssayExperiment with any gene expression, miRNA, copy number,
@@ -274,9 +274,9 @@ mirToRanges <- function(obj, removeOriginals = TRUE) {
 #' simplifyTCGA(accmae)
 #'
 #' @export
-simplifyTCGA <- function(obj, removeOriginals=TRUE){
-    obj <- qreduceTCGA(obj, removeOriginals)
-    obj <- mirToRanges(obj, removeOriginals)
-    obj <- symbolsToRanges(obj, removeOriginals)
+simplifyTCGA <- function(obj, keep = FALSE){
+    obj <- qreduceTCGA(obj, keep)
+    obj <- mirToRanges(obj, keep)
+    obj <- symbolsToRanges(obj, keep)
     return(obj)
 }

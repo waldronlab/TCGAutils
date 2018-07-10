@@ -5,12 +5,12 @@
 \title{Convert SummarizedExperiment elements with gene symbols to
 RangedSummarizedExperiment}
 \usage{
-symbolsToRanges(obj, removeOriginals = TRUE)
+symbolsToRanges(obj, keep = FALSE)
 }
 \arguments{
 \item{obj}{A MultiAssayExperiment object obtained from curatedTCGAData}
 
-\item{removeOriginals}{If TRUE (default), remove the SummarizedExperiment objects
+\item{keep}{If FALSE (default), remove the SummarizedExperiment objects
 that have been converted to RangedSummarizedExperiment}
 }
 \value{

@@ -4,12 +4,12 @@
 \alias{simplifyTCGA}
 \title{Title All-in-one simplification of curatedTCGAData objects}
 \usage{
-simplifyTCGA(obj, removeOriginals = TRUE)
+simplifyTCGA(obj, keep = FALSE)
 }
 \arguments{
 \item{obj}{A MultiAssayExperiment from curatedTCGAData}
 
-\item{removeOriginals}{If TRUE (default), remove the original
+\item{keep}{If FALSE (default), remove the original
 MultiAssayExperiment elements that have simplified versions in the output.}
 }
 \value{
