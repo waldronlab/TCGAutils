@@ -89,6 +89,8 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
 #'
 #' @export uniformBuilds
 uniformBuilds <- function(builds, cutoff = 0.2) {
+    if (length(unique(builds)) == 1L)
+        return(builds)
     wbuilds <- tolower(builds)
     tots <- length(wbuilds)
     ubuilds <- unique(tolower(wbuilds))
