@@ -181,16 +181,20 @@ UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
 #' barcodeToUUID(participant_ids)
 #'
 #' @export barcodeToUUID
-barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
-    legacy = FALSE) {
+barcodeToUUID <-
+    function(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
+{
+    orgcodes <- barcodes
+    barcodes <- unique(TCGAbarcode(barcodes))
     .checkBarcodes(barcodes)
     id_type <- match.arg(id_type)
     if (id_type == "case_id") {
         targetElement <- APIendpoint <- "submitter_id"
-        barcodes <- unique(TCGAbarcode(barcodes))
     } else if (id_type == "file_id") {
-        targetElement <- "cases"
-        APIendpoint <- .barcodeEndpoint(.findBarcodeLimit(barcodes))
+        id_type <- "case_id"
+        ## TODO: Make this dynamic to barcode
+        APIendpoint <- "submitter_aliquot_ids"
+        targetElement <- "aliquot_ids"
     }
     funcRes <- switch(id_type,
         file_id = files(legacy = legacy),
@@ -199,25 +203,36 @@ barcodeToUUID <-  function(barcodes, id_type = c("case_id", "file_id"),
         select(filter(funcRes, as.formula(
             paste("~ ", APIendpoint, "%in% barcodes")
         )),
-        APIendpoint)
+        targetElement)
     )
 
-    id_list <- lapply(info[[targetElement]], function(x) {
-        x[[1]][[1]][[1]]
-    })
+    if (APIendpoint == "submitter_aliquot_ids") {
+        dfcodes <- reshape2::melt(info[[targetElement]],
+            value.name = APIendpoint)
+        resultFrame <- data.frame(
+            barcode = orgcodes,
+            ids = dfcodes$L1[match(orgcodes, dfcodes[[targetElement]])]
+        )
+        names(resultFrame) <- c(APIendpoint, "ids")
+    } else {
+        id_list <- lapply(info[[targetElement]], function(x) {
+            x[[1]][[1]][[1]]
+        })
 
-    barcodes_per_file <- lengths(id_list)
+        barcodes_per_file <- lengths(id_list)
 
-    resultFrame <- data.frame(
-        barcode = if (!length(ids(info))) character(0L) else unlist(id_list),
-        ids = rep(ids(info), barcodes_per_file),
-        row.names = NULL,
-        stringsAsFactors = FALSE
-    )
-    names(resultFrame) <- c(APIendpoint, id_type)
-    resultFrame <- resultFrame[
-        na.omit(match(barcodes, resultFrame[[APIendpoint]])), ]
-    rownames(resultFrame) <- NULL
+        resultFrame <- data.frame(
+            barcode = if (!length(ids(info))) character(0L) else
+                unlist(id_list),
+            ids = rep(ids(info), barcodes_per_file),
+            row.names = NULL,
+            stringsAsFactors = FALSE
+        )
+        names(resultFrame) <- c(APIendpoint, id_type)
+        resultFrame <- resultFrame[
+            na.omit(match(barcodes, resultFrame[[APIendpoint]])), ]
+        rownames(resultFrame) <- NULL
+    }
     resultFrame
 }
 

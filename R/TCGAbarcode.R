@@ -9,7 +9,7 @@
         stop("Barcodes must start with 'TCGA'")
     filler <- .uniqueDelim(barcodes)
     if (length(filler) != 1L)
-        stop("barcode delimiters not consistent")
+        stop("Barcode delimiters not consistent")
 }
 
 #' Parse data from TCGA barcode
