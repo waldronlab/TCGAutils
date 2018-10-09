@@ -1,7 +1,8 @@
-.cMAE <- function(mae, x, name = "newelement") {
-    el <- ExperimentList(tmp = x)
-    names(el)[1] <- name
-    c(mae, el)
+.cMAE <- function(mae, x, name) {
+    if (missing(name))
+        stop("<internal> Provide a name for the 'ExperimentList' element")
+    newlist <- setNames(list(x), name)
+    c(mae, ExperimentList(newlist))
 }
 
 .hasMir <- function(x) {
