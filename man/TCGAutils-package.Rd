@@ -26,10 +26,15 @@ Useful links:
 \author{
 \strong{Maintainer}: Marcel Ramos \email{marcel.ramos@roswellpark.org}
 
+Authors:
+\itemize{
+  \item Lucas Schiffer
+  \item Levi Waldron
+}
+
 Other contributors:
 \itemize{
-  \item Lucas Schiffer [contributor]
-  \item WaldronLab [contributor]
+  \item Sean Davis [contributor]
 }
 
 }

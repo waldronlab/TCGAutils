@@ -200,12 +200,12 @@ symbolsToRanges <- function(obj, keep = FALSE) {
         rse <- obj[[i]][names(lookup$mapped),]
         SummarizedExperiment::rowRanges(rse) <- lookup$mapped
         obj <- .cMAE(obj, rse, name = paste0(names(obj)[i], "_ranged"))
-        if (length(lookup$unmapped > 0)) {
+        if (length(lookup$unmapped)) {
             se <- obj[[i]][lookup$unmapped,]
             obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
         }
     }
-    if (!keep & any(can.fix))
+    if (!keep && any(can.fix))
         obj <- obj[, ,-which(can.fix)]
     return(obj)
 }

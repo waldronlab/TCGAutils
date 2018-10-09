@@ -4,8 +4,8 @@
 \alias{TCGAbarcode}
 \title{Parse data from TCGA barcode}
 \usage{
-TCGAbarcode(barcodes, participant = TRUE, sample = FALSE, portion = FALSE,
-  plate = FALSE, center = FALSE, index = NULL)
+TCGAbarcode(barcodes, participant = TRUE, sample = FALSE,
+  portion = FALSE, plate = FALSE, center = FALSE, index = NULL)
 }
 \arguments{
 \item{barcodes}{A character vector of TCGA barcodes}

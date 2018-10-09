@@ -11,9 +11,11 @@
 UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
   end_point = "participant", legacy = FALSE)
 
-UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"), legacy = FALSE)
+UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"),
+  legacy = FALSE)
 
-barcodeToUUID(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
+barcodeToUUID(barcodes, id_type = c("case_id", "file_id"),
+  legacy = FALSE)
 
 filenameToBarcode(filenames, legacy = FALSE)
 }

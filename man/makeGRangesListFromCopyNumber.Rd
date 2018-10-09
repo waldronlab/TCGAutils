@@ -4,8 +4,8 @@
 \alias{makeGRangesListFromCopyNumber}
 \title{Make a GRangesList from TCGA Copy Number data}
 \usage{
-makeGRangesListFromCopyNumber(df, split.field, names.field = "Hugo_Symbol",
-  ...)
+makeGRangesListFromCopyNumber(df, split.field,
+  names.field = "Hugo_Symbol", ...)
 }
 \arguments{
 \item{df}{A \code{data.frame} or \code{DataFrame} class object. \code{list}
