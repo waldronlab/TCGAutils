@@ -272,6 +272,10 @@ mirToRanges <- function(obj, keep = FALSE) {
 #'     c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
 #'     dry.run = FALSE)
 #'
+#' # Fix
+#' genome(accmae[[4]]@assays) <-
+#'     vapply(genome(accmae[[4]]@assays), translateBuild, character(1L))
+#'
 #' simplifyTCGA(accmae)
 #'
 #' @export
