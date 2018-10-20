@@ -36,7 +36,7 @@ translateBuild <- function(from, to = "UCSC") {
     )
     if (to == "UCSC")
         from <- gsub("[GgRrCcHh]", "", from)
-    matchBuild <- switch (to, UCSC = "NCBI", NCBI = "UCSC" )
+    matchBuild <- switch(to, UCSC = "NCBI", NCBI = "UCSC")
     buildIndex <- match(from, buildDF[[matchBuild]])
     if (is.na(buildIndex)) {
         warning("build could not be matched")

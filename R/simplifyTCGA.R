@@ -96,11 +96,18 @@
 #' NCBI build.
 #' @examples
 #' library(curatedTCGAData)
+#' library(GenomeInfoDb)
 #'
 #' accmae <-
 #'     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
 #'
+#' ## Update build to "hg19"
+#' genome(accmae[["ACC_Mutation-20160128"]]@assays) <-
+#'     vapply(genome(accmae[["ACC_Mutation-20160128"]]@assays),
+#'     translateBuild, character(1L))
+#'
 #' qreduceTCGA(accmae)
+#'
 #' @importFrom GenomicFeatures genes microRNAs
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
@@ -253,7 +260,7 @@ mirToRanges <- function(obj, keep = FALSE) {
     return(obj)
 }
 
-#' Title All-in-one simplification of curatedTCGAData objects
+#' All-in-one simplification of curatedTCGAData objects
 #'
 #' @param obj A MultiAssayExperiment from curatedTCGAData
 #' @param keep If FALSE (default), remove the original
@@ -267,15 +274,20 @@ mirToRanges <- function(obj, keep = FALSE) {
 #' @seealso mirToRanges, symbolsToRanges, qreduceTCGA
 #' @examples
 #' library(curatedTCGAData)
+#' library(GenomeInfoDb)
 #'
 #' accmae <- curatedTCGAData("ACC",
 #'     c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
 #'     dry.run = FALSE)
 #'
-#' # Fix
-#' genome(accmae[[4]]@assays) <-
-#'     vapply(genome(accmae[[4]]@assays), translateBuild, character(1L))
+#' rex <- accmae[["ACC_Mutation-20160128"]]
 #'
+#' ## Translate build to "hg19"
+#' tgenome <- vapply(genome(rex@assays), translateBuild, character(1L))
+#' genome(rex@assays) <- tgenome
+#'
+#' ## Avoid missing MultiAssayExperiment method `[[<-`
+#' experiments(accmae)["ACC_Mutation-20160128"] <- SimpleList(`ACC_Mutation-20160128`=rex)
 #' simplifyTCGA(accmae)
 #'
 #' @export

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simplifyTCGA.R
 \name{simplifyTCGA}
 \alias{simplifyTCGA}
-\title{Title All-in-one simplification of curatedTCGAData objects}
+\title{All-in-one simplification of curatedTCGAData objects}
 \usage{
 simplifyTCGA(obj, keep = FALSE)
 }
@@ -17,15 +17,24 @@ a MultiAssayExperiment with any gene expression, miRNA, copy number,
   and mutations converted to RangedSummarizedExperiment objects
 }
 \description{
-Title All-in-one simplification of curatedTCGAData objects
+All-in-one simplification of curatedTCGAData objects
 }
 \examples{
 library(curatedTCGAData)
+library(GenomeInfoDb)
 
 accmae <- curatedTCGAData("ACC",
     c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
     dry.run = FALSE)
 
+rex <- accmae[["ACC_Mutation-20160128"]]
+
+## Translate build to "hg19"
+tgenome <- vapply(genome(rex@assays), translateBuild, character(1L))
+genome(rex@assays) <- tgenome
+
+## Avoid missing MultiAssayExperiment method `[[<-`
+experiments(accmae)["ACC_Mutation-20160128"] <- SimpleList(`ACC_Mutation-20160128`=rex)
 simplifyTCGA(accmae)
 
 }
