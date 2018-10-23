@@ -102,8 +102,8 @@
 #'     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
 #'
 #' ## Update build to "hg19"
-#' genome(accmae[["ACC_Mutation-20160128"]]@assays) <-
-#'     vapply(genome(accmae[["ACC_Mutation-20160128"]]@assays),
+#' genome(accmae[["ACC_Mutation-20160128"]]) <-
+#'     vapply(genome(accmae[["ACC_Mutation-20160128"]]),
 #'     translateBuild, character(1L))
 #'
 #' qreduceTCGA(accmae)
@@ -283,11 +283,11 @@ mirToRanges <- function(obj, keep = FALSE) {
 #' rex <- accmae[["ACC_Mutation-20160128"]]
 #'
 #' ## Translate build to "hg19"
-#' tgenome <- vapply(genome(rex@assays), translateBuild, character(1L))
-#' genome(rex@assays) <- tgenome
+#' tgenome <- vapply(genome(rex), translateBuild, character(1L))
+#' genome(rex) <- tgenome
 #'
-#' ## Avoid missing MultiAssayExperiment method `[[<-`
-#' experiments(accmae)["ACC_Mutation-20160128"] <- SimpleList(`ACC_Mutation-20160128`=rex)
+#' accmae[["ACC_Mutation-20160128"]] <- rex
+#'
 #' simplifyTCGA(accmae)
 #'
 #' @export

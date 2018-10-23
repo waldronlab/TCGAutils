@@ -30,11 +30,11 @@ accmae <- curatedTCGAData("ACC",
 rex <- accmae[["ACC_Mutation-20160128"]]
 
 ## Translate build to "hg19"
-tgenome <- vapply(genome(rex@assays), translateBuild, character(1L))
-genome(rex@assays) <- tgenome
+tgenome <- vapply(genome(rex), translateBuild, character(1L))
+genome(rex) <- tgenome
 
-## Avoid missing MultiAssayExperiment method `[[<-`
-experiments(accmae)["ACC_Mutation-20160128"] <- SimpleList(`ACC_Mutation-20160128`=rex)
+accmae[["ACC_Mutation-20160128"]] <- rex
+
 simplifyTCGA(accmae)
 
 }
