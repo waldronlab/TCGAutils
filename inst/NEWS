@@ -1,6 +1,20 @@
 # TCGAutils
 ------------------------------------------------------------
 
+## Changes in version 1.1.25
+
+### New features
+
+* `imputeAssay` added to impute data for MultiAssayExperiment assays
+* `UUIDtoUUID` translation available to translate from file to case IDs
+* A suite of functions is available to enhance existing MultiAssayExperiment
+datasets: `qreduceTCGA`, `mirToRanges`, `symbolsToRanges`. Thanks to @lwaldron
+
+### Minor changes and bug fixes
+
+* Various changes to examples for compatibility with RaggedExperiment
+* Bug fix to internal functions for finding GRanges columns
+
 ## Changes in version 1.1.5
 
 * `uniformBuilds` cleans up a vector of inconsistently labelled builds by
