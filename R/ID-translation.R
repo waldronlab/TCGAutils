@@ -185,15 +185,18 @@ barcodeToUUID <-
     function(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
 {
     orgcodes <- barcodes
-    barcodes <- unique(TCGAbarcode(barcodes))
     .checkBarcodes(barcodes)
     id_type <- match.arg(id_type)
     if (id_type == "case_id") {
         targetElement <- APIendpoint <- "submitter_id"
+        barcodes <- unique(TCGAbarcode(barcodes))
     } else if (id_type == "file_id") {
         id_type <- "case_id"
         ## TODO: Make this dynamic to barcode
-        APIendpoint <- "submitter_aliquot_ids"
+        if (identical(unique(nchar(barcodes)), 28L))
+            APIendpoint <- "submitter_aliquot_ids"
+        else
+            stop("Only full 28-character TCGA barcodes supported")
         targetElement <- "aliquot_ids"
     }
     funcRes <- switch(id_type,
@@ -209,11 +212,9 @@ barcodeToUUID <-
     if (APIendpoint == "submitter_aliquot_ids") {
         dfcodes <- reshape2::melt(info[[targetElement]],
             value.name = APIendpoint)
-        resultFrame <- data.frame(
-            barcode = orgcodes,
-            ids = dfcodes$L1[match(orgcodes, dfcodes[[targetElement]])]
-        )
-        names(resultFrame) <- c(APIendpoint, "ids")
+        names(dfcodes)[2L] <- "case_id"
+        warning("Unable to match 'aliquot_id' to individual UUIDs")
+        resultFrame <- cbind(dfcodes, submitter_id = TCGAbarcode(orgcodes))
     } else {
         id_list <- lapply(info[[targetElement]], function(x) {
             x[[1]][[1]][[1]]
