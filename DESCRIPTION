@@ -24,6 +24,7 @@ Imports:
     methods,
     MultiAssayExperiment,
     RaggedExperiment (>= 1.5.7),
+    reshape2,
     rvest,
     S4Vectors,
     stats,
