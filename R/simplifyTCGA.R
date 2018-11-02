@@ -1,7 +1,8 @@
-.cMAE <- function(mae, x, name = "newelement") {
-    el <- ExperimentList(tmp = x)
-    names(el)[1] <- name
-    c(mae, el)
+.cMAE <- function(mae, x, name) {
+    if (missing(name))
+        stop("<internal> Provide a name for the 'ExperimentList' element")
+    newlist <- setNames(list(x), name)
+    c(mae, ExperimentList(newlist))
 }
 
 .hasMir <- function(x) {
@@ -95,11 +96,18 @@
 #' NCBI build.
 #' @examples
 #' library(curatedTCGAData)
+#' library(GenomeInfoDb)
 #'
 #' accmae <-
 #'     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
 #'
+#' ## Update build to "hg19"
+#' genome(accmae[["ACC_Mutation-20160128"]]) <-
+#'     vapply(genome(accmae[["ACC_Mutation-20160128"]]),
+#'     translateBuild, character(1L))
+#'
 #' qreduceTCGA(accmae)
+#'
 #' @importFrom GenomicFeatures genes microRNAs
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
@@ -200,12 +208,12 @@ symbolsToRanges <- function(obj, keep = FALSE) {
         rse <- obj[[i]][names(lookup$mapped),]
         SummarizedExperiment::rowRanges(rse) <- lookup$mapped
         obj <- .cMAE(obj, rse, name = paste0(names(obj)[i], "_ranged"))
-        if (length(lookup$unmapped > 0)) {
+        if (length(lookup$unmapped)) {
             se <- obj[[i]][lookup$unmapped,]
             obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
         }
     }
-    if (!keep & any(can.fix))
+    if (!keep && any(can.fix))
         obj <- obj[, ,-which(can.fix)]
     return(obj)
 }
@@ -252,7 +260,7 @@ mirToRanges <- function(obj, keep = FALSE) {
     return(obj)
 }
 
-#' Title All-in-one simplification of curatedTCGAData objects
+#' All-in-one simplification of curatedTCGAData objects
 #'
 #' @param obj A MultiAssayExperiment from curatedTCGAData
 #' @param keep If FALSE (default), remove the original
@@ -266,10 +274,19 @@ mirToRanges <- function(obj, keep = FALSE) {
 #' @seealso mirToRanges, symbolsToRanges, qreduceTCGA
 #' @examples
 #' library(curatedTCGAData)
+#' library(GenomeInfoDb)
 #'
 #' accmae <- curatedTCGAData("ACC",
 #'     c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
 #'     dry.run = FALSE)
+#'
+#' rex <- accmae[["ACC_Mutation-20160128"]]
+#'
+#' ## Translate build to "hg19"
+#' tgenome <- vapply(genome(rex), translateBuild, character(1L))
+#' genome(rex) <- tgenome
+#'
+#' accmae[["ACC_Mutation-20160128"]] <- rex
 #'
 #' simplifyTCGA(accmae)
 #'
