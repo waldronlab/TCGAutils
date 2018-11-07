@@ -1,21 +1,48 @@
 ## function to figure out exact endpoint based on TCGA barcode
-.barcodeEndpoint <- function(sectionLimit = "participant") {
-    startPoint <- "cases"
-    p.analyte <- paste0(startPoint, ".samples.portions.analytes")
-    switch(sectionLimit,
-        participant = paste0(startPoint, ".submitter_id"),
-        sample = paste0(startPoint, ".samples.submitter_id"),
-        portion = p.analyte,
-        analyte = p.analyte,
-        plate = paste0(p.analyte, ".aliquots.submitter_id"),
-        center = paste0(p.analyte, ".aliquots.submitter_id")
-    )
+.barcode_files <- function(startPoint = "cases", submitter_id = TRUE) {
+    keywords <- c("cases", "samples", "portions", "analytes", "aliquots")
+    last <- match.arg(startPoint, keywords)
+    indx <- seq_len(which(keywords == last))
+    sub_id <- if (submitter_id) "submitter_id" else NULL
+    paste(c(keywords[indx], sub_id), collapse = ".")
+}
+
+.subword_id <- function(keyword) {
+    ret <- paste0(keyword, "_ids")
+    setNames(paste0("submitter_", ret), ret)
+}
+
+.barcode_cases <- function(bcodeType = "case") {
+    if (identical(bcodeType, "case"))
+        setNames("submitter_id", "case_id")
+    else
+        .subword_id(bcodeType)
 }
 
 .findBarcodeLimit <- function(barcode) {
     filler <- .uniqueDelim(barcode)
-    maxIndx <- unique(lengths(strsplit(barcode, filler)))
-    c(rep("participant", 3L), "sample", "portion", "plate", "center")[maxIndx]
+    splitCodes <- strsplit(barcode, filler)
+    maxIndx <- unique(lengths(splitCodes))
+    if (maxIndx < 3L)
+        stop("Minimum barcode fields required: 'project-TSS-participant'")
+    key <- c(rep("case", 3L), "sample", "analyte", "aliquot", "aliquot")[maxIndx]
+    if (identical(key, "analyte")) {
+        analyte_chars <- unique(
+            vapply(splitCodes, function(x) nchar(x[[maxIndx]]), integer(1L))
+        )
+        if (!S4Vectors::isSingleInteger(analyte_chars))
+            stop("Inconsistent '", key, "' barcodes")
+        if (analyte_chars < 3)
+            key <- "portion"
+    } else if (identical(key, "aliquot")) {
+        if (identical(maxIndx, 6L)) {
+            ali_chars <- vapply(splitCodes, function(x)
+                nchar(x[c(maxIndx-1L, maxIndx)]), integer(2L))
+            if (identical(ali_chars, c(2L, 3L)))
+                key <- "slide"
+        }
+    }
+    key
 }
 
 .buildIDframe <- function(info, id_list) {
@@ -87,9 +114,9 @@
 #'
 #' @export UUIDtoBarcode
 UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
-    end_point = "participant", legacy = FALSE) {
+    end_point = "cases", legacy = FALSE) {
     id_type <- match.arg(id_type)
-    APIendpoint <- .barcodeEndpoint(end_point)
+    APIendpoint <- .barcode_files(end_point)
     if (id_type == "case_id") {
         targetElement <- APIendpoint <- "submitter_id"
     } else if (id_type == "file_id") {
@@ -182,11 +209,11 @@ UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
 #'
 #' @export barcodeToUUID
 barcodeToUUID <-
-    function(barcodes, id_type = c("case_id", "file_id"), legacy = FALSE)
+    function(barcodes, legacy = FALSE)
 {
     orgcodes <- barcodes
     .checkBarcodes(barcodes)
-    id_type <- match.arg(id_type)
+    .findBarcodeLimit(barcodes)
     if (id_type == "case_id") {
         targetElement <- APIendpoint <- "submitter_id"
         barcodes <- unique(TCGAbarcode(barcodes))
