@@ -23,6 +23,8 @@
     filler <- .uniqueDelim(barcode)
     splitCodes <- strsplit(barcode, filler)
     maxIndx <- unique(lengths(splitCodes))
+    if (!S4Vectors::isSingleInteger(maxIndx))
+        stop("Inconsistent barcode lengths found")
     if (maxIndx < 3L)
         stop("Minimum barcode fields required: 'project-TSS-participant'")
     key <- c(rep("case", 3L), "sample", "analyte", "aliquot", "aliquot")[maxIndx]
@@ -211,57 +213,23 @@ UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
 barcodeToUUID <-
     function(barcodes, legacy = FALSE)
 {
-    orgcodes <- barcodes
     .checkBarcodes(barcodes)
-    .findBarcodeLimit(barcodes)
-    if (id_type == "case_id") {
-        targetElement <- APIendpoint <- "submitter_id"
-        barcodes <- unique(TCGAbarcode(barcodes))
-    } else if (id_type == "file_id") {
-        id_type <- "case_id"
-        ## TODO: Make this dynamic to barcode
-        if (identical(unique(nchar(barcodes)), 28L))
-            APIendpoint <- "submitter_aliquot_ids"
-        else
-            stop("Only full 28-character TCGA barcodes supported")
-        targetElement <- "aliquot_ids"
-    }
-    funcRes <- switch(id_type,
-        file_id = files(legacy = legacy),
-        case_id = cases(legacy = legacy))
+    bend <- .findBarcodeLimit(barcodes)
+    endtargets <- .barcode_cases(bend)
+    expander <- gsub("cases\\.", "", .barcode_files(paste0(bend, "s"), FALSE))
+    expander <- if (identical(expander, "cases")) "samples"
+
     info <- results_all(
-        select(filter(funcRes, as.formula(
-            paste("~ ", APIendpoint, "%in% barcodes")
+        expand(filter(cases(), as.formula(
+            paste("~ ", endtargets, "%in% barcodes")
         )),
-        targetElement)
+        expander)
     )
-
-    if (APIendpoint == "submitter_aliquot_ids") {
-        dfcodes <- reshape2::melt(info[[targetElement]],
-            value.name = APIendpoint)
-        names(dfcodes)[2L] <- "case_id"
-        warning("Unable to match 'aliquot_id' to individual UUIDs")
-        resultFrame <- cbind(dfcodes, submitter_id = TCGAbarcode(orgcodes))
-    } else {
-        id_list <- lapply(info[[targetElement]], function(x) {
-            x[[1]][[1]][[1]]
-        })
-
-        barcodes_per_file <- lengths(id_list)
-
-        resultFrame <- data.frame(
-            barcode = if (!length(ids(info))) character(0L) else
-                unlist(id_list),
-            ids = rep(ids(info), barcodes_per_file),
-            row.names = NULL,
-            stringsAsFactors = FALSE
-        )
-        names(resultFrame) <- c(APIendpoint, id_type)
-        resultFrame <- resultFrame[
-            na.omit(match(barcodes, resultFrame[[APIendpoint]])), ]
-        rownames(resultFrame) <- NULL
-    }
-    resultFrame
+    resultFrame <- cbind.data.frame(
+        unlist(info[[endtargets]]), unlist(info[[names(endtargets)]]),
+        stringsAsFactors = FALSE, row.names = NULL)
+    names(resultFrame) <- c(endtargets, names(endtargets))
+    resultFrame[resultFrame[[endtargets]] %in% barcodes, , drop = FALSE]
 }
 
 #' @rdname ID-translation

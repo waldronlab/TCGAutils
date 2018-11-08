@@ -12,8 +12,9 @@
 #' @importFrom stringr str_extract
 #' @importFrom IRanges CharacterList
 #' @importFrom SummarizedExperiment SummarizedExperiment mcols mcols<- rowData
-#' rowData<-
+#'   rowData<-
 #' @importFrom GenomicDataCommons files results_all select filter ids cases
+#'   expand
 #' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
 #' DataFrame
 NULL
