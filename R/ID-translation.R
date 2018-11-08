@@ -217,7 +217,7 @@ barcodeToUUID <-
     bend <- .findBarcodeLimit(barcodes)
     endtargets <- .barcode_cases(bend)
     expander <- gsub("cases\\.", "", .barcode_files(paste0(bend, "s"), FALSE))
-    expander <- if (identical(expander, "cases")) "samples"
+    expander <- if (identical(expander, "cases")) "samples" else expander
 
     info <- results_all(
         expand(filter(cases(), as.formula(
@@ -229,7 +229,7 @@ barcodeToUUID <-
         unlist(info[[endtargets]]), unlist(info[[names(endtargets)]]),
         stringsAsFactors = FALSE, row.names = NULL)
     names(rframe) <- c(endtargets, names(endtargets))
-    rframe[rframe[[endtargets]] %in% barcodes, , drop = FALSE]
+    rframe[na.omit(match(barcodes, rframe[[endtargets]])), , drop = FALSE]
 }
 
 #' @rdname ID-translation
