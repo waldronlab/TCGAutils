@@ -140,9 +140,9 @@ UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
         x[[1]][[1]][[1]]
     })
 
-    resultFrame <- .buildIDframe(info, id_list)
-    names(resultFrame) <- c(id_type, APIendpoint)
-    resultFrame
+    rframe <- .buildIDframe(info, id_list)
+    names(rframe) <- c(id_type, APIendpoint)
+    rframe
 }
 
 #' @rdname ID-translation
@@ -184,9 +184,9 @@ UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
     targetElement <- gsub("(\\w+).*", "\\1", endpoint)
     id_list <- lapply(info[[targetElement]], function(x) {x[[1]]})
 
-    resultFrame <- .buildIDframe(info, id_list)
-    names(resultFrame) <- c(from_type, endpoint)
-    resultFrame
+    rframe <- .buildIDframe(info, id_list)
+    names(rframe) <- c(from_type, endpoint)
+    rframe
 }
 
 #' @rdname ID-translation
@@ -225,11 +225,11 @@ barcodeToUUID <-
         )),
         expander)
     )
-    resultFrame <- cbind.data.frame(
+    rframe <- cbind.data.frame(
         unlist(info[[endtargets]]), unlist(info[[names(endtargets)]]),
         stringsAsFactors = FALSE, row.names = NULL)
-    names(resultFrame) <- c(endtargets, names(endtargets))
-    resultFrame[resultFrame[[endtargets]] %in% barcodes, , drop = FALSE]
+    names(rframe) <- c(endtargets, names(endtargets))
+    rframe[rframe[[endtargets]] %in% barcodes, , drop = FALSE]
 }
 
 #' @rdname ID-translation
