@@ -216,7 +216,7 @@ barcodeToUUID <-
     .checkBarcodes(barcodes)
     bend <- .findBarcodeLimit(barcodes)
     endtargets <- .barcode_cases(bend)
-    expander <- gsub("cases\\.", "", .barcode_files(paste0(bend, "s"), FALSE))
+    expander <- gsub("cases\\.", "", .barcode_files(bend, FALSE))
     expander <- if (identical(expander, "cases")) "samples" else expander
 
     info <- results_all(
@@ -225,9 +225,32 @@ barcodeToUUID <-
         )),
         expander)
     )
-    rframe <- cbind.data.frame(
-        unlist(info[[endtargets]]), unlist(info[[names(endtargets)]]),
-        stringsAsFactors = FALSE, row.names = NULL)
+    idnames <- lapply(ids(info), function(ident) {
+        info[["samples"]][[ident]]
+    })
+    browser()
+    if (!identical(expander, "samples")) {
+        exFUN <- switch(expander,
+            samples.portions =
+                function(x, i) x[["portions"]],
+            samples.portions.analytes =
+                function(x, i) unlist(lapply(
+                    x[["portions"]], `[[`, "analytes"), recursive = FALSE),
+            samples.portions.analytes.aliquots =
+                function(x, i) unlist(lapply(
+                    unlist(
+                        lapply(x[["portions"]], `[[`, "analytes"),
+                        recursive = FALSE), `[[`, "aliquots"),
+                    recursive = FALSE)
+            )
+        idnames <- unlist(lapply(seq_along(idnames), function(i)
+            exFUN(x = idnames[[i]], i = i)
+        ), recursive = FALSE)
+        idnames <- Filter(function(g) length(g) >= 2L, reslist)
+    }
+    rescols <- lapply(idnames, `[`,
+        c("submitter_id", gsub("s", "", names(endtargets))))
+    rframe <- do.call(rbind, rescols)
     names(rframe) <- c(endtargets, names(endtargets))
     rframe[na.omit(match(barcodes, rframe[[endtargets]])), , drop = FALSE]
 }
