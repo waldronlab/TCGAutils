@@ -217,41 +217,45 @@ barcodeToUUID <-
     bend <- .findBarcodeLimit(barcodes)
     endtargets <- .barcode_cases(bend)
     expander <- gsub("cases\\.", "", .barcode_files(bend, FALSE))
-    expander <- if (identical(expander, "cases")) "samples" else expander
 
+    exp <- switch(expander, cases = identity,
+        function(..., exp) expand(..., exp = expander))
     info <- results_all(
-        expand(filter(cases(), as.formula(
+        exp(filter(cases(), as.formula(
             paste("~ ", endtargets, "%in% barcodes")
-        )),
-        expander)
+        )))
     )
-    idnames <- lapply(ids(info), function(ident) {
-        info[["samples"]][[ident]]
-    })
-    browser()
-    if (!identical(expander, "samples")) {
-        exFUN <- switch(expander,
-            samples.portions =
-                function(x, i) x[["portions"]],
-            samples.portions.analytes =
-                function(x, i) unlist(lapply(
-                    x[["portions"]], `[[`, "analytes"), recursive = FALSE),
-            samples.portions.analytes.aliquots =
-                function(x, i) unlist(lapply(
-                    unlist(
-                        lapply(x[["portions"]], `[[`, "analytes"),
-                        recursive = FALSE), `[[`, "aliquots"),
-                    recursive = FALSE)
-            )
-        idnames <- unlist(lapply(seq_along(idnames), function(i)
-            exFUN(x = idnames[[i]], i = i)
-        ), recursive = FALSE)
-        idnames <- Filter(function(g) length(g) >= 2L, reslist)
+    if (identical(expander, "cases")) {
+        rframe <- as.data.frame(info[c(endtargets, names(endtargets))],
+            stringsAsFactors = FALSE)
+    } else {
+        idnames <- lapply(ids(info), function(ident) {
+            info[["samples"]][[ident]]
+        })
+        if (!identical(expander, "samples")) {
+            exFUN <- switch(expander,
+                samples.portions =
+                    function(x, i) x[["portions"]],
+                samples.portions.analytes =
+                    function(x, i) unlist(lapply(
+                        x[["portions"]], `[[`, "analytes"), recursive = FALSE),
+                samples.portions.analytes.aliquots =
+                    function(x, i) unlist(lapply(
+                        unlist(
+                            lapply(x[["portions"]], `[[`, "analytes"),
+                            recursive = FALSE), `[[`, "aliquots"),
+                        recursive = FALSE)
+                )
+            idnames <- unlist(lapply(seq_along(idnames), function(i)
+                exFUN(x = idnames[[i]], i = i)
+            ), recursive = FALSE)
+            idnames <- Filter(function(g) length(g) >= 2L, idnames)
+        }
+        rescols <- lapply(idnames, `[`,
+            c("submitter_id", gsub("s$", "", names(endtargets))))
+        rframe <- do.call(rbind, c(rescols, stringsAsFactors = FALSE))
+        names(rframe) <- c(endtargets, names(endtargets))
     }
-    rescols <- lapply(idnames, `[`,
-        c("submitter_id", gsub("s", "", names(endtargets))))
-    rframe <- do.call(rbind, rescols)
-    names(rframe) <- c(endtargets, names(endtargets))
     rframe[na.omit(match(barcodes, rframe[[endtargets]])), , drop = FALSE]
 }
 
