@@ -218,10 +218,10 @@ barcodeToUUID <-
     endtargets <- .barcode_cases(bend)
     expander <- gsub("cases\\.", "", .barcode_files(bend, FALSE))
 
-    exp <- switch(expander, cases = identity,
-        function(..., exp) expand(..., exp = expander))
+    pand <- switch(expander, cases = identity,
+        function(x) expand(x = x, expand = expander))
     info <- results_all(
-        exp(filter(cases(), as.formula(
+        pand(x = filter(cases(), as.formula(
             paste("~ ", endtargets, "%in% barcodes")
         )))
     )
