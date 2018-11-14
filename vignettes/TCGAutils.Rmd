@@ -299,7 +299,7 @@ be included for sample, portion/analyte, and plate/center by specifying the
 
 ```{r}
 UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf",
-    id_type = "file_id", end_point = "center")
+    id_type = "file_id", end_point = "aliquots")
 ```
 
 ### UUID to UUID
