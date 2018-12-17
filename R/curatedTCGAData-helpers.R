@@ -82,6 +82,24 @@ getClinicalNames <- function(diseaseCode) {
     clinNames[[diseaseCode]]
 }
 
+.checkSamplesInData <- function(mae, samplecodesin) {
+    sampcodelist <- lapply(sampleTables(mae), names)
+    missingcodes <- vapply(sampcodelist, function(expcodes) {
+        !samplecodesin %in% expcodes
+    }, logical(length(samplecodesin)))
+    rownames(missingcodes) <- samplecodesin
+
+    datacollapse <- apply(missingcodes, 1L, function(row) all(row))
+    if (all(datacollapse))
+        stop("'sampleCodes' not found in assay data, check 'sampleTables()'",
+            "\n    and see the 'data(\"sampleTypes\")' table")
+    if (any(datacollapse))
+        warning("'sampleCodes' not found in assays: ", paste(
+            names(which(datacollapse)), collapse = ", "))
+
+    names(which(!datacollapse))
+}
+
 #' @rdname curatedTCGAData-helpers
 #'
 #' @param sampleCodes A string of sample type codes
@@ -93,7 +111,7 @@ getClinicalNames <- function(diseaseCode) {
 #'     data object for a list of available codes. This operation generates
 #'     \strong{n} times the number of assays based on the number of sample codes
 #'     entered. By default, primary solid tumors ("01") and solid tissue
-#'     normals ("11") are seperated out.
+#'     normals ("11") are separated out.
 #' @export
 splitAssays <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
@@ -104,6 +122,8 @@ splitAssays <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
     sampleTypes <- env[["sampleTypes"]]
     if (!sampleCodes %in% sampleTypes[["Code"]] || !is.character(sampleCodes))
         stop("Provide valid sample types string")
+
+    sampleCodes <- .checkSamplesInData(multiassayexperiment, sampleCodes)
 
     cnames <- colnames(multiassayexperiment)
     exps <- experiments(multiassayexperiment)
