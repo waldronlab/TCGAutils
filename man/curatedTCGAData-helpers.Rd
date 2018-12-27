@@ -13,7 +13,7 @@ getSubtypeMap(multiassayexperiment)
 
 getClinicalNames(diseaseCode)
 
-splitAssays(multiassayexperiment, sampleCodes = c("01", "11"))
+splitAssays(multiassayexperiment, sampleCodes = NULL)
 
 sampleTables(multiassayexperiment, vial = FALSE)
 }
@@ -22,8 +22,8 @@ sampleTables(multiassayexperiment, vial = FALSE)
 
 \item{diseaseCode}{A TCGA cancer code (e.g., "BRCA")}
 
-\item{sampleCodes}{A string of sample type codes
-(refer to \code{data(sampleTypes)}; default "01", "11")}
+\item{sampleCodes}{character (default NULL) A string of sample type codes
+(refer to \code{data(sampleTypes)}; splitAssays section)}
 
 \item{vial}{(logical default FALSE) whether to display vials in the
 table output}
@@ -53,8 +53,8 @@ across most cancer codes.
     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
     data object for a list of available codes. This operation generates
     \strong{n} times the number of assays based on the number of sample codes
-    entered. By default, primary solid tumors ("01") and solid tissue
-    normals ("11") are seperated out.
+    entered. By default, all assays will be split by samples present in
+    the data
 }
 
 \section{sampleTables}{

@@ -80,64 +80,79 @@ getClinicalNames <- function(diseaseCode) {
     clinNames[[diseaseCode]]
 }
 
-.checkSamplesInData <- function(mae, samplecodesin) {
-    sampcodelist <- lapply(sampleTables(mae), names)
-    missingcodes <- vapply(sampcodelist, function(expcodes) {
-        !samplecodesin %in% expcodes
-    }, logical(length(samplecodesin)))
-    rownames(missingcodes) <- samplecodesin
+.samplesInData <- function(mae) {
+    IRanges::CharacterList(lapply(sampleTables(mae), names))
+}
 
-    datacollapse <- apply(missingcodes, 1L, function(row) all(row))
-    if (all(datacollapse))
+.validSamples <- function(samplist, sampleCodes) {
+    if (!is.null(sampleCodes)) {
+        .checkSamplesInData(samplist, sampleCodes)
+        samplist[S4Vectors::`%in%`(samplist, sampleCodes)]
+    }
+    else
+        samplist
+}
+
+.checkSamplesInData <- function(samplist, sampleCodes) {
+    invalidCodes <- IRanges::LogicalList(lapply(samplist,
+        function(acode) !sampleCodes %in% acode))
+
+    if (all(all(invalidCodes)))
         stop("'sampleCodes' not found in assay data, check 'sampleTables()'",
-            "\n    and see the 'data(\"sampleTypes\")' table")
-    if (any(datacollapse))
-        warning("'sampleCodes' not found in assays: ", paste(
-            names(which(datacollapse)), collapse = ", "))
+            "\n    and see the 'data(\"sampleTypes\")' table", call. = FALSE)
 
-    names(which(!datacollapse))
+    if (any(any(invalidCodes))) {
+        missingcodes <-
+            IRanges::CharacterList(lapply(invalidCodes[any(invalidCodes)],
+                function(inv) sampleCodes[inv]))
+        warning("Some 'sampleCodes' not found in assays", call. = FALSE)
+        missingcodes
+    }
 }
 
 #' @rdname curatedTCGAData-helpers
 #'
-#' @param sampleCodes A string of sample type codes
-#' (refer to \code{data(sampleTypes)}; default "01", "11")
+#' @param sampleCodes character (default NULL) A string of sample type codes
+#' (refer to \code{data(sampleTypes)}; splitAssays section)
 #'
 #' @section splitAssays:
 #'     Separates samples by indicated sample codes into different assays
 #'     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
 #'     data object for a list of available codes. This operation generates
 #'     \strong{n} times the number of assays based on the number of sample codes
-#'     entered. By default, primary solid tumors ("01") and solid tissue
-#'     normals ("11") are separated out.
+#'     entered. By default, all assays will be split by samples present in
+#'     the data.
 #' @export
-splitAssays <- function(multiassayexperiment, sampleCodes = c("01", "11")) {
+splitAssays <- function(multiassayexperiment, sampleCodes = NULL) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")
 
-    env <- new.env(parent = emptyenv())
-    data("sampleTypes", envir = env)
-    sampleTypes <- env[["sampleTypes"]]
-    if (!sampleCodes %in% sampleTypes[["Code"]] || !is.character(sampleCodes))
-        stop("Provide valid sample types string")
+    if (!is.null(sampleCodes)) {
+        env <- new.env(parent = emptyenv())
+        data("sampleTypes", envir = env)
+        sampleTypes <- env[["sampleTypes"]]
+        if (!sampleCodes %in% sampleTypes[["Code"]] ||
+            !is.character(sampleCodes))
+            stop("Provide valid sample types string")
+    }
 
-    sampleCodes <- .checkSamplesInData(multiassayexperiment, sampleCodes)
+    sampList <- .samplesInData(multiassayexperiment)
+    sampList <- .validSamples(sampList, sampleCodes)
 
-    cnames <- colnames(multiassayexperiment)
-    exps <- experiments(multiassayexperiment)
+    egroups <- unlist(Map(function(exps, sampcodes, enames) {
+        expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
+        lapply(expnames, function(code) {
+            logitype <- TCGAsampleSelect(colnames(exps), code)
+            exps[, logitype]
+        })
+    }, exps = experiments(multiassayexperiment), sampcodes = sampList,
+    enames = names(multiassayexperiment), USE.NAMES = FALSE))
 
-    egroups <- lapply(sampleCodes, function(scode) {
-        logitype <- BiocGenerics::relist(TCGAsampleSelect(
-            unlist(cnames, use.names = FALSE), scode), cnames)
-        explist <- subsetByColumn(exps, logitype)
-        names(explist) <- paste0(scode, "_", names(explist))
-        explist
-    })
-    egroups <- do.call(c, egroups)
     sampmap <- generateMap(egroups, colData(multiassayexperiment),
         idConverter = TCGAbarcode)
+
     BiocGenerics:::replaceSlots(multiassayexperiment,
-        ExperimentList = egroups,
+        ExperimentList = ExperimentList(egroups),
         sampleMap = sampmap)
 }
 
