@@ -19,6 +19,10 @@
 #'
 #' @export TCGAsampleSelect
 TCGAsampleSelect <- function(barcodes, sampleCode) {
+    stopifnot(
+        is.character(sampleCode), identical(length(sampleCode), 1L),
+        !is.na(sampleCode), !is.logical(sampleCode)
+    )
     bcodeCharLen <- unique(nchar(barcodes))
     if (!S4Vectors::isSingleNumber(bcodeCharLen))
         warning("Inconsistent barcode lengths: ",
