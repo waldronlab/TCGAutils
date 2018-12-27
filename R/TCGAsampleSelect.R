@@ -30,14 +30,14 @@ TCGAsampleSelect <- function(barcodes, sampleCode) {
     data("sampleTypes", envir = local_data_store)
     sampleTypes <- local_data_store[["sampleTypes"]]
     if (is.numeric(sampleCode)) {
-        if (nchar(as.character(sampleCode)) == 1L)
+        if (identical(nchar(as.character(sampleCode)), 1L))
             sampleCode <- paste0("0", sampleCode)
     }
     if (!sampleCode %in% sampleTypes[["Code"]])
         stop("'sampleCode' not in look up table")
-    LongName <- as.character(sampleTypes[match(sampleCode,
-                                               sampleTypes[["Code"]]),
-                                         "Definition"])
+    LongName <- as.character(
+        sampleTypes[match(sampleCode, sampleTypes[["Code"]]), "Definition"]
+    )
     message("Selecting '", LongName, "' samples")
     sampleSnippet <- TCGAbarcode(barcodes, sample = TRUE, participant = FALSE)
     barcodeSamples <- substr(sampleSnippet, 1L, 2L)

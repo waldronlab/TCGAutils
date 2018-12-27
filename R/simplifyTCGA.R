@@ -111,8 +111,6 @@
 #' @importFrom GenomicFeatures genes microRNAs
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
-#' @importFrom AnnotationDbi mapIds
-#' @importFrom BiocGenerics width
 #'
 #' @author L. Waldron
 #'
@@ -124,12 +122,12 @@ qreduceTCGA <- function(obj, keep = FALSE, suffix = "_simplified") {
     gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
         pruning.mode = "coarse")
     seqlevelsStyle(gn) <- "NCBI"
-    names(gn) <- mapIds(org.Hs.eg.db::org.Hs.eg.db, names(gn),
+    names(gn) <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, names(gn),
         keytype = "ENTREZID", column = "SYMBOL")
 
     weightedmean <- function(scores, ranges, qranges)
     ## weighted average score per query range
-    sum(scores * width(ranges)) / sum(width(ranges))
+    sum(scores * BiocGenerics::width(ranges)) / sum(BiocGenerics::width(ranges))
 
     nonsilent <- function(scores, ranges, qranges)
         any(scores != "Silent")
