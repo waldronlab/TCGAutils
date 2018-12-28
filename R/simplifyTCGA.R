@@ -101,11 +101,6 @@
 #' accmae <-
 #'     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
 #'
-#' ## Update build to "hg19"
-#' genome(accmae[["ACC_Mutation-20160128"]]) <-
-#'     vapply(genome(accmae[["ACC_Mutation-20160128"]]),
-#'     translateBuild, character(1L))
-#'
 #' qreduceTCGA(accmae)
 #'
 #' @importFrom GenomicFeatures genes microRNAs

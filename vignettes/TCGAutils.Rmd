@@ -69,13 +69,13 @@ data type that starts with `CN*` such as `CNASeq`:
 ```{r, echo = FALSE}
 suppressMessages({
 coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = "CN*", dry.run = FALSE)
+    assays = c("CN*", "Mutation"), dry.run = FALSE)
 })
 ```
 
 ```{r, eval = FALSE}
 coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = "CN*", dry.run = FALSE)
+    assays = c("CN*", "Mutation"), dry.run = FALSE)
 ```
 
 For a list of all available data types, use `dry.run = FALSE` and an
