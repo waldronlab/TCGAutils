@@ -2,6 +2,7 @@
 
 language: r
 r: bioc-devel
+bioc_check: true
 
 cache: packages
 
@@ -34,12 +35,6 @@ bioc_packages:
 # Test code coverage
 r_github_packages:
   - jimhester/covr
-
-script:
-  - cd ..
-  - R CMD build --keep-empty-dirs --no-resave-data TCGAutils
-  - R CMD check --no-vignettes --timings --no-multiarch TCGAutils_*.tar.gz
-  - R CMD BiocCheck --no-check-vignettes TCGAutils
 
 after_success:
   - Rscript -e 'library(covr);codecov()'

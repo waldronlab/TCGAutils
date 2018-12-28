@@ -54,7 +54,7 @@ across most cancer codes.
     data object for a list of available codes. This operation generates
     \strong{n} times the number of assays based on the number of sample codes
     entered. By default, all assays will be split by samples present in
-    the data
+    the data.
 }
 
 \section{sampleTables}{
