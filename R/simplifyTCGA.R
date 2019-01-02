@@ -284,9 +284,8 @@ mirToRanges <- function(obj, keep = FALSE) {
 #' simplifyTCGA(accmae)
 #'
 #' @export
-simplifyTCGA <- function(obj, keep = FALSE){
+simplifyTCGA <- function(obj, keep = FALSE) {
     obj <- qreduceTCGA(obj, keep)
     obj <- mirToRanges(obj, keep)
-    obj <- symbolsToRanges(obj, keep)
-    return(obj)
+    symbolsToRanges(obj, keep)
 }

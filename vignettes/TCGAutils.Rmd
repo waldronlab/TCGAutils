@@ -289,7 +289,7 @@ barcodeToUUID(xbarcode)
 Here we have a known case UUID that we want to translate into a TCGA barcode.
 
 ```{r}
-UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
+UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", from_type = "case_id")
 ```
 
 In cases where we want to translate a known file UUID to the associated TCGA
@@ -299,7 +299,7 @@ be included for sample, portion/analyte, and plate/center by specifying the
 
 ```{r}
 UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf",
-    id_type = "file_id", end_point = "aliquots")
+    from_type = "file_id", end_point = "aliquots")
 ```
 
 ### UUID to UUID

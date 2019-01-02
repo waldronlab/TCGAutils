@@ -70,33 +70,19 @@
 #' UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
 #' and vice versa. Please double check any results before using these
 #' features for analysis. Case / submitter identifiers are translated by
-#' default, see the \code{id_type} argument for details. All identifiers are
+#' default, see the \code{from_type} argument for details. All identifiers are
 #' converted to lower case.
 #'
 #' @details
-#' The \code{end_point} options reflect endpoints in the Genomic Data Commons
-#' API. These are summarized as follows:
-#' \itemize{
-#'   \item{participant}: This default snippet of information includes project,
-#'   tissue source site (TSS), and participant number
-#'   (barcode format: TCGA-XX-XXXX)
-#'   \item{sample}: This adds the sample information to the participant barcode
-#'   (TCGA-XX-XXXX-11X)
-#'   \item{portion, analyte}: Either of these options adds the portion and
-#'   analyte information to the sample barcode (TCGA-XX-XXXX-11X-01X)
-#'   \item{plate, center}: Additional plate and center information is returned,
-#'   i.e., the full barcode (TCGA-XX-XXXX-11X-01X-XXXX-XX)
-#' }
-#' Only these keywords need to be used to target the specific barcode endpoint.
-#' These endpoints only apply to "file_id" type translations to TCGA barcodes
-#' (see \code{id_type} argument).
+#' Based on the file UUID supplied, the appropriate entity_id (TCGA barcode) is
+#' returned. In previous versions of the package, the 'end_point' parameter
+#' would require the user to specify what type of barcode needed. This is no
+#' longer supported as `entity_id` returns the appropriate one.
 #'
 #' @param id_vector A \code{character} vector of UUIDs corresponding to
 #' either files or cases (default assumes case_ids)
-#' @param id_type Either \code{case_id} or \code{file_id} indicating the type of
+#' @param from_type Either \code{case_id} or \code{file_id} indicating the type of
 #' \code{id_vector} entered (default "case_id")
-#' @param end_point The cutoff point of the barcode that should be returned,
-#' only applies to \code{file_id} type queries. See details for options.
 #' @param legacy (logical default FALSE) whether to search the legacy archives
 #'
 #' @return A \code{data.frame} of TCGA barcode identifiers and UUIDs
@@ -108,41 +94,45 @@
 #' "002c67f2-ff52-4246-9d65-a3f69df6789e",
 #' "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 #'
-#' UUIDtoBarcode(uuids, id_type = "file_id", end_point = "sample")
+#' UUIDtoBarcode(uuids, from_type = "file_id")
 #'
-#' UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
+#' UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", from_type = "case_id")
 #'
 #' @author Sean Davis, M. Ramos
 #'
 #' @export UUIDtoBarcode
-UUIDtoBarcode <-  function(id_vector, id_type = c("case_id", "file_id"),
-    end_point = "cases", legacy = FALSE) {
-    id_type <- match.arg(id_type)
-    APIendpoint <- .barcode_files(end_point)
-    if (id_type == "case_id") {
+UUIDtoBarcode <-  function(id_vector, from_type = c("case_id", "file_id"),
+    legacy = FALSE) {
+    from_type <- match.arg(from_type)
+    if (identical(from_type, "case_id")) {
         targetElement <- APIendpoint <- "submitter_id"
-    } else if (id_type == "file_id") {
-        targetElement <- "cases"
+    } else if (identical(from_type, "file_id")) {
+        APIendpoint <- "associated_entities.entity_submitter_id"
+        targetElement <- "associated_entities"
     }
-    funcRes <- switch(id_type,
+    selector <- switch(from_type, case_id = identity,
+        function(x) select(x = x, fields = APIendpoint))
+
+    funcRes <- switch(from_type,
         file_id = files(legacy = legacy),
         case_id = cases(legacy = legacy))
     info <- results_all(
-        select(filter(funcRes, as.formula(
-            paste("~ ", id_type, "%in% id_vector")
-            )),
-        APIendpoint)
+        selector(
+            filter(funcRes, as.formula(
+                paste("~ ", from_type, "%in% id_vector")
+            ))
+        )
     )
-    # The mess of code below is to extract TCGA barcodes
-    # id_list will contain a list (one item for each file_id)
-    # of TCGA barcodes of the form 'TCGA-XX-YYYY-ZZZ'
-    id_list <- lapply(info[[targetElement]], function(x) {
-        x[[1]][[1]][[1]]
-    })
 
-    rframe <- .buildIDframe(info, id_list)
-    names(rframe) <- c(id_type, APIendpoint)
-    rframe
+    if (identical(from_type, "case_id"))
+        rframe <- data.frame(info[[from_type]], info[[targetElement]],
+            stringsAsFactors = FALSE)
+    else
+        rframe <- data.frame(names(info[[targetElement]]),
+            unlist(info[[targetElement]], use.names = FALSE),
+            stringsAsFactors = FALSE)
+    names(rframe) <- c(from_type, APIendpoint)
+    rframe[na.omit(match(id_vector, rframe[[from_type]])), , drop = FALSE]
 }
 
 #' @rdname ID-translation

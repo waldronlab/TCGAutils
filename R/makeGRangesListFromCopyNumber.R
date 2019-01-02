@@ -28,7 +28,7 @@
 #'
 #' fname <- gdcdata(manif$id)
 #'
-#' barcode <- UUIDtoBarcode(names(fname), id_type = "file_id")$cases.submitter_id
+#' barcode <- UUIDtoBarcode(names(fname), from_type = "file_id")$cases.submitter_id
 #'
 #' cndata <- read.delim(fname[[1L]], nrows = 10L)
 #'

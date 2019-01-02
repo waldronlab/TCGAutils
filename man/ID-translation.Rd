@@ -8,8 +8,8 @@
 \alias{filenameToBarcode}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
-UUIDtoBarcode(id_vector, id_type = c("case_id", "file_id"),
-  end_point = "cases", legacy = FALSE)
+UUIDtoBarcode(id_vector, from_type = c("case_id", "file_id"),
+  legacy = FALSE)
 
 UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"),
   legacy = FALSE)
@@ -22,11 +22,8 @@ filenameToBarcode(filenames, legacy = FALSE)
 \item{id_vector}{A \code{character} vector of UUIDs corresponding to
 either files or cases (default assumes case_ids)}
 
-\item{id_type}{Either \code{case_id} or \code{file_id} indicating the type of
+\item{from_type}{Either \code{case_id} or \code{file_id} indicating the type of
 \code{id_vector} entered (default "case_id")}
-
-\item{end_point}{The cutoff point of the barcode that should be returned,
-only applies to \code{file_id} type queries. See details for options.}
 
 \item{legacy}{(logical default FALSE) whether to search the legacy archives}
 
@@ -50,26 +47,14 @@ inputs. The UUID to TCGA barcode translation only applies to file and case
 UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
 and vice versa. Please double check any results before using these
 features for analysis. Case / submitter identifiers are translated by
-default, see the \code{id_type} argument for details. All identifiers are
+default, see the \code{from_type} argument for details. All identifiers are
 converted to lower case.
 }
 \details{
-The \code{end_point} options reflect endpoints in the Genomic Data Commons
-API. These are summarized as follows:
-\itemize{
-  \item{participant}: This default snippet of information includes project,
-  tissue source site (TSS), and participant number
-  (barcode format: TCGA-XX-XXXX)
-  \item{sample}: This adds the sample information to the participant barcode
-  (TCGA-XX-XXXX-11X)
-  \item{portion, analyte}: Either of these options adds the portion and
-  analyte information to the sample barcode (TCGA-XX-XXXX-11X-01X)
-  \item{plate, center}: Additional plate and center information is returned,
-  i.e., the full barcode (TCGA-XX-XXXX-11X-01X-XXXX-XX)
-}
-Only these keywords need to be used to target the specific barcode endpoint.
-These endpoints only apply to "file_id" type translations to TCGA barcodes
-(see \code{id_type} argument).
+Based on the file UUID supplied, the appropriate entity_id (TCGA barcode) is
+returned. In previous versions of the package, the 'end_point' parameter
+would require the user to specify what type of barcode needed. This is no
+longer supported as `entity_id` returns the appropriate one.
 }
 \examples{
 ## Translate UUIDs >> TCGA Barcode
@@ -78,9 +63,9 @@ uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
 "002c67f2-ff52-4246-9d65-a3f69df6789e",
 "003143c8-bbbf-46b9-a96f-f58530f4bb82")
 
-UUIDtoBarcode(uuids, id_type = "file_id", end_point = "sample")
+UUIDtoBarcode(uuids, from_type = "file_id")
 
-UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", id_type = "case_id")
+UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", from_type = "case_id")
 
 ## Translate file UUIDs >> case UUIDs
 
