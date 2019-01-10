@@ -4,11 +4,11 @@
     keyWord <- paste0("//a[contains(@href, '",keyWord,"')]")
     plinks <- rvest::html_nodes(doc, xpath = keyWord)
     plinks <- rvest::html_attr(plinks, "href")
+
     if (is.null(datasetLink))
-        plinks <- plinks[grepl(keyWord2,plinks)]
+        plinks[grepl(keyWord2,plinks)]
     else
-        plinks <- plinks[grepl(paste0("*.",datasetLink,keyWord2),plinks)]
-    return(plinks)
+        plinks[grepl(paste0("*.",datasetLink,keyWord2),plinks)]
 }
 
 #' Find the file names used in RTCGAToolbox
@@ -22,26 +22,21 @@
 #' @param disease The TCGA cancer disease code, e.g., "COAD"
 #' @param runDate The single \code{string} used in the \code{getFirehoseData}
 #' function (default "20160128")
-#' @param CNASNP A \code{logical} (default = FALSE) vector indicating whether
-#' to get the file name from this data type
-#' @param CNVSNP A \code{logical} (default = FALSE) vector indicating whether
-#' to get the file name from this data type
-#' @param CNASeq A \code{logical} (default = FALSE) vector indicating whether
-#' to get the file name from this data type
-#' @param CNACGH A \code{logical} (default = FALSE) vector indicating whether
-#' to get the file name from this data type
+#' @param dataType A single character vector (default "CNASNP") indicating the
+#' data type for which to get the source file name
 #'
-#' @return A \code{character} vector of length one indicating the file name
+#' @return A single \code{character} file name
 #'
 #' @examples
 #'
-#' getFileNames("COAD", CNVSNP = TRUE)
+#' getFileName("COAD", dataType = "CNASNP")
 #'
-#' @export getFileNames
-getFileNames <- function(disease, runDate = "20160128", CNASNP = FALSE,
-    CNVSNP = FALSE, CNASeq = FALSE, CNACGH = FALSE) {
-    if (!any(c(CNASNP, CNVSNP, CNASeq, CNACGH)))
-        stop("Set a data type to TRUE")
+#' @export getFileName
+getFileName <- function(disease, runDate = "20160128",
+    dataType = c("CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Mutation")) {
+
+    dataType <- match.arg(dataType,
+        c("CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Mutation"))
 
     fh_url <- "http://gdac.broadinstitute.org/runs/stddata__"
     fh_url <- paste0(fh_url, substr(runDate,1,4), "_",
@@ -49,35 +44,27 @@ getFileNames <- function(disease, runDate = "20160128", CNASNP = FALSE,
     fh_url <- paste0(fh_url, disease, "/", runDate, "/")
     doc <- xml2::read_html(fh_url)
 
-    plinks <- vector(mode = "character", length = 1L)
-    names(plinks) <- disease
-
-    if (CNASNP)
-        plinks <- .getLinks(
+    switch(dataType,
+        CNASNP = .getLinks(
             "Level_3__segmented_scna_hg19__seg.Level_3",
             paste0("[.]Merge_snp__.*.__Level_3__segmented",
-                   "_scna_hg19__seg.Level_3.*.tar[.]gz$"),
-            disease, doc)
-    if (CNVSNP)
-        plinks <- .getLinks(
+                "_scna_hg19__seg.Level_3.*.tar[.]gz$"),
+            disease, doc),
+        CNVSNP = .getLinks(
             "Level_3__segmented_scna_minus_germline_cnv_hg19__seg.Level_3",
             paste0("[.]Merge_snp__.*.__Level_3__segmented_scna_",
-                   "minus_germline_cnv_hg19__seg.Level_3.*.tar[.]gz$"),
+                "minus_germline_cnv_hg19__seg.Level_3.*.tar[.]gz$"),
+            disease, doc),
+        CNASeq = .getLinks("__Level_3__segmentation__seg.Level_3",
+            paste0("[.]Merge_cna__.*.dnaseq.*.__Level_3__",
+                "segmentation__seg.Level_3.*.tar[.]gz$"),
+            disease, doc),
+        CNACGH = .getLinks("__Level_3__segmentation__seg.Level_3",
+            paste0("[.]Merge_cna__.*.cgh.*.__Level_3__",
+                "segmentation__seg.Level_3.*.tar[.]gz$"),
+            disease, doc),
+        Mutation = .getLinks("Mutation_Packager_Calls",
+            "[.]Mutation_Packager_Calls[.]Level_3[.].*.tar[.]gz$",
             disease, doc)
-    if (CNASeq)
-        plinks <- .getLinks("__Level_3__segmentation__seg.Level_3",
-                            paste0("[.]Merge_cna__.*.dnaseq.*.__Level_3__",
-                                   "segmentation__seg.Level_3.*.tar[.]gz$"),
-                            disease, doc)
-    if (CNACGH)
-        plinks <- .getLinks("__Level_3__segmentation__seg.Level_3",
-                            paste0("[.]Merge_cna__.*.cgh.*.__Level_3__",
-                                   "segmentation__seg.Level_3.*.tar[.]gz$"),
-                            disease, doc)
-
-    if(S4Vectors::isSingleString(plinks)) {
-        return(unname(plinks))
-    } else {
-        return(NULL)
-    }
+    )
 }
