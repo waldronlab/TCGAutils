@@ -293,13 +293,10 @@ UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", from_type = "case_id")
 ```
 
 In cases where we want to translate a known file UUID to the associated TCGA
-patient barcode, we can use `UUIDtoBarcode`. Optional barcode information can
-be included for sample, portion/analyte, and plate/center by specifying the
-`end_point` argument.
+patient barcode, we can use `UUIDtoBarcode`.
 
 ```{r}
-UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf",
-    from_type = "file_id", end_point = "aliquots")
+UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf", from_type = "file_id")
 ```
 
 ### UUID to UUID
