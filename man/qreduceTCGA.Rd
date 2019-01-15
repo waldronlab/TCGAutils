@@ -38,6 +38,11 @@ library(GenomeInfoDb)
 accmae <-
     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
 
+## update genome annotation
+genome(accmae[["ACC_Mutation-20160128"]]) <-
+    vapply(genome(accmae[["ACC_Mutation-20160128"]]), translateBuild,
+    character(1L))
+
 qreduceTCGA(accmae)
 
 }

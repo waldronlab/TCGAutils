@@ -18,6 +18,9 @@ suppressPackageStartupMessages({
     library(curatedTCGAData)
     library(MultiAssayExperiment)
     library(RTCGAToolbox)
+    library(BiocFileCache)
+    library(rtracklayer)
+    library(R.utils)
 })
 ```
 
@@ -51,6 +54,9 @@ library(TCGAutils)
 library(curatedTCGAData)
 library(MultiAssayExperiment)
 library(RTCGAToolbox)
+library(BiocFileCache)
+library(rtracklayer)
+library(R.utils)
 ```
 
 # `curatedTCGAData` utility functions
@@ -200,7 +206,7 @@ mergeColData(MultiAssayExperiment(), data.frame())
 microRNA assays obtained from `curatedTCGAData` have annotated sequences
 that can be converted to genomic ranges using the `mirbase.db` package.
 The function looks up all sequences and converts them to ('hg19') ranges.
-For those rows that cannot be found, an '*_unranged' assay is introduced
+For those rows that cannot be found, an 'unranged' assay is introduced
 in the resulting MultiAssayExperiment object.
 
 ```{r}
@@ -216,8 +222,8 @@ mutations based on a 'Variant_Classification' metadata column in the original
 object.
 
 It uses 'hg19' transcript database ('TxDb') package internally to summarize
-regions using `qreduceAssay`. The current genome build ('hg18') in the data must
-be translated to 'hg19'.
+regions using `qreduceAssay`. The current genome build ('hg18') in the data
+must be translated to 'hg19'.
 
 In this example, we first translate the genome strings in the `RaggedExperiment`
 `COAD_Mutation-20160128` dataset using `translateBuild`. We do this for the
@@ -233,13 +239,25 @@ Now we use `liftOver` from `rtracklayer` to translate 'hg18' builds
 to 'hg19' using the downloaded chain file.
 
 ```{r}
-loverurl <-
-    "http://hgdownload.cse.ucsc.edu/goldenpath/hg18/liftOver/hg18ToHg19.over.chain.gz"
-tempdir <- tempdir()
-gzFile <- file.path(tempdir, basename(loverurl))
-download.file(loverurl, destfile = gzFile)
-chain <- import.chain(file.path(tempdir, gsub("\\.gz", "", basename(gzFile))))
-ranges19 <- liftOver(rowRanges(coad[[4]]), chain)
+lifturl <-
+"http://hgdownload.cse.ucsc.edu/goldenpath/hg18/liftOver/hg18ToHg19.over.chain.gz"
+bfc <- BiocFileCache()
+qfile <- bfcquery(bfc, "18to19chain", exact = TRUE)[["rpath"]]
+cfile <-
+if (length(qfile) && file.exists(qfile)) {
+    bfcquery(bfc, "18to19chain", exact = TRUE)[["rpath"]]
+} else {
+    bfcadd(bfc, "18to19chain", lifturl)
+}
+
+chainfile <- file.path(tempdir(), gsub("\\.gz", "", basename(cfile)))
+R.utils::gunzip(cfile, destname = chainfile, remove = FALSE)
+
+chain <- suppressMessages(
+    rtracklayer::import.chain(chainfile)
+)
+
+ranges19 <- rtracklayer::liftOver(rowRanges(coad[[4]]), chain)
 ```
 
 This will give us a list of ranges, each element corresponding to a single row
@@ -254,7 +272,7 @@ gaga <- unlist(grl, use.names = FALSE)
 
 ## add original mcols or assay metadata to all ranges
 mcols(gaga) <- mcor
-## create new GRangesList from previous data 
+## create new GRangesList from previous data
 newRanges <- relist(gaga, grl)
 ```
 
@@ -266,8 +284,7 @@ library(RaggedExperiment)
 coad[[4]] <- RaggedExperiment(newRanges)
 ```
 
-
-Now that we have matching builds, we can run the `qreduceTCGA` function.
+Now that we have matching builds, we can finally run the `qreduceTCGA` function.
 
 ```{r}
 qreduceTCGA(coad)
