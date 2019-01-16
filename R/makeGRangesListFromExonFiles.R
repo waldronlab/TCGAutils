@@ -42,26 +42,29 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
         if (length(filepaths) != length(sampleNames))
             stop("Inconsistent sample names obtained from file names")
     } else {
-        queryNames <- if (!is.null(fileNames)) {
-            fileNames } else { basename(filepaths) }
+        queryNames <-
+            if (!is.null(fileNames)) fileNames else basename(filepaths)
         sampleNames <-
             filenameToBarcode(queryNames, TRUE)[["aliquots.submitter_id"]]
     }
-    readr_avail <- requireNamespace("readr", quietly = TRUE)
     btData <- lapply(filepaths, function(file) {
-        if (readr_avail)
+        if (requireNamespace("readr", quietly = TRUE))
             readr::read_delim(file, delim = "\t")
         else
             read.delim(file, sep = "\t")
     })
+
     if (!length(sampleNames))
         sampleNames <- NULL
+
     names(btData) <- sampleNames
-    GRangesList(
-        lapply(btData, function(range) {
-            newGRanges <- GRanges(as.character(range[[rangesColumn]]))
-            mcols(newGRanges) <- range[, names(range) != rangesColumn]
-            newGRanges
-        })
-    )
+
+    allrowdata <- if (requireNamespace("dplyr", quietly = TRUE))
+        dplyr::bind_rows(btData)
+    else
+        do.call(rbind, btData)
+
+    newGRanges <- GRanges(allrowdata[[rangesColumn]])
+    mcols(newGRanges) <- allrowdata[, names(allrowdata) != rangesColumn]
+    GRangesList(relist(newGRanges, btData))
 }
