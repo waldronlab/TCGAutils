@@ -192,11 +192,11 @@ This function merges a `data.frame` or `DataFrame` into the
 `colData` of an existing `MultiAssayExperiment` object. It will match
 column names and row names to do a full merge of both data sets. This
 convenience function can be used, for example, to add subtype information
-available for a subset of patients to the `colData`. Here is an example on an
-empty `MultiAssayExperiment` just to demonstrate its usage:
+available for a subset of patients to the `colData`. Here is a simplified
+example of adding a column to the `colData` `DataFrame`:
 
 ```{r}
-mergeColData(MultiAssayExperiment(), data.frame())
+mergeColData(coad, DataFrame(race_f = factor(colData(coad)[["race"]])))
 ```
 
 # Converting Assays to SummarizedExperiment
@@ -262,32 +262,20 @@ ranges19 <- rtracklayer::liftOver(rowRanges(coad[[4]]), chain)
 
 This will give us a list of ranges, each element corresponding to a single row
 in the `RaggedExperiment`. We remove rows that had no matches in the `liftOver`
-process and re-add the metadata assay data to the `RaggedExperiment`.
+process and replace the ranges in the original `RaggedExperiment` with the
+replacement method. Finally, we put the `RaggedExperiment` object back into the
+`MultiAssayExperiment`.
 
 ```{r}
 rag <- coad[[4]][as.logical(lengths(ranges19))]
-mcor <- mcols(rag)
-grl <- relist(unlist(ranges19), rag@assays)
-gaga <- unlist(grl, use.names = FALSE)
-
-## add original mcols or assay metadata to all ranges
-mcols(gaga) <- mcor
-## create new GRangesList from previous data
-newRanges <- relist(gaga, grl)
-```
-
-We then convert the `GRangesList` object to `RaggedExperiment` and replace the
-old assay with the new one.
-
-```{r}
-library(RaggedExperiment)
-coad[[4]] <- RaggedExperiment(newRanges)
+rowRanges(rag) <- unlist(ranges19)
+coad[[4]] <- rag
 ```
 
 Now that we have matching builds, we can finally run the `qreduceTCGA` function.
 
 ```{r}
-qreduceTCGA(coad)
+coad <- qreduceTCGA(coad)
 ```
 
 ## `symbolsToRanges`
@@ -310,16 +298,38 @@ classes.
 
 ## `makeGRangesListFromExonFiles`
 
-%??% Could you use the GenomicDataCommons library to get an example file
-instead, or show the GDC command that would be used to obtain the file?
+The `GenomicDataCommons` package can be used to obtain 'legacy' exon
+quantification files via:
 
-The `GRangesList` class from the `r Biocpkg("GenomicRanges")` package is
-suitable for grouping `GRanges` vectors as a list, such as for grouping exons
-by gene. In this example we use a legacy exon quantification file from the
-Genomic Data Commons. We then use `makeGRangesListFromExonFiles` to create a
-`GRangesList` from vectors of file paths and names (where necessary). Some
-adjustments have been made to the file name for cross-platform compatibility
-with Windows operating system limitations.
+```{r}
+library(GenomicDataCommons)
+
+queso <- files(legacy = TRUE) %>%
+    filter( ~ cases.project.project_id == "TCGA-COAD" &
+        data_category == "Gene expression" &
+        data_type == "Exon quantification")
+
+qu <- manifest(queso)[20:25, ]
+qq <- gdcdata(qu$id)
+```
+
+We then use `makeGRangesListFromExonFiles` to create a `GRangesList` from
+vectors of file paths. There are options to provide file names when file names
+are too long to download (Windows OS). The `nrows` argument only keeps the
+first 5 rows in each of the files read in due to invalid character exon ranges.
+
+```{r}
+makeGRangesListFromExonFiles(qq, nrows = 5)
+```
+
+Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")`
+class to incorporate them into a `MultiAssayExperiment`.
+
+### Work around for long file names on Windows
+
+Due to file name length, Windows may not be able to read / display all files.
+The workaround uses the `fileNames` argument from a character vector of file
+names and will convert them to TCGA barcodes.
 
 ```{r}
 ## Load example file found in package
@@ -335,9 +345,6 @@ filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
 makeGRangesListFromExonFiles(exonFile,
     fileNames = paste0(filePrefix, basename(exonFile)))
 ```
-
-Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")`
-class to incorporate them into a `MultiAssayExperiment`.
 
 ## `makeGRangesListFromCopyNumber`
 

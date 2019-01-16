@@ -16,6 +16,8 @@
 #' the Genomic Data Commons Legacy archive (default NULL)
 #' @param rangesColumn (default "exon") A single string indicating the name of
 #' the column in the data containing the ranges information
+#' @param nrows The number of rows to return from each of the files read in
+#' (all rows by default)
 #'
 #' @return A \linkS4class{GRangesList} object
 #'
@@ -36,7 +38,7 @@
 #'
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
-    fileNames = NULL, rangesColumn = "exon")
+    fileNames = NULL, rangesColumn = "exon", nrows = NULL)
 {
     if (!is.null(sampleNames)) {
         if (length(filepaths) != length(sampleNames))
@@ -59,10 +61,14 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
 
     names(btData) <- sampleNames
 
+    if (!is.null(nrows))
+        btData <- lapply(btData, function(dat) dat[seq_len(nrows), ])
+
     allrowdata <- if (requireNamespace("dplyr", quietly = TRUE))
         dplyr::bind_rows(btData)
     else
         do.call(rbind, btData)
+
 
     newGRanges <- GRanges(allrowdata[[rangesColumn]])
     mcols(newGRanges) <- allrowdata[, names(allrowdata) != rangesColumn]

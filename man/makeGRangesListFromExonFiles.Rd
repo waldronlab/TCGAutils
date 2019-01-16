@@ -5,7 +5,7 @@
 \title{Read Exon level files and create a GRangesList}
 \usage{
 makeGRangesListFromExonFiles(filepaths, sampleNames = NULL,
-  fileNames = NULL, rangesColumn = "exon")
+  fileNames = NULL, rangesColumn = "exon", nrows = NULL)
 }
 \arguments{
 \item{filepaths}{A \code{character} vector of valid exon data file paths}
@@ -18,6 +18,9 @@ the Genomic Data Commons Legacy archive (default NULL)}
 
 \item{rangesColumn}{(default "exon") A single string indicating the name of
 the column in the data containing the ranges information}
+
+\item{nrows}{The number of rows to return from each of the files read in
+(all rows by default)}
 }
 \value{
 A \linkS4class{GRangesList} object
