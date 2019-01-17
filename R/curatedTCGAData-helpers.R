@@ -57,12 +57,19 @@ NULL
 #'
 #' @export
 getSubtypeMap <- function(multiassayexperiment) {
+
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")
+
     frameMap <- metadata(colData(multiassayexperiment))[["subtypes"]]
-    if (is.null(frameMap)) {
-        message("No subtype data available")
-    } else frameMap
+
+    if (is.null(frameMap))
+        return(message("No subtype data available"))
+
+    subColIdx <- grep("subtype", names(frameMap))
+    frameMap[[subColIdx]] <-
+        gsub("patient", "patientID", frameMap[[subColIdx]], fixed = TRUE)
+    frameMap
 }
 
 #' @rdname curatedTCGAData-helpers
