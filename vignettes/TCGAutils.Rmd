@@ -309,8 +309,8 @@ queso <- files(legacy = TRUE) %>%
         data_category == "Gene expression" &
         data_type == "Exon quantification")
 
-qu <- manifest(queso)[20:25, ]
-qq <- gdcdata(qu$id)
+qu <- manifest(queso)
+qq <- gdcdata(qu$id[1:4])
 ```
 
 We then use `makeGRangesListFromExonFiles` to create a `GRangesList` from
@@ -319,7 +319,7 @@ are too long to download (Windows OS). The `nrows` argument only keeps the
 first 5 rows in each of the files read in due to invalid character exon ranges.
 
 ```{r}
-makeGRangesListFromExonFiles(qq, nrows = 5)
+makeGRangesListFromExonFiles(qq, nrows = 4)
 ```
 
 Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")`

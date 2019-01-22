@@ -38,7 +38,7 @@
 #'
 #' @export makeGRangesListFromExonFiles
 makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
-    fileNames = NULL, rangesColumn = "exon", nrows = NULL)
+    fileNames = NULL, rangesColumn = "exon", nrows = Inf)
 {
     if (!is.null(sampleNames)) {
         if (length(filepaths) != length(sampleNames))
@@ -49,11 +49,13 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
         sampleNames <-
             filenameToBarcode(queryNames, TRUE)[["aliquots.submitter_id"]]
     }
+
     btData <- lapply(filepaths, function(file) {
         if (requireNamespace("readr", quietly = TRUE))
-            readr::read_delim(file, delim = "\t")
+            readr::read_delim(file, delim = "\t", n_max = nrows)
         else
-            read.delim(file, sep = "\t")
+            read.delim(file, sep = "\t",
+                nrows = if (is.infinite(nrows)) -1 else nrows)
     })
 
     if (!length(sampleNames))
@@ -61,16 +63,15 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
 
     names(btData) <- sampleNames
 
-    if (!is.null(nrows))
-        btData <- lapply(btData, function(dat) dat[seq_len(nrows), ])
-
     allrowdata <- if (requireNamespace("dplyr", quietly = TRUE))
         dplyr::bind_rows(btData)
     else
         do.call(rbind, btData)
 
 
-    newGRanges <- GRanges(allrowdata[[rangesColumn]])
+    newGRanges <- GenomicRanges::GRanges(allrowdata[[rangesColumn]])
     mcols(newGRanges) <- allrowdata[, names(allrowdata) != rangesColumn]
-    GRangesList(relist(newGRanges, btData))
+
+    splitIndx <- rep(names(btData), vapply(btData, nrow, integer(1L)))
+    IRanges::splitAsList(newGRanges, splitIndx)
 }
