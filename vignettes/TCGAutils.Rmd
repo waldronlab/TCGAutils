@@ -398,7 +398,7 @@ Here we translate the first two TCGA barcodes of the previous copy-number
 alterations dataset to UUID:
 
 ```{r}
-(xbarcode <- head(colnames(coad)[["COAD_CNASeq-20160128"]], 4L))
+(xbarcode <- head(colnames(coad)[["COAD_CNASeq-20160128_simplified"]], 4L))
 barcodeToUUID(xbarcode)
 ```
 
