@@ -62,13 +62,17 @@ getSubtypeMap <- function(multiassayexperiment) {
         stop("Provide a 'MultiAssayExperiment' object")
 
     frameMap <- metadata(colData(multiassayexperiment))[["subtypes"]]
+    frameMap[] <- lapply(frameMap, as.character)
 
     if (is.null(frameMap))
         return(message("No subtype data available"))
 
     subColIdx <- grep("subtype", names(frameMap))
-    frameMap[[subColIdx]] <-
-        gsub("patient", "patientID", frameMap[[subColIdx]], fixed = TRUE)
+
+    pats <-
+        frameMap[[subColIdx]] %in% c("patient", "SAMPLE", "Complete TCGA ID")
+
+    frameMap[pats, subColIdx] <- "patientID"
     frameMap
 }
 
