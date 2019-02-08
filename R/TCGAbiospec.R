@@ -36,7 +36,7 @@ TCGAbiospec <- function(barcodes) {
         stop("Provide a longer barcode")
 
     local_data_store <- new.env(parent = emptyenv())
-    data("sampleTypes", envir = local_data_store)
+    data("sampleTypes", envir = local_data_store, package = "TCGAutils")
     sampleTypes <- local_data_store[["sampleTypes"]]
     sampCode <- TCGAbarcode(barcodes, FALSE, TRUE)
     sampVial <- .strsep(sampCode, 2L)

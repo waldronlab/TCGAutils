@@ -32,7 +32,7 @@ TCGAsampleSelect <- function(barcodes, sampleCode) {
         stop("'barcodes' should be at least 15 characters ",
                 "with sample information")
     local_data_store <- new.env(parent = emptyenv())
-    data("sampleTypes", envir = local_data_store)
+    data("sampleTypes", envir = local_data_store, package = "TCGAutils")
     sampleTypes <- local_data_store[["sampleTypes"]]
     if (is.numeric(sampleCode)) {
         if (identical(nchar(as.character(sampleCode)), 1L))

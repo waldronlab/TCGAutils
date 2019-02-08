@@ -136,7 +136,7 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL) {
 
     if (!is.null(sampleCodes)) {
         env <- new.env(parent = emptyenv())
-        data("sampleTypes", envir = env)
+        data("sampleTypes", envir = env, package = "TCGAutils")
         sampleTypes <- env[["sampleTypes"]]
         if (!sampleCodes %in% sampleTypes[["Code"]] ||
             !is.character(sampleCodes))
