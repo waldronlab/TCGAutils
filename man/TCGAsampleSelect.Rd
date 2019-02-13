@@ -4,14 +4,14 @@
 \alias{TCGAsampleSelect}
 \title{Select samples from barcodes from lookup table}
 \usage{
-TCGAsampleSelect(barcodes, sampleCode)
+TCGAsampleSelect(barcodes, sampleCodes)
 }
 \arguments{
 \item{barcodes}{Standard TCGA barcodes containing patient identifiers,
 sample, portion, plate, center codes.}
 
-\item{sampleCode}{Either a character or numeric vector of length one. See
-the \code{sampleType} dataset.}
+\item{sampleCodes}{Either a character or numeric vector of TCGA sample codes.
+See the \code{sampleType} dataset.}
 }
 \value{
 A logical vector of the same length as 'barcodes' indicating matches
@@ -25,6 +25,6 @@ See lookup table in \code{data("sampleTypes")}.
 \examples{
 
 example("TCGAbarcode")
-TCGAsampleSelect(barcodes, 11)
+TCGAsampleSelect(barcodes, c(11, 01))
 
 }
