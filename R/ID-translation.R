@@ -271,16 +271,15 @@ filenameToBarcode <- function(filenames, legacy = FALSE) {
     filesres <- files(legacy = legacy)
     info <- results_all(
         select(filter(filesres, ~ file_name %in% filenames),
-            "cases.samples.portions.analytes.aliquots.submitter_id")
+            c("file_name",
+            "cases.samples.portions.analytes.aliquots.submitter_id"))
     )
-    id_list <- lapply(info[["cases"]], function(a) {
-        a[[1L]][[1L]][[1L]]
-    })
-    # so we can later expand to a data.frame of the right size
-    barcodes_per_file <- lengths(id_list)
-    # And build the data.frame
-    data.frame(file_name = rep(filenames, barcodes_per_file),
-        file_id = rep(ids(info), barcodes_per_file),
-        aliquots.submitter_id = unlist(id_list), row.names = NULL,
+
+    res <- data.frame(file_name = info[["file_name"]],
+        file_id = info[["file_id"]],
+        aliquots.submitter_id = unname(unlist(info[["cases"]])),
+        row.names = NULL,
         stringsAsFactors = FALSE)
+
+    res[na.omit(match(res[["file_name"]], filenames)), ]
 }
