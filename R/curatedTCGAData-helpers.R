@@ -149,15 +149,19 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL) {
 
     sampList <- .samplesInData(multiassayexperiment)
     sampList <- .validSamples(sampList, sampleCodes)
+    validExp <- Filter(length, sampList)
+    exps <- experiments(multiassayexperiment)
+    exps <- exps[names(exps) %in% names(validExp)]
+
 
     egroups <- unlist(Map(function(exps, sampcodes, enames) {
-        expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
-        lapply(expnames, function(code) {
-            logitype <- TCGAsampleSelect(colnames(exps), code)
-            exps[, logitype]
-        })
-    }, exps = experiments(multiassayexperiment), sampcodes = sampList,
-    enames = names(multiassayexperiment), USE.NAMES = FALSE))
+            expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
+            lapply(expnames, function(code) {
+                logitype <- TCGAsampleSelect(colnames(exps), code)
+                exps[, logitype]
+            })
+    }, exps = exps, sampcodes = validExp,
+    enames = names(validExp), USE.NAMES = FALSE))
 
     sampmap <- generateMap(egroups, colData(multiassayexperiment),
         idConverter = TCGAbarcode)
