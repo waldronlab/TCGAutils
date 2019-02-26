@@ -121,6 +121,14 @@ getClinicalNames <- function(diseaseCode) {
     }
 }
 
+.addLeadingZero <- function(vect) {
+    vect <- as.character(vect)
+    singleDigits <- nchar(vect) < 2L
+    if (any(singleDigits))
+        vect <- replace(vect, singleDigits, paste0("0", vect[singleDigits]))
+    vect
+}
+
 #' @rdname curatedTCGAData-helpers
 #'
 #' @param sampleCodes character (default NULL) A string of sample type codes
@@ -139,6 +147,7 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL) {
         stop("Provide a 'MultiAssayExperiment' object")
 
     if (!is.null(sampleCodes)) {
+        sampleCodes <- .addLeadingZero(sampleCodes)
         env <- new.env(parent = emptyenv())
         data("sampleTypes", envir = env, package = "TCGAutils")
         sampleTypes <- env[["sampleTypes"]]
