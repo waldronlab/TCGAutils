@@ -22,7 +22,6 @@ init:
 install:
   ps: |
         Bootstrap
-        InstallRtools
 
 branches:
   only:
@@ -50,7 +49,6 @@ on_success:
 environment:
   global:
     _R_CHECK_FORCE_SUGGESTS_: false
-    USE_RTOOLS: false
 
   matrix:
     - R_VERSION: devel
