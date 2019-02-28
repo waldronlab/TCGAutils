@@ -30,6 +30,7 @@ branches:
 # Adapt as necessary starting from here
 build_script:
   - echo Current directory=%CD%
+  - travis.tool.sh install_deps
   - travis-tool.sh github_package jimhester/covr hadley/devtools
   - travis-tool.sh install_bioc_deps
 
@@ -49,6 +50,8 @@ on_success:
 environment:
   global:
     _R_CHECK_FORCE_SUGGESTS_: false
+    USE_RTOOLS: true
+    PKGTYPE: win.binary
 
   matrix:
     - R_VERSION: devel
