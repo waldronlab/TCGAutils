@@ -309,6 +309,8 @@ queso <- files(legacy = TRUE) %>%
         data_category == "Gene expression" &
         data_type == "Exon quantification")
 
+gdc_set_cache(directory = tempdir())
+
 qu <- manifest(queso)
 qq <- gdcdata(qu$id[1:4])
 ```
