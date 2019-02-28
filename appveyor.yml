@@ -51,7 +51,7 @@ environment:
   global:
     _R_CHECK_FORCE_SUGGESTS_: false
     USE_RTOOLS: true
-    RTOOLS_VERSION: 33
+    RTOOLS_VERSION: 35
     PKGTYPE: win.binary
 
   matrix:
