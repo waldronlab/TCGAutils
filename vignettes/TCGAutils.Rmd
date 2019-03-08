@@ -301,6 +301,8 @@ classes.
 The `GenomicDataCommons` package can be used to obtain 'legacy' exon
 quantification files via:
 
+_Note_. File downloads disabled on Windows due to long file names.
+
 ```{r}
 library(GenomicDataCommons)
 
@@ -311,8 +313,10 @@ queso <- files(legacy = TRUE) %>%
 
 gdc_set_cache(directory = tempdir())
 
-qu <- manifest(queso)
-qq <- gdcdata(qu$id[1:4])
+if (!identical(.Platform$OS.type, "windows")) {
+    qu <- manifest(queso)
+    qq <- gdcdata(qu$id[1:4])
+}
 ```
 
 We then use `makeGRangesListFromExonFiles` to create a `GRangesList` from
