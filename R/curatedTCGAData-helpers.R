@@ -151,7 +151,7 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL) {
         env <- new.env(parent = emptyenv())
         data("sampleTypes", envir = env, package = "TCGAutils")
         sampleTypes <- env[["sampleTypes"]]
-        if (!sampleCodes %in% sampleTypes[["Code"]] ||
+        if (all(!sampleCodes %in% sampleTypes[["Code"]]) ||
             !is.character(sampleCodes))
             stop("Provide valid sample types string")
     }
