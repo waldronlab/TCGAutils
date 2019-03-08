@@ -1,3 +1,8 @@
+#' @importFrom GenomicFeatures genes microRNAs
+#' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
+#' seqlevelsStyle<-
+NULL
+
 .cMAE <- function(mae, x, name) {
     if (missing(name))
         stop("<internal> Provide a name for the 'ExperimentList' element")
@@ -75,47 +80,127 @@
     }, logical(1L))
 }
 
-#' Simplify curatedTCGAData objects by replacing RaggedExperiment objects
+#' @rdname simplifyTCGA
+#'
+#' @title Functions to convert rows annotations to ranges and RaggedExperiment
+#' to RangedSummarizedExperiment
+#'
+#' @description This group of functions will convert row annotations as
+#' either gene symbols or miRNA symbols to row ranges based on database
+#' resources 'TxDB' and 'org.Hs' packages. It will also simplify the
+#' representation of \linkS4class{RaggedExperiment} objects to
+#' \linkS4class{RangedSummarizedExperiment}.
+#'
+#' @details The original SummarizedExperiment containing either gene symbol
+#'   or miR annotations is replaced or supplemented by a
+#'   \linkS4class{RangedSummarizedExperiment} for those that could be mapped to
+#'   \linkS4class{GRanges}, and optionally another
+#'   \linkS4class{SummarizedExperiment} for annotations that
+#'   could not be mapped to \linkS4class{GRanges}.
+#'
+#' RaggedExperiment mutation objects become a genes by patients
+#' RangedSummarizedExperiment object containing '1' if there is a non-silent
+#' mutation somewhere in the gene, and '0' otherwise. "CNA" and "CNV" segmented
+#' copy number are reduced using a weighted mean in the rare cases of
+#' overlapping (non-disjoint) copy number regions.
+#'
+#' These functions rely on 'TxDb.Hsapiens.UCSC.hg19.knownGene' and
+#' 'org.Hs.eg.db' to map to the 'hg19' NCBI build.
 #'
 #' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
-#' @param keep logical (default FALSE) whether to remove the original
-#'   RaggedExperiment objects from the returned MultiAssayExperiment
+#' @param keep.assay logical (default FALSE) Whether to keep the
+#'   SummarizedExperiment assays that have been converted to
+#'   RangedSummarizedExperiment
+#' @param unmapped logical (default TRUE) Include an assay of data that was
+#'   not able to be mapped in reference database
 #' @param suffix character (default "_simplified") A character string to append
-#' to the newly modified assay.
+#' to the newly modified assay for `qreduceTCGA`.
 #'
-#' @return
-#' A MultiAssayExperiment object with RaggedExperiments converted to
-#' RangedSummarizedExperiment with rows corresponding to gene symbol.
+#' @return A \linkS4class{MultiAssayExperiment} with any gene expression, miRNA,
+#'   copy number, and mutations converted to RangedSummarizedExperiment objects
 #'
-#' "Mutations" objects become a genes x patients RangedSummarizedExperiment
-#' containing 1 if there is a non-silent mutation somewhere in the gene, and 0
-#' otherwise. "CNA" and "CNV" segmented copy number are reduced using a weighted
-#' mean in the rare cases of overlapping (non-disjoint) copy number regions.
-#' @details
-#' Relies on TxDb.Hsapiens.UCSC.hg19.knownGene and org.Hs.eg.db to map to hg19
-#' NCBI build.
+#' @author L. Waldron
+#'
 #' @examples
 #' library(curatedTCGAData)
 #' library(GenomeInfoDb)
 #'
 #' accmae <-
-#'     curatedTCGAData("ACC", c("CNASNP", "Mutation"), dry.run = FALSE)
+#'     curatedTCGAData(diseaseCode = "ACC",
+#'     assays = c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
+#'     dry.run = FALSE)
 #'
 #' ## update genome annotation
-#' genome(accmae[["ACC_Mutation-20160128"]]) <-
-#'     vapply(genome(accmae[["ACC_Mutation-20160128"]]), translateBuild,
-#'     character(1L))
+#' rex <- accmae[["ACC_Mutation-20160128"]]
 #'
-#' qreduceTCGA(accmae)
+#' ## Translate build to "hg19"
+#' tgenome <- vapply(genome(rex), translateBuild, character(1L))
+#' genome(rex) <- tgenome
 #'
-#' @importFrom GenomicFeatures genes microRNAs
-#' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
-#' seqlevelsStyle<-
+#' accmae[["ACC_Mutation-20160128"]] <- rex
 #'
-#' @author L. Waldron
+#' simplifyTCGA(accmae)
 #'
 #' @export
-qreduceTCGA <- function(obj, keep = FALSE, suffix = "_simplified") {
+simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+    obj <- qreduceTCGA(obj, keep.assay)
+    obj <- mirToRanges(obj, keep.assay, unmapped)
+    symbolsToRanges(obj, keep.assay, unmapped)
+}
+
+#' @name simplifyTCGA
+#' @aliases symbolsToRanges
+#' @export
+symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+    can.fix <- vapply(experiments(obj), function(y) {
+        .hasSymbols(y) & .isSummarizedExperiment(y)
+    }, TRUE)
+
+    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
+    for (i in which(can.fix)) {
+        lookup <- .getRangesOfSYMBOLS(rownames(obj[[i]]))
+        rse <- obj[[i]][names(lookup$mapped),]
+        SummarizedExperiment::rowRanges(rse) <- lookup$mapped
+        obj <- .cMAE(obj, rse, name = paste0(names(obj)[i], "_ranged"))
+        if (length(lookup$unmapped) && unmapped) {
+            se <- obj[[i]][lookup$unmapped, ]
+            obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
+        }
+    }
+    if (!keep.assay && any(can.fix))
+        obj <- obj[, ,-which(can.fix)]
+    return(obj)
+}
+
+#' @name simplifyTCGA
+#' @aliases mirToRanges
+#' @export
+mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+    can.fix <- vapply(experiments(obj), function(y) {
+        .hasMir(y) & .isSummarizedExperiment(y)
+    }, TRUE)
+
+    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "mirbase.db"))
+    for (i in which(can.fix)) {
+        lookup <- .getRangesOfMir(rownames(obj[[i]]))
+        rse <- obj[[i]][names(lookup$mapped), ]
+        SummarizedExperiment::rowRanges(rse) <- lookup$mapped
+        obj <- .cMAE(obj, rse, paste0(names(obj)[i], "_ranged"))
+        if (length(lookup$unmapped) && unmapped) {
+            se <- obj[[i]][lookup$unmapped, ]
+            obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
+        }
+        if (!keep.assay & any(can.fix))
+            obj <- obj[, , -which(can.fix)]
+    }
+    return(obj)
+}
+
+
+#' @name simplifyTCGA
+#' @aliases qreduceTCGA
+#' @export
+qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     gn <- genes(
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
@@ -161,136 +246,8 @@ qreduceTCGA <- function(obj, keep = FALSE, suffix = "_simplified") {
         names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)
     }
-    if (!keep) {
+    if (!keep.assay) {
         obj <- obj[, , !isRE(obj)]
     }
     return(obj)
-}
-
-#' Convert SummarizedExperiment elements with gene symbols to
-#' RangedSummarizedExperiment
-#'
-#' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
-#' @param keep If FALSE (default), remove the SummarizedExperiment objects
-#' that have been converted to RangedSummarizedExperiment
-#'
-#' @return a MultiAssayExperiment where any of the original SummarizedExperiment
-#'   containing gene symbols as rownames have been replaced or supplemented by a
-#'   RangedSummarizedExperiment for miR that could be mapped to GRanges, and
-#'   another SummarizedExperiment for miR that could not be mapped to GRanges.
-#'
-#' @seealso mirToRanges
-#'
-#' @details Any SummarizedExperiment elements with gene symbols as rownames will
-#'   have ranges added. Symbols where ranges can't be found are put in a new
-#'   SummarizedExperiment.
-#'
-#' @author L. Waldron
-#'
-#' @examples
-#' library(MultiAssayExperiment)
-#'
-#' data(miniACC)
-#'
-#' symbolsToRanges(miniACC)
-#'
-#' @export
-symbolsToRanges <- function(obj, keep = FALSE) {
-    can.fix <- vapply(experiments(obj), function(y) {
-        .hasSymbols(y) & .isSummarizedExperiment(y)
-    }, TRUE)
-
-    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
-    for (i in which(can.fix)) {
-        lookup <- .getRangesOfSYMBOLS(rownames(obj[[i]]))
-        rse <- obj[[i]][names(lookup$mapped),]
-        SummarizedExperiment::rowRanges(rse) <- lookup$mapped
-        obj <- .cMAE(obj, rse, name = paste0(names(obj)[i], "_ranged"))
-        if (length(lookup$unmapped)) {
-            se <- obj[[i]][lookup$unmapped,]
-            obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
-        }
-    }
-    if (!keep && any(can.fix))
-        obj <- obj[, ,-which(can.fix)]
-    return(obj)
-}
-
-#' Convert SummarizedExperiment elements with microRNA to
-#' RangedSummarizedExperiment
-#'
-#' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
-#' @param keep If FALSE (default), remove the SummarizedExperiment
-#'   objects that have been converted to RangedSummarizedExperiment
-#' @return a MultiAssayExperiment where any of the original SummarizedExperiment
-#'   containing gene symbols as rownames have been replaced or supplemented by a
-#'   RangedSummarizedExperiment for miR that could be mapped to GRanges, and
-#'   another SummarizedExperiment for miR that could not be mapped to GRanges.
-#' @seealso symbolsToRanges
-#'
-#' @author L. Waldron
-#'
-#' @examples
-#' library(curatedTCGAData)
-#'
-#' accmae <- curatedTCGAData("ACC", "miRNASeqGene", dry.run = FALSE)
-#'
-#' mirToRanges(accmae)
-#' @export
-mirToRanges <- function(obj, keep = FALSE) {
-    can.fix <- vapply(experiments(obj), function(y) {
-        .hasMir(y) & .isSummarizedExperiment(y)
-    }, TRUE)
-
-    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "mirbase.db"))
-    for (i in which(can.fix)) {
-        lookup <- .getRangesOfMir(rownames(obj[[i]]))
-        rse <- obj[[i]][names(lookup$mapped), ]
-        SummarizedExperiment::rowRanges(rse) <- lookup$mapped
-        obj <- .cMAE(obj, rse, paste0(names(obj)[i], "_ranged"))
-        if (length(lookup$unmapped > 0)) {
-            se <- obj[[i]][lookup$unmapped, ]
-            obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
-        }
-        if (!keep & any(can.fix))
-            obj <- obj[, , -which(can.fix)]
-    }
-    return(obj)
-}
-
-#' All-in-one simplification of curatedTCGAData objects
-#'
-#' @param obj A MultiAssayExperiment from curatedTCGAData
-#' @param keep If FALSE (default), remove the original
-#'   MultiAssayExperiment elements that have simplified versions in the output.
-#'
-#' @return a MultiAssayExperiment with any gene expression, miRNA, copy number,
-#'   and mutations converted to RangedSummarizedExperiment objects
-#'
-#' @author L. Waldron
-#'
-#' @seealso mirToRanges, symbolsToRanges, qreduceTCGA
-#' @examples
-#' library(curatedTCGAData)
-#' library(GenomeInfoDb)
-#'
-#' accmae <- curatedTCGAData("ACC",
-#'     c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
-#'     dry.run = FALSE)
-#'
-#' rex <- accmae[["ACC_Mutation-20160128"]]
-#'
-#' ## Translate build to "hg19"
-#' tgenome <- vapply(genome(rex), translateBuild, character(1L))
-#' genome(rex) <- tgenome
-#'
-#' accmae[["ACC_Mutation-20160128"]] <- rex
-#'
-#' simplifyTCGA(accmae)
-#'
-#' @export
-simplifyTCGA <- function(obj, keep = FALSE) {
-    obj <- qreduceTCGA(obj, keep)
-    obj <- mirToRanges(obj, keep)
-    symbolsToRanges(obj, keep)
 }
