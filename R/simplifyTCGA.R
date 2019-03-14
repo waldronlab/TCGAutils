@@ -10,8 +10,18 @@ NULL
     c(mae, ExperimentList(newlist))
 }
 
+.checkHas <- function(x, what = c("^hsa", "^cg", "symbols"), threshold = 0.9) {
+    if (identical(what, "symbols"))
+        what <- "^[A-Z0-9]{1,6}|^C[0-9]orf[0-9]{1,4}"
+    mean(c(FALSE, grepl(what, rownames(x))), na.rm = TRUE) > 0.9
+}
+
 .hasMir <- function(x) {
     mean(c(FALSE, grepl("^hsa", rownames(x))), na.rm = TRUE) > 0.9
+}
+
+.hasCpG <- function(x) {
+    mean(c(FALSE, grepl("^cg", rownames(x))), na.rm = TRUE) > 0.9
 }
 
 .hasSymbols <- function(x) {
@@ -25,19 +35,21 @@ NULL
     is(x, "SummarizedExperiment") & !is(x, "RangedSummarizedExperiment")
 }
 
+#' @param x A character vector
+#' @param gn A GRanges object with some of its names found in x
+#' @return A list of length 2: unmapped (character vector) and mapped (GRanges)
+#' @keywords internal
 .makeListRanges <- function(x, gn) {
-    ## x is a character vector
-    ## gn is a GRanges object with some of its names found in x
     res <- list(unmapped = x[!x %in% names(gn)])
     x <- x[x %in% names(gn)]
     gn <- gn[match(x, names(gn))]
-    res$mapped <- gn
-    ## Returns a list of length 2:
-    ## unmapped = character vector of x not found in gn
-    ## mapped = GRanges of gn that are found in x
+    res[["mapped"]] <- gn
     return(res)
 }
 
+#' @return list of length 2: "unmapped" is a character vector providing
+#' unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
+#' @keywords internal
 .getRangesOfSYMBOLS <- function(x) {
     entrez <-
         AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, x, keytype = "SYMBOL",
@@ -52,13 +64,13 @@ NULL
     gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
         pruning.mode = "coarse")
     seqlevelsStyle(gn) <- "NCBI"
-    ## returns a list of length 2: "unmapped" is a character vector providing
-    ## unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols.
+
     return(.makeListRanges(x, gn))
 }
 
+#' @param x A SummarizedExperiment containing hsa miR IDs as rownames
+#' @keywords internal
 .getRangesOfMir <- function(x) {
-## x is a SummarizedExperiment containing hsa miR IDs as rownames
     mr <- microRNAs(
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
     names(mr) <- mr$mirna_id
@@ -78,6 +90,21 @@ NULL
     } else
         TRUE
     }, logical(1L))
+}
+
+.getRangesOfCpG <- function(x) {
+    annote450k <- minfi::getAnnotation(
+        IlluminaHumanMethylation450kanno.ilmn12.hg19::
+            IlluminaHumanMethylation450kanno.ilmn12.hg19)
+    clist <- list(seqnames = "chr", ranges = "pos", strand = "strand")
+    gps <- do.call(GRanges, lapply(clist, function(x) annote450k[, x]))
+    names(gps) <- rownames(annote450k)
+
+    res <- split(x, x %in% names(gps))
+    names(res) <- c("unmapped", "mapped")[seq_along(res)]
+    gps <- gps[match(res[["mapped"]], names(gps)), ]
+    res[["mapped"]] <- gps
+    return(res)
 }
 
 #' @rdname simplifyTCGA
@@ -154,7 +181,7 @@ simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
         .hasSymbols(y) & .isSummarizedExperiment(y)
-    }, TRUE)
+    }, logical(1L))
 
     .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     for (i in which(can.fix)) {
@@ -178,7 +205,7 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
         .hasMir(y) & .isSummarizedExperiment(y)
-    }, TRUE)
+    }, logical(1L))
 
     .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "mirbase.db"))
     for (i in which(can.fix)) {
@@ -196,6 +223,28 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     return(obj)
 }
 
+CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+    can.fix <- vapply(experiments(obj), function(y) {
+        .hasCpG(y) & .isSummarizedExperiment(y)
+    }, logical(1L))
+
+    .checkPkgsAvail(c("IlluminaHumanMethylation450kanno.ilmn12.hg19", "minfi"))
+
+    browser()
+    for (i in which(can.fix)) {
+        lookup <- .getRangesOfCpG(rownames(obj[[i]]))
+        rse <- obj[[i]][names(lookup[["mapped"]]), ]
+        SummarizedExperiment::rowRanges(rse) <- lookup[["mapped"]]
+        obj <- .cMAE(obj, rse, paste0(names(obj)[i], "_ranged"))
+        if (length(lookup[["unmapped"]]) && unmapped) {
+            se <- obj[[i]][lookup[["unmapped"]], ]
+            obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
+        }
+        if (!keep.assay & any(can.fix))
+            obj <- obj[, , -which(can.fix)]
+    }
+    return(obj)
+}
 
 #' @name simplifyTCGA
 #' @aliases qreduceTCGA
