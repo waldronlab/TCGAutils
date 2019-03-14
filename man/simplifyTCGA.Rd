@@ -4,6 +4,7 @@
 \alias{simplifyTCGA}
 \alias{symbolsToRanges}
 \alias{mirToRanges}
+\alias{CpGtoRanges}
 \alias{qreduceTCGA}
 \title{Functions to convert rows annotations to ranges and RaggedExperiment
 to RangedSummarizedExperiment}
@@ -13,6 +14,8 @@ simplifyTCGA(obj, keep.assay = FALSE, unmapped = TRUE)
 symbolsToRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 
 mirToRanges(obj, keep.assay = FALSE, unmapped = TRUE)
+
+CpGtoRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 
 qreduceTCGA(obj, keep.assay = FALSE, suffix = "_simplified")
 }

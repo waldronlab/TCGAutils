@@ -35,6 +35,8 @@ NULL
     is(x, "SummarizedExperiment") & !is(x, "RangedSummarizedExperiment")
 }
 
+#' @name hidden-helpers
+#' @title A small document for helper functions
 #' @param x A character vector
 #' @param gn A GRanges object with some of its names found in x
 #' @return A list of length 2: unmapped (character vector) and mapped (GRanges)
@@ -47,6 +49,7 @@ NULL
     return(res)
 }
 
+#' @rdname hidden-helpers
 #' @return list of length 2: "unmapped" is a character vector providing
 #' unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
 #' @keywords internal
@@ -68,6 +71,7 @@ NULL
     return(.makeListRanges(x, gn))
 }
 
+#' @rdname hidden-helpers
 #' @param x A SummarizedExperiment containing hsa miR IDs as rownames
 #' @keywords internal
 .getRangesOfMir <- function(x) {
@@ -93,18 +97,17 @@ NULL
 }
 
 .getRangesOfCpG <- function(x) {
+    requireNamespace("IlluminaHumanMethylation450kanno.ilmn12.hg19",
+        quietly = TRUE)
     annote450k <- minfi::getAnnotation(
         IlluminaHumanMethylation450kanno.ilmn12.hg19::
             IlluminaHumanMethylation450kanno.ilmn12.hg19)
     clist <- list(seqnames = "chr", ranges = "pos", strand = "strand")
     gps <- do.call(GRanges, lapply(clist, function(x) annote450k[, x]))
     names(gps) <- rownames(annote450k)
+    seqlevelsStyle(gps) <- "NCBI"
 
-    res <- split(x, x %in% names(gps))
-    names(res) <- c("unmapped", "mapped")[seq_along(res)]
-    gps <- gps[match(res[["mapped"]], names(gps)), ]
-    res[["mapped"]] <- gps
-    return(res)
+    .makeListRanges(x, gps)
 }
 
 #' @rdname simplifyTCGA
@@ -194,6 +197,7 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
             obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
         }
     }
+    ## TODO: remove rest outside of loop
     if (!keep.assay && any(can.fix))
         obj <- obj[, ,-which(can.fix)]
     return(obj)
@@ -223,6 +227,9 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     return(obj)
 }
 
+#' @name simplifyTCGA
+#' @aliases CpGtoRanges
+#' @export
 CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
         .hasCpG(y) & .isSummarizedExperiment(y)
@@ -230,7 +237,6 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 
     .checkPkgsAvail(c("IlluminaHumanMethylation450kanno.ilmn12.hg19", "minfi"))
 
-    browser()
     for (i in which(can.fix)) {
         lookup <- .getRangesOfCpG(rownames(obj[[i]]))
         rse <- obj[[i]][names(lookup[["mapped"]]), ]
@@ -240,9 +246,10 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
             se <- obj[[i]][lookup[["unmapped"]], ]
             obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
         }
-        if (!keep.assay & any(can.fix))
-            obj <- obj[, , -which(can.fix)]
     }
+    if (!keep.assay & any(can.fix))
+        obj <- obj[, , -na.omit(match(names(obj), names(can.fix)))]
+
     return(obj)
 }
 
