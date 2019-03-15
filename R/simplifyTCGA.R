@@ -3,36 +3,33 @@
 #' seqlevelsStyle<-
 NULL
 
-.cMAE <- function(mae, x, name) {
-    if (missing(name))
-        stop("<internal> Provide a name for the 'ExperimentList' element")
-    newlist <- setNames(list(x), name)
-    c(mae, ExperimentList(newlist))
-}
-
-.checkHas <- function(x, what = c("^hsa", "^cg", "symbols"), threshold = 0.9) {
-    if (identical(what, "symbols"))
-        what <- "^[A-Z0-9]{1,6}|^C[0-9]orf[0-9]{1,4}"
-    mean(c(FALSE, grepl(what, rownames(x))), na.rm = TRUE) > 0.9
-}
-
-.hasMir <- function(x) {
-    mean(c(FALSE, grepl("^hsa", rownames(x))), na.rm = TRUE) > 0.9
-}
-
-.hasCpG <- function(x) {
-    mean(c(FALSE, grepl("^cg", rownames(x))), na.rm = TRUE) > 0.9
-}
-
-.hasSymbols <- function(x) {
-    mean(c(
-        FALSE,
-        grepl("^[A-Z0-9]{1,6}|^C[0-9]orf[0-9]{1,4}", rownames(x))
-    ), na.rm = TRUE) > 0.9
+.checkHas <-
+    function(x, pattern = c("^hsa", "^cg", "symbols"), threshold = 0.9) {
+    if (identical(pattern, "symbols"))
+        pattern <- "^[A-Z0-9]{1,6}|^C[0-9]orf[0-9]{1,4}"
+    mean(c(FALSE, grepl(pattern, rownames(x))), na.rm = TRUE) > 0.9
 }
 
 .isSummarizedExperiment <- function(x) {
     is(x, "SummarizedExperiment") & !is(x, "RangedSummarizedExperiment")
+}
+
+.convertTo <- function(x, which, FUN, keep, unmap) {
+    for (i in which(which)) {
+        lookup <- FUN(rownames(x[[i]]))
+        rse <- x[[i]][names(lookup[["mapped"]]),]
+        SummarizedExperiment::rowRanges(rse) <- lookup[["mapped"]]
+        x <- c(x, setNames(S4Vectors::List(rse),
+            paste0(names(x)[i], "_ranged")))
+        if (length(lookup[["unmapped"]]) && unmap) {
+            se <- x[[i]][lookup[["unmapped"]], ]
+            x <- c(x, setNames(S4Vectors::List(se),
+                paste0(names(x)[i], "_unranged")))
+        }
+    }
+    if (!keep & any(which))
+        x <- x[, , -na.omit(match(names(x), names(which)))]
+    x
 }
 
 #' @name hidden-helpers
@@ -97,8 +94,9 @@ NULL
 }
 
 .getRangesOfCpG <- function(x) {
-    requireNamespace("IlluminaHumanMethylation450kanno.ilmn12.hg19",
-        quietly = TRUE)
+    ## TODO: Fix here
+    try(attachNamespace("IlluminaHumanMethylation450kanno.ilmn12.hg19"),
+        silent = TRUE)
     annote450k <- minfi::getAnnotation(
         IlluminaHumanMethylation450kanno.ilmn12.hg19::
             IlluminaHumanMethylation450kanno.ilmn12.hg19)
@@ -183,24 +181,17 @@ simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @export
 symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
-        .hasSymbols(y) & .isSummarizedExperiment(y)
+        .checkHas(y, "symbols") & .isSummarizedExperiment(y)
     }, logical(1L))
 
     .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
-    for (i in which(can.fix)) {
-        lookup <- .getRangesOfSYMBOLS(rownames(obj[[i]]))
-        rse <- obj[[i]][names(lookup$mapped),]
-        SummarizedExperiment::rowRanges(rse) <- lookup$mapped
-        obj <- .cMAE(obj, rse, name = paste0(names(obj)[i], "_ranged"))
-        if (length(lookup$unmapped) && unmapped) {
-            se <- obj[[i]][lookup$unmapped, ]
-            obj <- .cMAE(obj, se, name = paste0(names(obj)[i], "_unranged"))
-        }
-    }
-    ## TODO: remove rest outside of loop
-    if (!keep.assay && any(can.fix))
-        obj <- obj[, ,-which(can.fix)]
-    return(obj)
+    .convertTo(
+        x = obj,
+        which = can.fix,
+        FUN = .getRangesOfSYMBOLS,
+        keep = keep.assay,
+        unmap = unmapped
+    )
 }
 
 #' @name simplifyTCGA
@@ -208,23 +199,17 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
-        .hasMir(y) & .isSummarizedExperiment(y)
+        .checkHas(y, "^hsa") & .isSummarizedExperiment(y)
     }, logical(1L))
 
     .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "mirbase.db"))
-    for (i in which(can.fix)) {
-        lookup <- .getRangesOfMir(rownames(obj[[i]]))
-        rse <- obj[[i]][names(lookup$mapped), ]
-        SummarizedExperiment::rowRanges(rse) <- lookup$mapped
-        obj <- .cMAE(obj, rse, paste0(names(obj)[i], "_ranged"))
-        if (length(lookup$unmapped) && unmapped) {
-            se <- obj[[i]][lookup$unmapped, ]
-            obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
-        }
-        if (!keep.assay & any(can.fix))
-            obj <- obj[, , -which(can.fix)]
-    }
-    return(obj)
+    .convertTo(
+        x = obj,
+        which = can.fix,
+        FUN = .getRangesOfMir,
+        keep = keep.assay,
+        unmap = unmapped
+    )
 }
 
 #' @name simplifyTCGA
@@ -232,25 +217,18 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @export
 CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
-        .hasCpG(y) & .isSummarizedExperiment(y)
+        .checkHas(y, "^cg") & .isSummarizedExperiment(y)
     }, logical(1L))
 
     .checkPkgsAvail(c("IlluminaHumanMethylation450kanno.ilmn12.hg19", "minfi"))
 
-    for (i in which(can.fix)) {
-        lookup <- .getRangesOfCpG(rownames(obj[[i]]))
-        rse <- obj[[i]][names(lookup[["mapped"]]), ]
-        SummarizedExperiment::rowRanges(rse) <- lookup[["mapped"]]
-        obj <- .cMAE(obj, rse, paste0(names(obj)[i], "_ranged"))
-        if (length(lookup[["unmapped"]]) && unmapped) {
-            se <- obj[[i]][lookup[["unmapped"]], ]
-            obj <- .cMAE(obj, se, paste0(names(obj)[i], "_unranged"))
-        }
-    }
-    if (!keep.assay & any(can.fix))
-        obj <- obj[, , -na.omit(match(names(obj), names(can.fix)))]
-
-    return(obj)
+    .convertTo(
+        x = obj,
+        which = can.fix,
+        FUN = .getRangesOfCpG,
+        keep = keep.assay,
+        unmap = unmapped
+    )
 }
 
 #' @name simplifyTCGA
