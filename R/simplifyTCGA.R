@@ -266,9 +266,11 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     names(gn) <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, names(gn),
         keytype = "ENTREZID", column = "SYMBOL")
 
-    weightedmean <- function(scores, ranges, qranges)
-    ## weighted average score per query range
-    sum(scores * BiocGenerics::width(ranges)) / sum(BiocGenerics::width(ranges))
+    weightedmean <- function(scores, ranges, qranges) {
+        isects <- GenomicRanges::pintersect(ranges, qranges)
+        sum(scores * BiocGenerics::width(isects)) /
+            sum(BiocGenerics::width(isects))
+    }
 
     nonsilent <- function(scores, ranges, qranges)
         any(scores != "Silent")
