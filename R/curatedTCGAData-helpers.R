@@ -95,20 +95,20 @@ getClinicalNames <- function(diseaseCode) {
     IRanges::CharacterList(lapply(sampleTables(mae), names))
 }
 
-.validSamples <- function(samplist, sampleCodes) {
-    if (!is.null(sampleCodes)) {
-        .checkSamplesInData(samplist, sampleCodes)
-        samplist[S4Vectors::`%in%`(samplist, sampleCodes)]
-    }
-    else
-        samplist
+.checkSampleCodes <- function(sampleCodes, type) {
+    env <- new.env(parent = emptyenv())
+    data("sampleTypes", envir = env, package = "TCGAutils")
+    sampleTypes <- env[["sampleTypes"]]
+    if (all(!sampleCodes %in% sampleTypes[["Code"]]) ||
+        !is.character(sampleCodes))
+        stop("Provide valid TCGA 'sampleCodes' in ", type)
 }
 
-.checkSamplesInData <- function(samplist, sampleCodes) {
+.checkCodesAgainstData <- function(samplist, sampleCodes) {
     invalidCodes <- IRanges::LogicalList(lapply(samplist,
         function(acode) !sampleCodes %in% acode))
 
-    if (all(all(invalidCodes)))
+    if (all(all(invalidCodes) & lengths(invalidCodes)))
         stop("'sampleCodes' not found in assay data, check 'sampleTables()'",
             "\n    and see the 'data(\"sampleTypes\")' table", call. = FALSE)
 
@@ -117,7 +117,6 @@ getClinicalNames <- function(diseaseCode) {
             IRanges::CharacterList(lapply(invalidCodes[any(invalidCodes)],
                 function(inv) sampleCodes[inv]))
         warning("Some 'sampleCodes' not found in assays", call. = FALSE)
-        missingcodes
     }
 }
 
@@ -133,6 +132,8 @@ getClinicalNames <- function(diseaseCode) {
 #'
 #' @param sampleCodes character (default NULL) A string of sample type codes
 #' (refer to \code{data(sampleTypes)}; splitAssays section)
+#' @param exclusive logical (default FALSE) Whether to return only assays that
+#' contain all codes in `sampleCodes`
 #'
 #' @section splitAssays:
 #'     Separates samples by indicated sample codes into different assays
@@ -142,26 +143,33 @@ getClinicalNames <- function(diseaseCode) {
 #'     entered. By default, all assays will be split by samples present in
 #'     the data.
 #' @export
-splitAssays <- function(multiassayexperiment, sampleCodes = NULL) {
+splitAssays <- function(multiassayexperiment, sampleCodes = NULL,
+    exclusive = FALSE) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")
 
+    sampList <- .samplesInData(multiassayexperiment)
+    .checkSampleCodes(unique(unlist(sampList)),
+        "colnames(MultiAssayExperiment)")
+
     if (!is.null(sampleCodes)) {
         sampleCodes <- .addLeadingZero(sampleCodes)
-        env <- new.env(parent = emptyenv())
-        data("sampleTypes", envir = env, package = "TCGAutils")
-        sampleTypes <- env[["sampleTypes"]]
-        if (all(!sampleCodes %in% sampleTypes[["Code"]]) ||
-            !is.character(sampleCodes))
-            stop("Provide valid sample types string")
+        .checkSampleCodes(sampleCodes, "in 'sampleCodes'")
+        .checkCodesAgainstData(sampList, sampleCodes)
+        if (exclusive) {
+            inCodes <-
+                S4Vectors::`%in%`(IRanges::CharacterList(sampleCodes), sampList)
+           sampList <- sampList[all(inCodes)]
+        }
+        if (!length(sampList))
+            stop("Not all 'sampleCodes' were found in data")
+        subCodes <- S4Vectors::`%in%`(sampList, sampleCodes)
+        sampList <- sampList[subCodes]
     }
 
-    sampList <- .samplesInData(multiassayexperiment)
-    sampList <- .validSamples(sampList, sampleCodes)
-    validExp <- Filter(length, sampList)
+   validExp <- Filter(length, sampList)
     exps <- experiments(multiassayexperiment)
     exps <- exps[names(exps) %in% names(validExp)]
-
 
     egroups <- unlist(Map(function(exps, sampcodes, enames) {
             expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
