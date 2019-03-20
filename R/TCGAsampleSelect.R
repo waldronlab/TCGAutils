@@ -39,6 +39,6 @@ TCGAsampleSelect <- function(barcodes, sampleCodes) {
     barcodeSamples <- substr(sampleSnippet, 1L, 2L)
     barc <- setNames(barcodeSamples %in% sampleCodes, barcodeSamples)
     if (exists("clist") && isTRUE(clist))
-        barc <- utils::relist(barc, bcodes)
+        barc <- BiocGenerics::relist(barc, bcodes)
     return(barc)
 }
