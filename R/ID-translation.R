@@ -20,13 +20,7 @@
 }
 
 .findBarcodeLimit <- function(barcode) {
-    filler <- .uniqueDelim(barcode)
-    splitCodes <- strsplit(barcode, filler)
-    maxIndx <- unique(lengths(splitCodes))
-    if (!S4Vectors::isSingleInteger(maxIndx))
-        stop("Inconsistent barcode lengths found")
-    if (maxIndx < 3L)
-        stop("Minimum barcode fields required: 'project-TSS-participant'")
+    .checkBarcodes(barcode, minIndex = 3L)
     key <- c(rep("case", 3L), "sample", "analyte", "aliquot", "aliquot")[maxIndx]
     if (identical(key, "analyte")) {
         analyte_chars <- unique(
