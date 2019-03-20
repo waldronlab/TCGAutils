@@ -13,7 +13,8 @@ getSubtypeMap(multiassayexperiment)
 
 getClinicalNames(diseaseCode)
 
-splitAssays(multiassayexperiment, sampleCodes = NULL)
+splitAssays(multiassayexperiment, sampleCodes = NULL,
+  exclusive = FALSE)
 
 sampleTables(multiassayexperiment, vial = FALSE)
 }
@@ -24,6 +25,9 @@ sampleTables(multiassayexperiment, vial = FALSE)
 
 \item{sampleCodes}{character (default NULL) A string of sample type codes
 (refer to \code{data(sampleTypes)}; splitAssays section)}
+
+\item{exclusive}{logical (default FALSE) Whether to return only assays that
+contain all codes in `sampleCodes`}
 
 \item{vial}{(logical default FALSE) whether to display vials in the
 table output}
