@@ -30,23 +30,10 @@ TCGAsampleSelect <- function(barcodes, sampleCodes) {
         barcodes <- unlist(barcodes, use.names = FALSE)
     }
 
-    bcodeCharLen <- unique(nchar(barcodes))
-    if (!S4Vectors::isSingleNumber(bcodeCharLen))
-        warning("Inconsistent barcode lengths: ",
-            paste(bcodeCharLen, collapse = ", "))
-     if (any(bcodeCharLen < 15L))
-        stop("'barcodes' should be at least 15 characters ",
-                "with sample information")
-    local_data_store <- new.env(parent = emptyenv())
-    data("sampleTypes", envir = local_data_store, package = "TCGAutils")
-    sampleTypes <- local_data_store[["sampleTypes"]]
+    .checkBarcodes(barcodes, check.sample = TRUE)
 
-    ncodes <- nchar(as.character(sampleCodes))
-    singles <- ncodes == 1L
-    sampleCodes[singles] <- paste0("0", sampleCodes[singles])
-
-    if (any(!sampleCodes %in% sampleTypes[["Code"]]))
-        stop("At least one sample code not found in look-up table")
+    sampleCodes <- .addLeadingZero(sampleCodes)
+    .checkSampleCodes(sampleCodes, strict = TRUE)
 
     sampleSnippet <- TCGAbarcode(barcodes, sample = TRUE, participant = FALSE)
     barcodeSamples <- substr(sampleSnippet, 1L, 2L)

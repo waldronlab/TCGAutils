@@ -4,12 +4,21 @@
     ))
 }
 
-.checkBarcodes <- function(barcodes) {
+.checkBarcodes <- function(barcodes, check.sample = FALSE) {
     if (!all(startsWith(toupper(barcodes), "TCGA")))
         stop("Barcodes must start with 'TCGA'")
     filler <- .uniqueDelim(barcodes)
     if (length(filler) != 1L)
         stop("Barcode delimiters not consistent")
+    bcodelens <- unique(nchar(barcodes))
+    if (length(bcodelens) > 1L)
+        warning("Inconsistent barcode lengths: ",
+            paste(bcodelens, collapse = ", "))
+    if (check.sample) {
+        if (any(bcodelens < 15L))
+        stop("'barcodes' should be at least 15 characters ",
+                "with sample information")
+    }
 }
 
 #' Parse data from TCGA barcode

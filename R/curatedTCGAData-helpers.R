@@ -95,12 +95,13 @@ getClinicalNames <- function(diseaseCode) {
     IRanges::CharacterList(lapply(sampleTables(mae), names))
 }
 
-.checkSampleCodes <- function(sampleCodes, type) {
+.checkSampleCodes <-
+    function(sampleCodes, type = "'sampleCodes'", strict = FALSE) {
+    FUN <- if (strict) any else all
     env <- new.env(parent = emptyenv())
     data("sampleTypes", envir = env, package = "TCGAutils")
     sampleTypes <- env[["sampleTypes"]]
-    if (all(!sampleCodes %in% sampleTypes[["Code"]]) ||
-        !is.character(sampleCodes))
+    if (FUN(!sampleCodes %in% sampleTypes[["Code"]]))
         stop("Provide valid TCGA 'sampleCodes' in ", type)
 }
 
@@ -154,7 +155,7 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL,
 
     if (!is.null(sampleCodes)) {
         sampleCodes <- .addLeadingZero(sampleCodes)
-        .checkSampleCodes(sampleCodes, "in 'sampleCodes'")
+        .checkSampleCodes(sampleCodes)
         .checkCodesAgainstData(sampList, sampleCodes)
         if (exclusive) {
             inCodes <-
