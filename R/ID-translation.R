@@ -20,20 +20,28 @@
 }
 
 .findBarcodeLimit <- function(barcode) {
-    .checkBarcodes(barcode, minIndex = 3L)
-    key <- c(rep("case", 3L), "sample", "analyte", "aliquot", "aliquot")[maxIndx]
+    .checkBarcodes(barcode)
+    filler <- .uniqueDelim(barcode)
+    splitCodes <- strsplit(barcode, filler)
+    obsIdx <- unique(lengths(splitCodes))
+
+    if (obsIdx < 3L)
+        stop("Minimum barcode fields required: ", 3L,
+            "; first three are 'project-TSS-participant'")
+
+    key <- c(rep("case", 3L), "sample", "analyte", "aliquot", "aliquot")[obsIdx]
     if (identical(key, "analyte")) {
         analyte_chars <- unique(
-            vapply(splitCodes, function(x) nchar(x[[maxIndx]]), integer(1L))
+            vapply(splitCodes, function(x) nchar(x[[obsIdx]]), integer(1L))
         )
         if (!S4Vectors::isSingleInteger(analyte_chars))
             stop("Inconsistent '", key, "' barcodes")
         if (analyte_chars < 3)
             key <- "portion"
     } else if (identical(key, "aliquot")) {
-        if (identical(maxIndx, 6L)) {
+        if (identical(obsIdx, 6L)) {
             ali_chars <- vapply(splitCodes, function(x)
-                nchar(x[c(maxIndx-1L, maxIndx)]), integer(2L))
+                nchar(x[c(obsIdx-1L, obsIdx)]), integer(2L))
             if (identical(ali_chars, c(2L, 3L)))
                 key <- "slide"
         }

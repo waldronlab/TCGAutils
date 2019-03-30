@@ -50,7 +50,7 @@ TCGAbiospec <- function(barcodes) {
             as.data.frame(sampVial, stringsAsFactors = FALSE),
             stringsAsFactors = FALSE
         )
-    if (maxIndx == 4L)
+    if (identical(maxIndx, 4L))
         return(biospec)
     else
         splitDex <- seq(5L, maxIndx)

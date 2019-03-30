@@ -4,7 +4,7 @@
     ))
 }
 
-.checkBarcodes <- function(barcodes, check.sample = FALSE, minIndex = NULL) {
+.checkBarcodes <- function(barcodes, check.sample = FALSE) {
     if (!all(startsWith(toupper(barcodes), "TCGA")))
         stop("Barcodes must start with 'TCGA'")
     filler <- .uniqueDelim(barcodes)
@@ -18,13 +18,6 @@
         if (any(bcodelens < 15L))
         stop("'barcodes' should be at least 15 characters ",
                 "with sample information")
-    }
-    if (!is.null(minIndex)) {
-        splitCodes <- strsplit(barcodes, filler)
-        obsIdx <- unique(lengths(splitCodes))
-        if (obsIdx < minIndex)
-            stop("Minimum barcode fields required: ", minIndex,
-                "; first three are 'project-TSS-participant'")
     }
 }
 
