@@ -28,7 +28,7 @@ NULL
         }
     }
     if (!keep & any(which))
-        x <- x[, , -na.omit(match(names(x), names(which)))]
+        x <- x[, , -match(names(which(which)), names(x))]
     x
 }
 
