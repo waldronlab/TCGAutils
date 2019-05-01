@@ -1,7 +1,41 @@
 # TCGAutils
 ------------------------------------------------------------
 
-## Changes in version 1.1.25
+## Changes in version 1.4.0
+
+### New features
+
+* `trimColData` added to remove any extra columns from the `colData` slot
+(thanks to @vjcitn)
+* `CpGtoRanges` translates CpG islands to genomic positions using an annotation
+package and `minfi`
+* Overhaul of the barcode translation services allows accurate translation
+of identifiers
+* `splitAssays` now seperates all assays by sample codes contained therein
+by default, previous behavior had default values
+* Documentation for `simplifyTCGA` was modified to include similar operations,
+such as, `symbolsToRanges`, `mirToRanges`, `CpGtoRanges`, etc.
+* Vignette includes comprehensive examples of new functionality
+
+### Minor changes and bug fixes
+
+* `getFileNames` renamed to `getFileName`
+* `TCGAsampleSelect` now allows multiple sample type inputs as the
+`sampleCodes` argument
+* `getSubtypeMap` updates column names to accurately represent patient
+identifiers
+* More robust checks were added to `splitAssays` to ensure valid sample codes
+in the input and provided as arguments
+* `makeGRangesListFromExonFiles` is optimized to use `dplyr` when available
+and fast operations from `IRanges`
+* Various enhancements to `*toRanges` functions, including re-using underlying
+common helper function
+* The internal `weightedmean` function in `qreduceTCGA` has been updated for
+correctness
+* The `keep` arugment in `qreduceTCGA` and related functions was changed
+to `keep.assay`
+
+## Changes in version 1.2.0
 
 ### New features
 
