@@ -25,11 +25,15 @@ mergeColData <- function(MultiAssayExperiment, colData) {
     if (!is(MultiAssayExperiment, "MultiAssayExperiment"))
         stop("Provide a valid MultiAssayExperiment object")
     if (!is(colData, "DataFrame") && !is.data.frame(colData))
-        stop("Clinical data must be 'DataFrame' or 'data.frame'")
+        stop("'colData' must be 'DataFrame' or 'data.frame'")
+    if (is.null(rownames(colData)))
+        stop("'colData' data must have rownames")
 
     maeClinical <- colData(MultiAssayExperiment)
     mergedClin <- merge(maeClinical, colData,
-        by = "row.names", all = TRUE, sort = FALSE, stringsAsFactors = FALSE)
+        by = c("row.names", intersect(names(maeClinical), names(colData))),
+        all = TRUE, sort = FALSE, stringsAsFactors = FALSE)
+
     rownames(mergedClin) <- mergedClin[["Row.names"]]
     mergedClin <- mergedClin[, names(mergedClin) != "Row.names", drop = FALSE]
     colData(MultiAssayExperiment) <- as(mergedClin, "DataFrame")
