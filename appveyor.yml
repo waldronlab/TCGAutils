@@ -20,8 +20,7 @@ init:
         Import-Module '..\appveyor-tool.ps1'
 
 install:
-  ps: |
-        Bootstrap
+  ps: Bootstrap
 
 branches:
   only:
@@ -31,7 +30,7 @@ branches:
 build_script:
   - echo Current directory=%CD%
   - travis-tool.sh install_deps
-  - travis-tool.sh github_package jimhester/covr hadley/devtools
+  - travis-tool.sh github_package jimhester/covr r-lib/devtools
   - travis-tool.sh install_bioc_deps
 
 test_script:
@@ -55,7 +54,7 @@ environment:
     PKGTYPE: win.binary
 
   matrix:
-    - R_VERSION: devel
+    - R_VERSION: release 
       R_ARCH: x64
       GCC_PATH: mingw_64
 
