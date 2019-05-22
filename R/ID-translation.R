@@ -106,9 +106,8 @@
 UUIDtoBarcode <-  function(id_vector, from_type = c("case_id", "file_id"),
     legacy = FALSE) {
     from_type <- match.arg(from_type)
-    if (identical(from_type, "case_id")) {
-        targetElement <- APIendpoint <- "submitter_id"
-    } else if (identical(from_type, "file_id")) {
+    targetElement <- APIendpoint <- "submitter_id"
+    if (identical(from_type, "file_id")) {
         APIendpoint <- "associated_entities.entity_submitter_id"
         targetElement <- "associated_entities"
     }
@@ -125,14 +124,18 @@ UUIDtoBarcode <-  function(id_vector, from_type = c("case_id", "file_id"),
             ))
         )
     )
+    if (!length(info))
+        stop("No barcodes found, only case and file UUIDs are supported.")
 
+    rframe <-
     if (identical(from_type, "case_id"))
-        rframe <- data.frame(info[[from_type]], info[[targetElement]],
+        data.frame(info[[from_type]], info[[targetElement]],
             stringsAsFactors = FALSE)
     else
-        rframe <- data.frame(names(info[[targetElement]]),
+        data.frame(names(info[[targetElement]]),
             unlist(info[[targetElement]], use.names = FALSE),
             stringsAsFactors = FALSE)
+
     names(rframe) <- c(from_type, APIendpoint)
     rframe[na.omit(match(id_vector, rframe[[from_type]])), , drop = FALSE]
 }
