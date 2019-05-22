@@ -26,7 +26,7 @@ mergeColData <- function(MultiAssayExperiment, colData) {
         stop("Provide a valid MultiAssayExperiment object")
     if (!is(colData, "DataFrame") && !is.data.frame(colData))
         stop("'colData' must be 'DataFrame' or 'data.frame'")
-    if (is.null(rownames(colData)))
+    if (is.null(rownames(colData)) && length(colData))
         stop("'colData' data must have rownames")
 
     maeClinical <- colData(MultiAssayExperiment)
