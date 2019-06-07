@@ -73,5 +73,5 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
     mcols(newGRanges) <- allrowdata[, names(allrowdata) != rangesColumn]
 
     splitIndx <- rep(names(btData), vapply(btData, nrow, integer(1L)))
-    IRanges::splitAsList(newGRanges, splitIndx)
+    S4Vectors::splitAsList(newGRanges, splitIndx)
 }
