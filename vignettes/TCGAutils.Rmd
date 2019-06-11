@@ -196,7 +196,9 @@ available for a subset of patients to the `colData`. Here is a simplified
 example of adding a column to the `colData` `DataFrame`:
 
 ```{r}
-mergeColData(coad, DataFrame(race_f = factor(colData(coad)[["race"]])))
+race_df <- DataFrame(race_f = factor(colData(coad)[["race"]]),
+    row.names = rownames(colData(coad)))
+mergeColData(coad, race_df)
 ```
 
 # Converting Assays to SummarizedExperiment
