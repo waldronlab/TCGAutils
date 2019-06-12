@@ -14,23 +14,8 @@ branches:
   only:
     - master
 
-r_binary_packages:
-  - testthat
-
-bioc_packages:
-  - BiocGenerics
-  - BiocCheck
-  - BiocFileCache
-  - GenomeInfoDb
-  - GenomicRanges
-  - GenomicDataCommons
-  - IRanges
-  - MultiAssayExperiment
-  - RTCGAToolbox
-  - SummarizedExperiment
-  - S4Vectors
-  - BiocStyle
-  - curatedTCGAData
+repos:
+  CRAN: https://cloud.r-project.org
 
 # Test code coverage
 r_github_packages:
