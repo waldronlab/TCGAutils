@@ -60,6 +60,23 @@
     )
 }
 
+.cleanExpand <- function(result, ids) {
+    samps <- result[["samples"]][[1L]]
+    numrows <- nrow(samps)
+    resList <- vector(mode = "list", length = numrows)
+    for (i in seq_len(numrows)) {
+        blue <- unlist(samps[i, 1L])
+        sameNames <- gsub("[0-9]*$", "", names(blue))
+        splitted <- split(blue, sameNames)
+        res <- do.call(function(...) cbind.data.frame(..., stringsAsFactors = FALSE),
+            splitted)
+        rownames(res) <- NULL
+        resList[[i]] <- res
+    }
+    resframe <- do.call(rbind, resList)
+    resframe[resframe[[1L]] %in% ids, , drop = FALSE]
+}
+
 #' @name ID-translation
 #'
 #' @title Translate study identifiers from barcode to UUID and vice versa
@@ -103,20 +120,26 @@
 #' @author Sean Davis, M. Ramos
 #'
 #' @export UUIDtoBarcode
-UUIDtoBarcode <-  function(id_vector, from_type = c("case_id", "file_id"),
-    legacy = FALSE) {
+UUIDtoBarcode <-  function(id_vector,
+    from_type = c("case_id", "file_id", "aliquot_ids"), legacy = FALSE) {
     from_type <- match.arg(from_type)
     targetElement <- APIendpoint <- "submitter_id"
     if (identical(from_type, "file_id")) {
         APIendpoint <- "associated_entities.entity_submitter_id"
         targetElement <- "associated_entities"
+    } else if (identical(from_type, "aliquot_ids")) {
+        APIendpoint <- "samples.portions.analytes.aliquots.submitter_id"
+        targetElement <- "samples"
     }
-    selector <- switch(from_type, case_id = identity,
+    selector <- switch(from_type, case_id = identity, aliquot_ids =
+        function(x) select(x = x, fields =
+            c(APIendpoint, "samples.portions.analytes.aliquots.aliquot_id")),
         function(x) select(x = x, fields = APIendpoint))
 
     funcRes <- switch(from_type,
         file_id = files(legacy = legacy),
-        case_id = cases(legacy = legacy))
+        case_id = cases(legacy = legacy),
+        aliquot_ids = cases(legacy = legacy))
     info <- results_all(
         selector(
             filter(funcRes, as.formula(
@@ -131,10 +154,12 @@ UUIDtoBarcode <-  function(id_vector, from_type = c("case_id", "file_id"),
     if (identical(from_type, "case_id"))
         data.frame(info[[from_type]], info[[targetElement]],
             stringsAsFactors = FALSE)
-    else
+    else if (identical(from_type, "file_id"))
         data.frame(names(info[[targetElement]]),
             unlist(info[[targetElement]], use.names = FALSE),
             stringsAsFactors = FALSE)
+    else
+        return(.cleanExpand(info, id_vector))
 
     names(rframe) <- c(from_type, APIendpoint)
     rframe[na.omit(match(id_vector, rframe[[from_type]])), , drop = FALSE]
