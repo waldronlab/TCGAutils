@@ -72,18 +72,10 @@ For demonstration we download part of the Colon Adenocarcinoma (COAD) dataset
 using`curatedTCGAData` via `ExperimentHub`. This command will download any
 data type that starts with `CN*` such as `CNASeq`:
 
-```{r, echo = FALSE}
-suppressMessages({
+```{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}
 coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = c("CNASeq", "Mutation", "miRNA*", "RNASeq2*", "mRNAArray"),
-    dry.run = FALSE)
-})
-```
-
-```{r, eval = FALSE}
-coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = c("CNASeq", "Mutation", "miRNA*", "RNASeq2*", "mRNAArray"),
-    dry.run = FALSE)
+    assays = c("CNASeq", "Mutation", "miRNA*",
+        "RNASeq2*", "mRNAArray", "Methyl*"), dry.run = FALSE)
 ```
 
 For a list of all available data types, use `dry.run = FALSE` and an
@@ -202,6 +194,27 @@ mergeColData(coad, race_df)
 ```
 
 # Converting Assays to SummarizedExperiment
+
+This section gives an overview of the operations that can be performed on
+a given set of metadata obtained particularly from data-rich objects such
+as those obtained from `curatedTCGAData`. There are several operations that
+work with microRNA, methylation, mutation, and assays that have gene symbol
+annotations.
+
+## `CpGtoRanges`
+
+Using the methylation annotations in
+`IlluminaHumanMethylation450kanno.ilmn12.hg19` and the `minfi` package, we
+look up CpG probes and convert to genomic coordinates with `CpGtoRanges`.
+The function provides two assays, one with mapped probes and the other with
+unmapped probes. Excluding unmapped probes can be done by setting the
+`unmapped` argument to `FALSE`. This will run for both types of methylation
+data (27k and 450k).
+
+```{r}
+methcoad <- CpGtoRanges(coad)
+```
+
 
 ## `mirToRanges`
 
@@ -424,6 +437,15 @@ patient barcode, we can use `UUIDtoBarcode`.
 ```{r}
 UUIDtoBarcode("0001801b-54b0-4551-8d7a-d66fb59429bf", from_type = "file_id")
 ```
+
+Translating aliquot UUIDs is also possible by providing a known aliquot UUID to
+the function and giving a `from_type`, "aliquot_ids":
+
+```{r}
+UUIDtoBarcode("d85d8a17-8aea-49d3-8a03-8f13141c163b", from_type = "aliquot_ids")
+```
+
+Additional UUIDs may be supported in future versions.
 
 ### UUID to UUID
 
