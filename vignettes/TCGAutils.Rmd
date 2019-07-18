@@ -12,18 +12,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo=FALSE, warning=FALSE}
-suppressPackageStartupMessages({
-    library(TCGAutils)
-    library(curatedTCGAData)
-    library(MultiAssayExperiment)
-    library(RTCGAToolbox)
-    library(BiocFileCache)
-    library(rtracklayer)
-    library(R.utils)
-})
-```
-
 # Overview
 
 The `TCGAutils` package completes a suite of Bioconductor packages for
@@ -42,14 +30,14 @@ It includes:
 # Installation
 
 ```{r, eval=FALSE}
-if (!require("BiocManager"))
+if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("TCGAutils")
 ```
 
 Required packages for this vignette:
 
-```{r, eval=FALSE}
+```{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}
 library(TCGAutils)
 library(curatedTCGAData)
 library(MultiAssayExperiment)
@@ -338,7 +326,7 @@ first 5 rows in each of the files read in due to invalid character exon ranges.
 if (!identical(.Platform$OS.type, "windows")) {
     qu <- manifest(queso)
     qq <- gdcdata(qu$id[1:4])
-    
+
     makeGRangesListFromExonFiles(qq, nrows = 4)
 }
 ```
