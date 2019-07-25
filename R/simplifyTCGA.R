@@ -17,8 +17,12 @@ NULL
 .convertTo <- function(x, which, FUN, keep, unmap) {
     for (i in which(which)) {
         lookup <- FUN(rownames(x[[i]]))
-        rse <- x[[i]][names(lookup[["mapped"]]),]
-        SummarizedExperiment::rowRanges(rse) <- lookup[["mapped"]]
+        ranges <- lookup[["mapped"]]
+        rse <- x[[i]][names(ranges), ]
+        # rowData not merged with mcols of RHS in `rowRanges<-` method
+        mcols(ranges) <-
+            S4Vectors::DataFrame(rowData(rse), S4Vectors::mcols(ranges))
+        SummarizedExperiment::rowRanges(rse) <- ranges
         x <- c(x, setNames(S4Vectors::List(rse),
             paste0(names(x)[i], "_ranged")))
         if (length(lookup[["unmapped"]]) && unmap) {
@@ -65,7 +69,7 @@ NULL
         pruning.mode = "coarse")
     seqlevelsStyle(gn) <- "NCBI"
 
-    return(.makeListRanges(x, gn))
+    .makeListRanges(x, gn)
 }
 
 #' @rdname hidden-helpers
@@ -78,7 +82,7 @@ NULL
     mr <- keepStandardChromosomes(granges(mr),
         pruning.mode = "coarse")
     seqlevelsStyle(mr) <- "NCBI"
-    return(.makeListRanges(x, mr))
+    .makeListRanges(x, mr)
 }
 
 .checkPkgsAvail <- function(pkgnames) {
