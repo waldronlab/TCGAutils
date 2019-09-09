@@ -323,12 +323,10 @@ are too long to download (Windows OS). The `nrows` argument only keeps the
 first 5 rows in each of the files read in due to invalid character exon ranges.
 
 ```{r}
-if (!identical(.Platform$OS.type, "windows")) {
-    qu <- manifest(queso)
-    qq <- gdcdata(qu$id[1:4])
+qu <- manifest(queso)
+qq <- gdcdata(qu$id[1:4])
 
-    makeGRangesListFromExonFiles(qq, nrows = 4)
-}
+makeGRangesListFromExonFiles(qq, nrows = 4)
 ```
 
 Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")`
