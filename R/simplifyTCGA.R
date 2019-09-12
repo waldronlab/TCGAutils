@@ -50,6 +50,20 @@ NULL
     return(res)
 }
 
+.getGN <- function() {
+    gn <- GenomicFeatures::genes(
+        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
+    gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
+        pruning.mode = "coarse")
+    seqlevelsStyle(gn) <- "NCBI"
+    names(gn) <-
+        AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
+            names(gn),
+            keytype = "ENTREZID",
+            column = "SYMBOL")
+    gn
+}
+
 #' @rdname hidden-helpers
 #' @return list of length 2: "unmapped" is a character vector providing
 #' unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
@@ -58,16 +72,7 @@ NULL
     entrez <-
         AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, x, keytype = "SYMBOL",
         column = "ENTREZID")
-    gn <- GenomicFeatures::genes(
-        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
-    names(gn) <-
-        AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
-            names(gn),
-            keytype = "ENTREZID",
-            column = "SYMBOL")
-    gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
-        pruning.mode = "coarse")
-    seqlevelsStyle(gn) <- "NCBI"
+    gn <- .getGN()
 
     .makeListRanges(x, gn)
 }
