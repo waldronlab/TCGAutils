@@ -3,6 +3,7 @@
 export(CpGtoRanges)
 export(TCGAbarcode)
 export(TCGAbiospec)
+export(TCGAprimaryTumors)
 export(TCGAsampleSelect)
 export(UUIDtoBarcode)
 export(UUIDtoUUID)
