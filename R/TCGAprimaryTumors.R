@@ -1,16 +1,27 @@
 #' Select primary tumors from TCGA datasets
 #'
+#' Tumor selection is decided using the `sampleTypes` data. For 'LAML' datasets,
+#' the primary tumor code used is "03" otherwise, "01" is used.
 #'
-#' @param multiassayexperiment
+#' @param multiassayexperiment A \linkS4class{MultiAssayExperiment} with TCGA
+#'     data as obtained from \code{\link[curatedTCGAData]{curatedTCGAData}}
 #'
-#' @param tumorCodes
-#'
-#' @return A MultiAssayExperiment of only primary tumor samples
+#' @return A MultiAssayExperiment containing only primary tumor samples
 #'
 #' @export TCGAprimaryTumors
-TCGAprimaryTumors <- function(multiassayexperiment, tumorCodes = NULL) {
+TCGAprimaryTumors <- function(multiassayexperiment) {
+    if (!is(multiassayexperiment, "MultiAssayExperiment"))
+        stop("Provide a 'MultiAssayExperiment' object as input")
 
-if (is.null(tumorCodes))
-    "01"
+    exptnames <- names(experiments(multiassayexperiment))
+    dcodes <- vapply(strsplit(exptnames, "_"), `[[`, character(1L), 1L)
 
+    primaries <- ifelse(dcodes == "LAML", "03", "01")
+    primaries <- setNames(primaries, dcodes)
+
+    logisub <- Map(function(barcodes, tumorcode) {
+        TCGAsampleSelect(barcodes, tumorcode)
+    }, colnames(multiassayexperiment), primaries)
+
+    multiassayexperiment[, logisub, ]
 }
