@@ -20,7 +20,7 @@
 #' @return
 oncoPrintTCGA <-
     function(multiassayexperiment, mutation = "*_Mutation-*",
-        variantCol = "Variant_Classification", brewer_pal = "Set3")
+        variantCol = "Variant_Classification", brewer_pal = "Set3", ntop = 25)
 {
     stopifnot(
         is.character(mutation) && length(mutation) == 1L,
@@ -33,6 +33,9 @@ oncoPrintTCGA <-
 
     mutname <-
         grep(glob2rx(mutation), names(multiassayexperiment), value = TRUE)
+
+    if (length(mutname) > 1)
+        stop("Only one mutation assay supported at this time")
 
     Variants <- mcols(multiassayexperiment[[mutname]])[[variantCol]]
     Variants <- gsub("_", " ", Variants)
@@ -52,38 +55,23 @@ oncoPrintTCGA <-
 
     gn <- sort(.getGN())
 
-    simplify_funs <- lapply(vclass,
-        function(variant) {
-            args <- alist(scores =, ranges =, qranges =)
-            args <- as.pairlist(args)
-            body <- substitute({
-                any(S4Vectors::`%in%`(scores, z))
-            }, list(z = variant))
-            eval(call("function", args, body))
-        }
-    )
-
     ragex <- multiassayexperiment[[mutname]]
     stopifnot(is(ragex, "RaggedExperiment"))
 
     gnomel <- length(genome(ragex))
     genome(ragex) <- rep(translateBuild(genome(ragex)[1L]), gnomel)
 
-    list_mats <- lapply(simplify_funs, function(variant_fun) {
-        res <-
-            RaggedExperiment::qreduceAssay(ragex, gn, variant_fun, variantCol)
-        rownames(res) <- names(gn)
-        res[is.na(res)] <- 0
-        res[!is.na(rownames(res)), ]
-    })
+    simplify_fun <- function(scores, ranges, qranges)
+        { sum(S4Vectors::`%in%`(scores, vclass)) }
 
-    nomutgenes <- Reduce(intersect,
-        lapply(list_mats, function(x) rownames(x[rowSums(x) == 0, ]))
+    res <- qreduceAssay(
+        ragex, gn, simplify_fun, "Variant_Classification", background = 0
     )
 
-    updated_mats <- lapply(list_mats, function(genemat) {
-        genemat[!rownames(genemat) %in% nomutgenes, ]
-    })
+    rownames(resto) <- names(gn)
+    resto <- resto[!is.na(rownames(resto)), ]
+
+    topgenes <- head(sort(rowSums(resto), decreasing = TRUE), ntop)
 
     qualcolors <- RColorBrewer::brewer.pal(n = length(vclass), brewer_pal)
     colors <- setNames(qualcolors, names(mutclass))
@@ -102,16 +90,11 @@ oncoPrintTCGA <-
             gp = grid::gpar(fill = "#FFFFFF", col = "#FFFFFF"))
     mutfuns2 <- c(background = background, mutfuns)
 
-    tops <- ceiling(nrow(updated_mats[[1]]) * 0.0005)
-    mgenes <- Reduce(union, lapply(updated_mats, function(x)
-        names(sort(rowSums(x), decreasing = TRUE)[seq_len(tops)]))
-    )
-    ug <- length(unique(mgenes))
-    upmats2 <- lapply(updated_mats, function(mat) mat[mgenes, ])
+    resto <- resto[topgenes, ]
 
     return(
         ComplexHeatmap::oncoPrint(
-            upmats2, alter_fun = mutfuns2, col = colors, show_pct = FALSE
+            resto, alter_fun = mutfuns2, col = colors, show_pct = FALSE
         )
     )
 }
