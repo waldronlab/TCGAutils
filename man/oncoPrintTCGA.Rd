@@ -5,7 +5,8 @@
 \title{OncoPrint for TCGA Mutation Assays}
 \usage{
 oncoPrintTCGA(multiassayexperiment, mutation = "*_Mutation-*",
-  variantCol = "Variant_Classification", brewer_pal = "Set3")
+  variantCol = "Variant_Classification", brewer_pal = "Set3",
+  ntop = 25, incl.thresh = 0.01)
 }
 \arguments{
 \item{multiassayexperiment}{A MultiAssayExperiment preferably from
@@ -19,11 +20,14 @@ the mutation categories}
 \item{brewer_pal}{character(1) The name of the `RColorBrewer` palette for
 the different mutation types}
 }
+\value{
+An oncoPrint plot of mutations
+}
 \description{
 OncoPrint for TCGA Mutation Assays
 }
 \examples{
-
+library(curatedTCGAData)
 acc <- curatedTCGAData("ACC", "Mutation", FALSE)
 
 oncoPrintTCGA(acc)

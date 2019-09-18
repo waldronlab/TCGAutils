@@ -50,9 +50,15 @@ NULL
     return(res)
 }
 
-.getGN <- function() {
-    gn <- GenomicFeatures::genes(
-        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
+.getGN <- function(gen) {
+    stopifnot(is.character(gen), length(gen) == 1L)
+
+    txdb <- if (identical(gen, "hg18"))
+        TxDb.Hsapiens.UCSC.hg18.knownGene::TxDb.Hsapiens.UCSC.hg18.knownGene
+    else if (identical(gen, "hg19"))
+        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+
+    gn <- GenomicFeatures::genes(txdb)
     gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
         pruning.mode = "coarse")
     seqlevelsStyle(gn) <- "NCBI"
