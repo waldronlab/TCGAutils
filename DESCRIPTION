@@ -35,6 +35,7 @@ Suggests:
     BiocFileCache,
     BiocStyle,
     curatedTCGAData,
+    ComplexHeatmap,
     devtools,
     dplyr,
     IlluminaHumanMethylation450kanno.ilmn12.hg19,
@@ -44,12 +45,14 @@ Suggests:
     minfi,
     mirbase.db,
     org.Hs.eg.db,
+    RColorBrewer,
     readr,
     RTCGAToolbox (>= 2.7.5),
     rtracklayer,
     R.utils,
     testthat,
-    TxDb.Hsapiens.UCSC.hg19.knownGene,
+    TxDb.Hsapiens.UCSC.hg18.knownGene,
+    TxDb.Hsapiens.UCSC.hg19.knownGene
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true

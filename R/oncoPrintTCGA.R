@@ -1,3 +1,7 @@
+.isSingleType <- function(x, test = is.character) {
+     test(x) && length(x) == 1L && !is.na(x)
+}
+
 #' OncoPrint for TCGA Mutation Assays
 #'
 #' @param multiassayexperiment A MultiAssayExperiment preferably from
@@ -37,16 +41,16 @@ oncoPrintTCGA <-
         incl.thresh = 0.01, rowcol = "Hugo_Symbol")
 {
     stopifnot(
-        is.character(mutation) && length(mutation) == 1L,
+        .isSingleType(matchassay), .isSingleType(variantCol),
+        .isSingleType(brewerPal), .isSingleType(ntop, is.numeric),
         is(multiassayexperiment, "MultiAssayExperiment"),
-        is.character(variantCol) && length(variantCol) == 1L,
-        is.character(brewer_pal) && length(brewer_pal) == 1L
+        .isSingleType(incl.thresh, is.numeric), .isSingleType(rowcol)
     )
 
-    .checkPkgsAvail("org.Hs.eg.db")
+    .checkPkgsAvail(c("org.Hs.eg.db", "ComplexHeatmap", "RColorBrewer"))
 
-    mutname <-
-        grep(glob2rx(mutation), names(multiassayexperiment), value = TRUE)
+    mutname <- grep(utils::glob2rx(matchassay),
+        names(multiassayexperiment), value = TRUE)
 
     if (length(mutname) > 1)
         stop("Only one mutation assay supported at this time")
@@ -70,28 +74,31 @@ oncoPrintTCGA <-
     validvariants <- setNames(names(types), names(types))
 
     ragex <- ragex[mcols(ragex)[[variantCol]] %in% validvariants, ]
-    rowRanges(ragex) <- unstrand(rowRanges(ragex))
+    rr <- BiocGenerics::unstrand(RaggedExperiment::rowRanges(ragex))
+    ragex <- RaggedExperiment::`rowRanges<-`(ragex, value = rr)
 
-    genomeannot <- unique(genome(ragex))
+    gen <- GenomeInfoDb::genome(ragex)
+    genomeannot <- unique(gen)
+    genomelen <- length(gen)
 
     if (length(genomeannot) > 1)
         stop("'genome' annotation is not consistent")
 
     if (!startsWith(genomeannot, "hg")) {
         genomeannot <- translateBuild(genomeannot)
-        genome(ragex) <- rep(genomeannot, length(genome(ragex)))
+        ragex <- GenomeInfoDb::`genome<-`(ragex, rep(genomeannot, genomelen))
     }
 
     .checkPkgsAvail(paste0("TxDb.Hsapiens.UCSC.", genomeannot, ".knownGene"))
 
     gn <- sort(.getGN(genomeannot))
-    gn <- unstrand(gn)
+    gn <- BiocGenerics::unstrand(gn)
     gn <- gn[!is.na(names(gn))]
 
     simplify_fun <- function(scores, ranges, qranges)
         { any(scores != "Silent") }
 
-    res <- qreduceAssay(
+    res <- RaggedExperiment::qreduceAssay(
         ragex, gn, simplify_fun, "Variant_Classification", background = FALSE
     )
     rownames(res) <- names(gn)
@@ -100,7 +107,7 @@ oncoPrintTCGA <-
     gn2 <- gn[match(names(topgenes), names(gn))]
 
     qualcolors <-
-        RColorBrewer::brewer.pal(n = length(validvariants), brewer_pal)
+        RColorBrewer::brewer.pal(n = length(validvariants), brewerPal)
     colors <- setNames(qualcolors, validvariants)
 
     colfuns <- lapply(colors, function(couleur) {
@@ -129,9 +136,10 @@ oncoPrintTCGA <-
     )
 
     list_mats <- lapply(simplify_funs, function(variant_fun) {
-        res <- qreduceAssay(ragex, gn2, variant_fun,
+        res <- RaggedExperiment::qreduceAssay(ragex, gn2, variant_fun,
             "Variant_Classification", background = 0)
         rownames(res) <- names(gn2)
+        res
     })
 
     return(
