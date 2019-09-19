@@ -3,15 +3,26 @@
 #' @param multiassayexperiment A MultiAssayExperiment preferably from
 #'    `curatedTCGAData``
 #'
-#' @param mutation character(1) The name of the assay containing mutation data
+#' @param matchassay character(1) The name of the assay containing mutation
+#'     data, this can be a pattern (e.g., "*_Mutation-*", the default)
 #'
 #' @param variantCol character(1) The name of the metadata column containing
-#'     the mutation categories
+#'     the mutation categories, usually "Variant_Classification" in TCGA
 #'
-#' @param brewer_pal character(1) The name of the `RColorBrewer` palette for
-#'     the different mutation types
+#' @param brewerPal character(1) The name of the `RColorBrewer::brewer.pal`
+#'     palette, (default: "Set3")
+#'
+#' @param ntop integer(1) The number of the top N genes for displaying based
+#'     on per-sample mutation frequency
+#'
+#' @param incl.thresh double(1) The inclusion threshold for empirical mutations,
+#'     mutations less frequent than this value will not be included
+#'
+#' @param rowcol character(1) The name of the column in the metadata to annotate
+#'     the rows with either "Hugo_Symbol" (default) or
 #'
 #' @examples
+#'
 #' library(curatedTCGAData)
 #' acc <- curatedTCGAData("ACC", "Mutation", FALSE)
 #'
@@ -21,9 +32,9 @@
 #'
 #' @export
 oncoPrintTCGA <-
-    function(multiassayexperiment, mutation = "*_Mutation-*",
-        variantCol = "Variant_Classification", brewer_pal = "Set3", ntop = 25,
-        incl.thresh = 0.01)
+    function(multiassayexperiment, matchassay = "*_Mutation-*",
+        variantCol = "Variant_Classification", brewerPal = "Set3", ntop = 25,
+        incl.thresh = 0.01, rowcol = "Hugo_Symbol")
 {
     stopifnot(
         is.character(mutation) && length(mutation) == 1L,
@@ -43,15 +54,20 @@ oncoPrintTCGA <-
     ragex <- multiassayexperiment[[mutname]]
     stopifnot(is(ragex, "RaggedExperiment"))
 
+    rownames(ragex) <- mcols(ragex)[[rowcol]]
+    somaticnonsilent <- mcols(ragex)[["Mutation_Status"]] == "Somatic" &
+        mcols(ragex)[[variantCol]] != "Silent"
+    ragex <- ragex[somaticnonsilent, ]
+
     Variants <- mcols(ragex)[[variantCol]]
     Variants <- gsub("_", " ", Variants)
     mcols(ragex)[[variantCol]] <- Variants
 
     types <- table(Variants)
     tottypes <- sum(types)
-    incl <- (types/tottypes) > incl.thresh & names(types) != "Silent"
+    incl <- (types/tottypes) > incl.thresh
     types <- types[incl]
-    validvariants <- names(types)
+    validvariants <- setNames(names(types), names(types))
 
     ragex <- ragex[mcols(ragex)[[variantCol]] %in% validvariants, ]
     rowRanges(ragex) <- unstrand(rowRanges(ragex))
@@ -70,6 +86,7 @@ oncoPrintTCGA <-
 
     gn <- sort(.getGN(genomeannot))
     gn <- unstrand(gn)
+    gn <- gn[!is.na(names(gn))]
 
     simplify_fun <- function(scores, ranges, qranges)
         { any(scores != "Silent") }
@@ -78,16 +95,15 @@ oncoPrintTCGA <-
         ragex, gn, simplify_fun, "Variant_Classification", background = FALSE
     )
     rownames(res) <- names(gn)
-    res <- res[!is.na(rownames(res)), ]
 
     topgenes <- head(sort(rowSums(res), decreasing = TRUE), ntop)
-    gn2 <- gn[names(gn) %in% names(topgenes)]
+    gn2 <- gn[match(names(topgenes), names(gn))]
 
     qualcolors <-
         RColorBrewer::brewer.pal(n = length(validvariants), brewer_pal)
     colors <- setNames(qualcolors, validvariants)
 
-    mutfuns <- lapply(colors, function(couleur) {
+    colfuns <- lapply(colors, function(couleur) {
         args <- alist(x =, y =, w =, h =)
         args <- as.pairlist(args)
         body <- substitute({
@@ -99,9 +115,8 @@ oncoPrintTCGA <-
     background <- function(x, y, w, h)
         grid::grid.rect(x, y, w, h,
             gp = grid::gpar(fill = "#FFFFFF", col = "#FFFFFF"))
-    mutfuns2 <- c(background = background, mutfuns)
+    mutfuns <- c(background = background, colfuns)
 
-    validvariants <- setNames(validvariants, validvariants)
     simplify_funs <- lapply(validvariants,
         function(variant) {
             args <- alist(scores =, ranges =, qranges =)
@@ -117,12 +132,11 @@ oncoPrintTCGA <-
         res <- qreduceAssay(ragex, gn2, variant_fun,
             "Variant_Classification", background = 0)
         rownames(res) <- names(gn2)
-        res <- res[!is.na(rownames(res)), ]
     })
 
     return(
         ComplexHeatmap::oncoPrint(
-            list_mats, alter_fun = mutfuns2, col = colors, show_pct = FALSE
+            list_mats, alter_fun = mutfuns, col = colors, show_pct = FALSE
         )
     )
 }

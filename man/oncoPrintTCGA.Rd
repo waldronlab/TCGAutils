@@ -4,21 +4,31 @@
 \alias{oncoPrintTCGA}
 \title{OncoPrint for TCGA Mutation Assays}
 \usage{
-oncoPrintTCGA(multiassayexperiment, mutation = "*_Mutation-*",
-  variantCol = "Variant_Classification", brewer_pal = "Set3",
-  ntop = 25, incl.thresh = 0.01)
+oncoPrintTCGA(multiassayexperiment, matchassay = "*_Mutation-*",
+  variantCol = "Variant_Classification", brewerPal = "Set3",
+  ntop = 25, incl.thresh = 0.01, rowcol = "Hugo_Symbol")
 }
 \arguments{
 \item{multiassayexperiment}{A MultiAssayExperiment preferably from
 `curatedTCGAData``}
 
-\item{mutation}{character(1) The name of the assay containing mutation data}
+\item{matchassay}{character(1) The name of the assay containing mutation
+data, this can be a pattern (e.g., "*_Mutation-*", the default)}
 
 \item{variantCol}{character(1) The name of the metadata column containing
-the mutation categories}
+the mutation categories, usually "Variant_Classification" in TCGA}
 
-\item{brewer_pal}{character(1) The name of the `RColorBrewer` palette for
-the different mutation types}
+\item{brewerPal}{character(1) The name of the `RColorBrewer::brewer.pal`
+palette, (default: "Set3")}
+
+\item{ntop}{integer(1) The number of the top N genes for displaying based
+on per-sample mutation frequency}
+
+\item{incl.thresh}{double(1) The inclusion threshold for empirical mutations,
+mutations less frequent than this value will not be included}
+
+\item{rowcol}{character(1) The name of the column in the metadata to annotate
+the rows with either "Hugo_Symbol" (default) or}
 }
 \value{
 An oncoPrint plot of mutations
@@ -27,6 +37,7 @@ An oncoPrint plot of mutations
 OncoPrint for TCGA Mutation Assays
 }
 \examples{
+
 library(curatedTCGAData)
 acc <- curatedTCGAData("ACC", "Mutation", FALSE)
 
