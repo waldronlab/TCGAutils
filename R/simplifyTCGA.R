@@ -50,23 +50,32 @@ NULL
     return(res)
 }
 
-.getGN <- function(gen) {
+.getGN <- function(gen, FUN) {
     stopifnot(is.character(gen), length(gen) == 1L)
+
+    fun <- switch(FUN,
+        genes = GenomicFeatures::genes,
+        microRNAs = GenomicFeatures::microRNAs
+    )
 
     txdb <- if (identical(gen, "hg18"))
         TxDb.Hsapiens.UCSC.hg18.knownGene::TxDb.Hsapiens.UCSC.hg18.knownGene
     else if (identical(gen, "hg19"))
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
 
-    gn <- GenomicFeatures::genes(txdb)
-    gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
-        pruning.mode = "coarse")
+    gn <- keepStandardChromosomes(fun(txdb), pruning.mode = "coarse")
     seqlevelsStyle(gn) <- "NCBI"
-    names(gn) <-
-        AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
+
+    if (identical(FUN, "genes"))
+        names(gn) <- AnnotationDbi::mapIds(
+            org.Hs.eg.db::org.Hs.eg.db,
             names(gn),
             keytype = "ENTREZID",
-            column = "SYMBOL")
+            column = "SYMBOL"
+        )
+    else if (identical(FUN, "microRNAs"))
+        names(gn) <- mcols(gn)[["mirna_id"]]
+
     gn
 }
 
@@ -75,11 +84,7 @@ NULL
 #' unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
 #' @keywords internal
 .getRangesOfSYMBOLS <- function(x) {
-    entrez <-
-        AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, x, keytype = "SYMBOL",
-        column = "ENTREZID")
-    gn <- .getGN()
-
+    gn <- .getGN("hg19", "genes")
     .makeListRanges(x, gn)
 }
 
@@ -87,12 +92,7 @@ NULL
 #' @param x A SummarizedExperiment containing hsa miR IDs as rownames
 #' @keywords internal
 .getRangesOfMir <- function(x) {
-    mr <- microRNAs(
-        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
-    names(mr) <- mr$mirna_id
-    mr <- keepStandardChromosomes(granges(mr),
-        pruning.mode = "coarse")
-    seqlevelsStyle(mr) <- "NCBI"
+    mr <- .getGN("hg19", "microRNAs")
     .makeListRanges(x, mr)
 }
 
