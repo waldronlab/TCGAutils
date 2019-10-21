@@ -1,5 +1,20 @@
-# TCGAutils
-------------------------------------------------------------
+## Changes in version 1.6.0
+
+### New features
+
+* `oncoPrintTCGA`: Create an `oncoPrint` visualization for mutation data
+* Support `aliquot_ids` as input to `UUIDtoBarcode` function
+* Additional sections in the vignette: `CpGtoRanges`, `UUIDtoBarcode` for
+`aliquot_ids`
+* `TCGAprimaryTumors` allows users to select all primary tumors for a given
+`curatedTCGAData` `MultiAssayExperiment` object (suggested by @vjcitn)
+
+### Minor changes and bug fixes
+
+* Now merging clinical data using both rows and columns in `mergeColData`
+* Added informative error when query results are empty in `UUIDtoBarcode`
+* Updates to `makeGRangesListFromExonFiles` to use `S4Vectors::splitAsList`
+(@hpages)
 
 ## Changes in version 1.4.0
 
