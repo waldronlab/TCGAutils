@@ -1,4 +1,4 @@
-#' @rdname builds
+#' @name builds
 #'
 #' @title Utilities for working with build numbers
 #'
@@ -21,6 +21,13 @@
 #'
 #' translateBuild("GRCh35", "UCSC")
 #'
+#' @return
+#'     translateBuild: A character vector of translated genome builds
+#'
+#'     extractBuild: A character string of the build information available
+#'
+#'     uniformBuilds: A character vector of builds where all builds are
+#'         identical `identical(length(unique(build)), 1L)`
 #' @export
 translateBuild <- function(from, to = "UCSC") {
     if (!S4Vectors::isSingleString(to) && !S4Vectors::isSingleString(from))
