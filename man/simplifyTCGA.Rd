@@ -61,6 +61,7 @@ These functions rely on 'TxDb.Hsapiens.UCSC.hg19.knownGene' and
 'org.Hs.eg.db' to map to the 'hg19' NCBI build.
 }
 \examples{
+
 library(curatedTCGAData)
 library(GenomeInfoDb)
 

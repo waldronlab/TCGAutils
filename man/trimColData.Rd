@@ -25,10 +25,10 @@ and contain keywords.
 }
 \examples{
 
-library(curatedTCGAData)
+example(getSubtypeMap)
 
-gbm <- curatedTCGAData("GBM", "CNASNP", FALSE)
 (gbm_trimmed <- trimColData(gbm))
+
 head(colData(gbm_trimmed))[1:5]
 
 }

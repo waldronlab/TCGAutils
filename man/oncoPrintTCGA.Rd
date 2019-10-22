@@ -39,6 +39,7 @@ OncoPrint for TCGA Mutation Assays
 \examples{
 
 library(curatedTCGAData)
+
 acc <- curatedTCGAData("ACC", "Mutation", FALSE)
 
 oncoPrintTCGA(acc)

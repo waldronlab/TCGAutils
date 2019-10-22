@@ -40,13 +40,12 @@ NULL
 #' @param multiassayexperiment A \linkS4class{MultiAssayExperiment} object
 #'
 #' @examples
-#' \dontrun{
+#'
 #' library(curatedTCGAData)
 #'
-#' coad <- curatedTCGAData(diseaseCode = "COAD",
-#'     assays = "CNA*", dry.run = FALSE)
-#' getSubtypeMap(coad)
-#' }
+#' gbm <- curatedTCGAData("GBM", c("RPPA*", "CNA*"), FALSE)
+#'
+#' getSubtypeMap(gbm)
 #'
 #' @return \itemize{
 #'     \item{getSubtypeMap}: A \code{data.frame} with columns representing

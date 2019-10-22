@@ -17,3 +17,10 @@ A MultiAssayExperiment containing only primary tumor samples
 Tumor selection is decided using the `sampleTypes` data. For 'LAML' datasets,
 the primary tumor code used is "03" otherwise, "01" is used.
 }
+\examples{
+
+example(getSubtypeMap)
+
+TCGAprimaryTumors(gbm)
+
+}

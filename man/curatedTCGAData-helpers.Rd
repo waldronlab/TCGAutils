@@ -67,13 +67,12 @@ across most cancer codes.
 }
 
 \examples{
-\dontrun{
+
 library(curatedTCGAData)
 
-coad <- curatedTCGAData(diseaseCode = "COAD",
-    assays = "CNA*", dry.run = FALSE)
-getSubtypeMap(coad)
-}
+gbm <- curatedTCGAData("GBM", c("RPPA*", "CNA*"), FALSE)
+
+getSubtypeMap(gbm)
 
 getClinicalNames("COAD")
 

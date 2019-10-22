@@ -8,6 +8,12 @@
 #'
 #' @return A MultiAssayExperiment containing only primary tumor samples
 #'
+#' @examples
+#'
+#' example(getSubtypeMap)
+#'
+#' TCGAprimaryTumors(gbm)
+#'
 #' @export TCGAprimaryTumors
 TCGAprimaryTumors <- function(multiassayexperiment) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))

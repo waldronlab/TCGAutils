@@ -28,6 +28,7 @@
 #' @examples
 #'
 #' library(curatedTCGAData)
+#'
 #' acc <- curatedTCGAData("ACC", "Mutation", FALSE)
 #'
 #' oncoPrintTCGA(acc)

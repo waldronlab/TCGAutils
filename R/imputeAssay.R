@@ -15,14 +15,14 @@
 #' @return MultiAssayExperiment with imputed assays values
 #'
 #' @examples
-#' library(curatedTCGAData)
 #'
-#' gbm <- curatedTCGAData("GBM", "RPPA*", FALSE)
+#' example(getSubtypeMap)
 #'
-#' ## replace DataFrame with "matrix"
-#' gbm[[1L]] <- as.matrix(assay(gbm[[1L]]))
+#' ## convert data to matrix and add as experiment
+#' gbm <-
+#'   c(gbm, RPPA_matrix = data.matrix(assay(gbm[["GBM_RPPAArray-20160128"]])))
 #'
-#' gbm <- imputeAssay(gbm, i = 1L)
+#' imputeAssay(gbm, i = "RPPA_matrix")
 #'
 #' @export
 imputeAssay <- function(multiassayexperiment, i = 1, ...) {

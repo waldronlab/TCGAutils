@@ -165,6 +165,7 @@ NULL
 #' @author L. Waldron
 #'
 #' @examples
+#'
 #' library(curatedTCGAData)
 #' library(GenomeInfoDb)
 #'
