@@ -117,6 +117,8 @@
 #'
 #' UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", from_type = "case_id")
 #'
+#' UUIDtoBarcode("d85d8a17-8aea-49d3-8a03-8f13141c163b", "aliquot_ids")
+#'
 #' @author Sean Davis, M. Ramos
 #'
 #' @export UUIDtoBarcode
@@ -162,7 +164,8 @@ UUIDtoBarcode <-  function(id_vector,
         return(.cleanExpand(info, id_vector))
 
     names(rframe) <- c(from_type, APIendpoint)
-    rframe[na.omit(match(id_vector, rframe[[from_type]])), , drop = FALSE]
+    rframe[[from_type]] <- factor(rframe[[from_type]], levels = id_vector)
+    rframe[order(rframe[[from_type]]), , drop = FALSE]
 }
 
 #' @rdname ID-translation

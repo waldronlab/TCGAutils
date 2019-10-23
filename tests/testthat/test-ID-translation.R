@@ -47,3 +47,49 @@ test_that("barcodeToUUID translates correctly", {
         "2303247f-9691-4b38-bac2-8a30d6e08cc9")
     )
 })
+
+
+test_that("UUIDtoBarcode translates correctly", {
+    exuuid <- "6b7d7a7f-f16d-472d-9b7b-3482c434cc99"
+    entities <- c(
+        "TCGA-ND-A4W6-01A-11D-A28Q-01", "TCGA-N9-A4Q8-01A-31D-A28Q-01",
+        "TCGA-NG-A4VW-01A-11D-A28Q-01", "TCGA-N9-A4Q4-01A-11D-A28Q-01",
+        "TCGA-NA-A4QW-01A-11D-A28Q-01", "TCGA-N6-A4VF-01A-31D-A28Q-01",
+        "TCGA-N5-A4RD-01A-11D-A28Q-01", "TCGA-N8-A56S-01A-11D-A28Q-01",
+        "TCGA-N5-A4RS-01A-11D-A28Q-01", "TCGA-NA-A5I1-01A-21D-A28Q-01",
+        "TCGA-ND-A4WF-01A-11D-A28Q-01", "TCGA-N5-A4RU-01A-31D-A28Q-01",
+        "TCGA-N5-A4RT-01A-11D-A28Q-01", "TCGA-N5-A4RA-01A-11D-A28Q-01",
+        "TCGA-ND-A4WA-01A-12D-A28Q-01", "TCGA-NA-A4R0-01A-11D-A28Q-01",
+        "TCGA-N8-A4PN-01A-11D-A28Q-01", "TCGA-N9-A4PZ-01A-22D-A28Q-01",
+        "TCGA-N5-A4RF-01A-11D-A28Q-01", "TCGA-NG-A4VU-01A-11D-A28Q-01",
+        "TCGA-QN-A5NN-01A-11D-A28Q-01", "TCGA-N9-A4Q1-01A-11D-A28Q-01",
+        "TCGA-N6-A4VC-01A-11D-A28Q-01", "TCGA-N7-A4Y0-01A-12D-A28Q-01",
+        "TCGA-N8-A4PQ-01A-11D-A28Q-01", "TCGA-N5-A4RJ-01A-11D-A28Q-01",
+        "TCGA-N9-A4Q3-01A-11D-A28Q-01", "TCGA-N5-A4RM-01A-11D-A28Q-01",
+        "TCGA-N8-A4PI-01A-21D-A28Q-01", "TCGA-N6-A4VG-01A-31D-A28Q-01",
+        "TCGA-N6-A4V9-01A-11D-A28Q-01", "TCGA-N5-A59F-01A-11D-A28Q-01",
+        "TCGA-N7-A4Y5-01A-12D-A28Q-01", "TCGA-NA-A4QX-01A-11D-A28Q-01",
+        "TCGA-NA-A4QV-01A-11D-A28Q-01", "TCGA-N6-A4VE-01A-11D-A28Q-01",
+        "TCGA-N6-A4VD-01A-11D-A28Q-01", "TCGA-N8-A4PM-01A-11D-A28Q-01",
+        "TCGA-NF-A4X2-01A-11D-A28Q-01", "TCGA-N8-A4PL-01A-11D-A28Q-01",
+        "TCGA-N5-A59E-01A-11D-A28Q-01", "TCGA-N8-A4PO-01A-11D-A28Q-01",
+        "TCGA-ND-A4WC-01A-21D-A28Q-01", "TCGA-N7-A4Y8-01A-11D-A28Q-01",
+        "TCGA-NF-A4WU-01A-11D-A28Q-01", "TCGA-N7-A59B-01A-11D-A28Q-01",
+        "TCGA-QM-A5NM-01A-11D-A28Q-01", "TCGA-N5-A4RV-01A-21D-A28Q-01",
+        "TCGA-NA-A4QY-01A-11D-A28Q-01", "TCGA-N9-A4Q7-01A-11D-A28Q-01",
+        "TCGA-NF-A4WX-01A-11D-A28Q-01", "TCGA-NF-A5CP-01A-12D-A28Q-01",
+        "TCGA-NA-A4R1-01A-11D-A28Q-01", "TCGA-N5-A4RO-01A-11D-A28Q-01",
+        "TCGA-N8-A4PP-01A-11D-A28Q-01", "TCGA-N5-A4RN-01A-12D-A28Q-01"
+    )
+    resframe <- UUIDtoBarcode(exuuid, from_type = "file_id")
+    expect_true(
+        all(entities %in% resframe[["associated_entities.entity_submitter_id"]])
+    )
+
+    aliquotid <- "TCGA-CV-5443-01A-01D-1510-01"
+    aliquotfile <- "d85d8a17-8aea-49d3-8a03-8f13141c163b"
+    resframe <- UUIDtoBarcode(aliquotfile, from_type = "aliquot_ids")
+    expect_true(
+        all(aliquotid %in% resframe[["analytes.aliquots.submitter_id"]])
+    )
+})
