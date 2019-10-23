@@ -14,8 +14,12 @@
 #'   level of occurence with the alternative build
 #' }
 #'
-#' @param from A build version name
-#' @param to The name of the desired version
+#' @param from character() A vector of build versions typically from `genome()`
+#'     (e.g., "37"). The build vector must be homogenous (i.e.,
+#'     `length(unique(x)) == 1L`).
+#'
+#' @param to character(1) The name of the desired build version (either "UCSC"
+#'     or "NCBI")
 #'
 #' @examples
 #'
@@ -30,8 +34,11 @@
 #'         identical `identical(length(unique(build)), 1L)`
 #' @export
 translateBuild <- function(from, to = "UCSC") {
-    if (!S4Vectors::isSingleString(to) && !S4Vectors::isSingleString(from))
-        stop("Enter a single valid genomic build")
+    lfro <- length(from)
+    from <- unique(from)
+
+    if (!identical(length(from), 1L))
+        stop("Enter a consistent vector of genomic builds")
     if (!to %in% c("UCSC", "NCBI"))
         stop ("Only UCSC and NCBI supported")
 
@@ -41,18 +48,23 @@ translateBuild <- function(from, to = "UCSC") {
         NCBI = c("34", "35", "36", "37", "38"),
         UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
     )
+
     if (to == "UCSC")
         from <- gsub("[GgRrCcHh]", "", from)
     matchBuild <- switch(to, UCSC = "NCBI", NCBI = "UCSC")
     buildIndex <- match(from, buildDF[[matchBuild]])
+
     if (is.na(buildIndex)) {
         warning("build could not be matched")
         return(NA_character_)
     }
-    if (to == "NCBI")
-        paste0("GRCh", buildDF[[to]][buildIndex])
-    else
-        buildDF[[to]][buildIndex]
+
+    build <-
+        if (to == "NCBI")
+            paste0("GRCh", buildDF[[to]][buildIndex])
+        else
+            buildDF[[to]][buildIndex]
+    rep(build, lfro)
 }
 
 #' @rdname builds

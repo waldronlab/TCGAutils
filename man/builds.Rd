@@ -14,9 +14,12 @@ extractBuild(string, build = c("UCSC", "NCBI"))
 uniformBuilds(builds, cutoff = 0.2)
 }
 \arguments{
-\item{from}{A build version name}
+\item{from}{character() A vector of build versions typically from `genome()`
+(e.g., "37"). The build vector must be homogenous (i.e.,
+`length(unique(x)) == 1L`).}
 
-\item{to}{The name of the desired version}
+\item{to}{character(1) The name of the desired build version (either "UCSC"
+or "NCBI")}
 
 \item{string}{A single character string}
 
