@@ -106,21 +106,41 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
 #' buildvec <- rep(c("GRCh37", "hg19"), times = c(5, 1))
 #' uniformBuilds(buildvec)
 #'
+#' navec <- c(rep(c("GRCh37", "hg19"), times = c(5, 1)), "NA")
+#' uniformBuilds(navec)
+#'
 #' @export uniformBuilds
 uniformBuilds <- function(builds, cutoff = 0.2) {
     if (length(unique(builds)) == 1L)
         return(builds)
     wbuilds <- tolower(builds)
+    nabuilds <- wbuilds == "na"
+    wbuilds[nabuilds] <- NA_character_
     tots <- length(wbuilds)
+    nabuilds <- is.na(wbuilds)
+    propna <- sum(nabuilds) / tots
+    if (propna > cutoff)
+        stop("Frequency of NA values higher than the cutoff tolerance")
+    wbuilds <- na.omit(wbuilds)
     ubuilds <- unique(tolower(wbuilds))
-    if (length(ubuilds) > 2)
+
+    if (identical(length(ubuilds), 1L)) {
+        builds[nabuilds] <- unique(builds[!nabuilds])
+        return(builds)
+    } else if (length(ubuilds) > 2)
         stop("Only two build types at a time can be used")
-    names(ubuilds) <- unique(builds)
+
+    names(ubuilds) <- unique(wbuilds)
     props <- vapply(ubuilds, function(biobuild) {
-        sum(biobuild == wbuilds)/tots
+        sum(biobuild == wbuilds) / tots
     }, numeric(1L))
-    props <- props[props < cutoff]
-    offbuild <- names(props)
+
+    offbuild <- names(props[props < cutoff])
+    mainbuild <- names(props[props > cutoff])
+    mainbuild <- builds[match(mainbuild, tolower(builds))]
+    if (any(nabuilds))
+        builds[nabuilds] <- mainbuild
+
     results <- Filter(function(x) !is.na(x),
         lapply(c("NCBI", "UCSC"), function(buildfmt) {
             suppressWarnings(translateBuild(offbuild, buildfmt))
@@ -129,3 +149,4 @@ uniformBuilds <- function(builds, cutoff = 0.2) {
     builds[wbuilds == offbuild] <- unlist(results)
     builds
 }
+
