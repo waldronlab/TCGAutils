@@ -2,5 +2,4 @@
 ^appveyor\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^NEWS\.md$
 ^data-raw$
