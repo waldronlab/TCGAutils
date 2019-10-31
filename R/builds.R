@@ -96,6 +96,15 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
         builds[1L]
 }
 
+.getBuildNo <- function(cvec) {
+    gsub("(.*)([0-9]{2})", "\\2", cvec)
+}
+
+.consistentNumbers <- function(charvec) {
+    bnos <- .getBuildNo(charvec)
+    identical(length(unique(bnos)), 1L)
+}
+
 #' @rdname builds
 #'
 #' @param builds A character vector of builds
@@ -141,12 +150,17 @@ uniformBuilds <- function(builds, cutoff = 0.2) {
     if (any(nabuilds))
         builds[nabuilds] <- mainbuild
 
-    results <- Filter(function(x) !is.na(x),
-        lapply(c("NCBI", "UCSC"), function(buildfmt) {
-            suppressWarnings(translateBuild(offbuild, buildfmt))
-        })
-    )
-    builds[wbuilds == offbuild] <- unlist(results)
+    samebuilds <- .consistentNumbers(builds)
+    if (samebuilds) {
+        builds[wbuilds == offbuild] <- mainbuild
+    } else {
+        results <- Filter(function(x) !is.na(x),
+            lapply(c("NCBI", "UCSC"), function(buildfmt) {
+                suppressWarnings(translateBuild(offbuild, buildfmt))
+            })
+        )
+        builds[wbuilds == offbuild] <- unlist(results)
+    }
     builds
 }
 
