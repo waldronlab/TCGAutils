@@ -109,15 +109,15 @@ NULL
 }
 
 .getRangesOfCpG <- function(x) {
-    ## TODO: Fix here
-    try(attachNamespace("IlluminaHumanMethylation450kanno.ilmn12.hg19"),
-        silent = TRUE)
-    annote450k <- minfi::getAnnotation(
-        IlluminaHumanMethylation450kanno.ilmn12.hg19::
-            IlluminaHumanMethylation450kanno.ilmn12.hg19)
-    clist <- list(seqnames = "chr", ranges = "pos", strand = "strand")
-    gps <- do.call(GRanges, lapply(clist, function(x) annote450k[, x]))
-    names(gps) <- rownames(annote450k)
+    local_data_store <- new.env(parent = emptyenv())
+    data("Locations", envir = local_data_store,
+        package = "IlluminaHumanMethylation450kanno.ilmn12.hg19")
+    Locations <- local_data_store[["Locations"]]
+
+    clist <- list(seqnames = "chr", pos = "pos", strand = "strand")
+    gps <- do.call(GenomicRanges::GPos,
+        lapply(clist, function(x) Locations[, x]))
+    names(gps) <- rownames(Locations)
     seqlevelsStyle(gps) <- "NCBI"
 
     .makeListRanges(x, gps)
@@ -236,7 +236,7 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
         .checkHas(y, "^cg") & .isSummarizedExperiment(y)
     }, logical(1L))
 
-    .checkPkgsAvail(c("IlluminaHumanMethylation450kanno.ilmn12.hg19", "minfi"))
+    .checkPkgsAvail(c("IlluminaHumanMethylation450kanno.ilmn12.hg19"))
 
     .convertTo(
         x = obj,
