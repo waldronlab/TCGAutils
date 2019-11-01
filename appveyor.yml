@@ -82,7 +82,3 @@ artifacts:
 
 cache:
   - C:\RLibrary -> appveyor.yml
-
-notifications:
-  - provider: Slack
-    incoming_webhook: https://hooks.slack.com/services/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
