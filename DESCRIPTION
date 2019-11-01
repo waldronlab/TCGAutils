@@ -42,7 +42,6 @@ Suggests:
     impute,
     knitr,
     magrittr,
-    minfi,
     mirbase.db,
     org.Hs.eg.db,
     RColorBrewer,
