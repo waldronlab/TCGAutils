@@ -7,11 +7,11 @@
 \alias{uniformBuilds}
 \title{Utilities for working with build numbers}
 \usage{
-translateBuild(from, to = "UCSC")
+translateBuild(from, to = c("UCSC", "NCBI"))
 
 extractBuild(string, build = c("UCSC", "NCBI"))
 
-uniformBuilds(builds, cutoff = 0.2)
+uniformBuilds(builds, cutoff = 0.2, na = c("", "NA"))
 }
 \arguments{
 \item{from}{character() A vector of build versions typically from `genome()`
@@ -19,7 +19,7 @@ uniformBuilds(builds, cutoff = 0.2)
 `length(unique(x)) == 1L`).}
 
 \item{to}{character(1) The name of the desired build version (either "UCSC"
-or "NCBI")}
+or "NCBI"; default: "UCSC")}
 
 \item{string}{A single character string}
 
@@ -27,7 +27,11 @@ or "NCBI")}
 
 \item{builds}{A character vector of builds}
 
-\item{cutoff}{A threshold value for translating builds below the threshold}
+\item{cutoff}{numeric(1L) An inclusive threshold tolerance value for missing
+values and translating builds that are below the threshold}
+
+\item{na}{character() The values to be considered as missing (default:
+c("", "NA"))}
 }
 \value{
 translateBuild: A character vector of translated genome builds
@@ -62,5 +66,8 @@ extractBuild(
 
 buildvec <- rep(c("GRCh37", "hg19"), times = c(5, 1))
 uniformBuilds(buildvec)
+
+navec <- c(rep(c("GRCh37", "hg19"), times = c(5, 1)), "NA")
+uniformBuilds(navec)
 
 }

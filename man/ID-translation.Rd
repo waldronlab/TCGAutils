@@ -67,6 +67,8 @@ UUIDtoBarcode(uuids, from_type = "file_id")
 
 UUIDtoBarcode("ae55b2d3-62a1-419e-9f9a-5ddfac356db4", from_type = "case_id")
 
+UUIDtoBarcode("d85d8a17-8aea-49d3-8a03-8f13141c163b", "aliquot_ids")
+
 ## Translate file UUIDs >> case UUIDs
 
 uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
