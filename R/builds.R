@@ -104,7 +104,7 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
 
 .consistentNumbers <- function(charvec) {
     bnos <- gsub("(.*)([0-9]{2})", "\\2", charvec)
-    .isSingleValue(charvec)
+    .isSingleValue(bnos)
 }
 
 #' @rdname builds
