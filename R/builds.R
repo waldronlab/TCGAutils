@@ -19,7 +19,7 @@
 #'     `length(unique(x)) == 1L`).
 #'
 #' @param to character(1) The name of the desired build version (either "UCSC"
-#'     or "NCBI")
+#'     or "NCBI"; default: "UCSC")
 #'
 #' @examples
 #'
@@ -33,14 +33,13 @@
 #'     uniformBuilds: A character vector of builds where all builds are
 #'         identical `identical(length(unique(build)), 1L)`
 #' @export
-translateBuild <- function(from, to = "UCSC") {
+translateBuild <- function(from, to = c("UCSC", "NCBI")) {
     lfro <- length(from)
     from <- unique(from)
+    to <- match.arg(to)
 
-    if (!identical(length(from), 1L))
+    if (!.isSingleValue(from))
         stop("Enter a consistent vector of genomic builds")
-    if (!to %in% c("UCSC", "NCBI"))
-        stop ("Only UCSC and NCBI supported")
 
     buildDF <- S4Vectors::DataFrame(
         Date = c("July 2004", "May 2004", "March 2006", "February 2009",
@@ -49,8 +48,11 @@ translateBuild <- function(from, to = "UCSC") {
         UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
     )
 
-    if (to == "UCSC")
+    if (identical(to, "UCSC"))
         from <- gsub("[GgRrCcHh]", "", from)
+    else
+        from <- tolower(from)
+
     matchBuild <- switch(to, UCSC = "NCBI", NCBI = "UCSC")
     buildIndex <- match(from, buildDF[[matchBuild]])
 
@@ -60,7 +62,7 @@ translateBuild <- function(from, to = "UCSC") {
     }
 
     build <-
-        if (to == "NCBI")
+        if (identical(to, "NCBI"))
             paste0("GRCh", buildDF[[to]][buildIndex])
         else
             buildDF[[to]][buildIndex]
@@ -96,10 +98,24 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
         builds[1L]
 }
 
+.isSingleValue <- function(charvec) {
+    identical(length(unique(charvec)), 1L)
+}
+
+.consistentNumbers <- function(charvec) {
+    bnos <- gsub("(.*)([0-9]{2})", "\\2", charvec)
+    .isSingleValue(bnos)
+}
+
 #' @rdname builds
 #'
 #' @param builds A character vector of builds
-#' @param cutoff A threshold value for translating builds below the threshold
+#'
+#' @param cutoff numeric(1L) An inclusive threshold tolerance value for missing
+#'     values and translating builds that are below the threshold
+#'
+#' @param na character() The values to be considered as missing (default:
+#'     c("", "NA"))
 #'
 #' @examples
 #'
@@ -110,43 +126,50 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
 #' uniformBuilds(navec)
 #'
 #' @export uniformBuilds
-uniformBuilds <- function(builds, cutoff = 0.2) {
-    if (length(unique(builds)) == 1L)
+uniformBuilds <- function(builds, cutoff = 0.2, na = c("", "NA")) {
+    if (.isSingleValue(builds))
         return(builds)
-    wbuilds <- tolower(builds)
-    nabuilds <- wbuilds == "na"
+    wbuilds <- toupper(builds)
+    nabuilds <- wbuilds %in% na | is.na(wbuilds)
     wbuilds[nabuilds] <- NA_character_
-    tots <- length(wbuilds)
-    nabuilds <- is.na(wbuilds)
-    propna <- sum(nabuilds) / tots
-    if (propna > cutoff)
-        stop("Frequency of NA values higher than the cutoff tolerance")
-    wbuilds <- na.omit(wbuilds)
-    ubuilds <- unique(tolower(wbuilds))
 
-    if (identical(length(ubuilds), 1L)) {
-        builds[nabuilds] <- unique(builds[!nabuilds])
+    tt <- table(wbuilds, useNA = "always")
+    proptt <- prop.table(tt)
+
+    uvals <- names(proptt)
+    nanames <- is.na(uvals)
+    propna <- proptt[nanames]
+
+    if (propna >= cutoff)
+        stop("Frequency of NA values higher than the cutoff tolerance")
+
+    ubuilds <- uvals[!nanames]
+
+    if (.isSingleValue(ubuilds)) {
+        builds[nabuilds] <- ubuilds
         return(builds)
-    } else if (length(ubuilds) > 2)
+    } else if (sum(!nanames) > 2)
         stop("Only two build types at a time can be used")
 
-    names(ubuilds) <- unique(wbuilds)
-    props <- vapply(ubuilds, function(biobuild) {
-        sum(biobuild == wbuilds) / tots
-    }, numeric(1L))
+    props <- proptt[!nanames]
 
-    offbuild <- names(props[props < cutoff])
+    offbuild <- names(props[props <= cutoff])
     mainbuild <- names(props[props > cutoff])
-    mainbuild <- builds[match(mainbuild, tolower(builds))]
+    mainbuild <- builds[match(mainbuild, toupper(builds))]
     if (any(nabuilds))
         builds[nabuilds] <- mainbuild
 
-    results <- Filter(function(x) !is.na(x),
-        lapply(c("NCBI", "UCSC"), function(buildfmt) {
-            suppressWarnings(translateBuild(offbuild, buildfmt))
-        })
-    )
-    builds[wbuilds == offbuild] <- unlist(results)
+    samebuilds <- .consistentNumbers(builds)
+    if (samebuilds) {
+        builds[wbuilds == offbuild] <- mainbuild
+    } else {
+        results <- Filter(function(x) !is.na(x),
+            lapply(c("NCBI", "UCSC"), function(buildfmt) {
+                suppressWarnings(translateBuild(offbuild, buildfmt))
+            })
+        )
+        builds[wbuilds == offbuild] <- unlist(results)
+    }
     builds
 }
 
