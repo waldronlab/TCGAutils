@@ -31,23 +31,37 @@ test_that("translateBuild works correctly", {
 
 
 test_that("uniformBuilds is returning the appropriate output", {
-    testbuild <- rep(c("GRCh37", "hg19"), times = c(5, 1))
-    resbuild <- uniformBuilds(testbuild)
-    expect_identical(1L, length(unique(resbuild)))
+    build <- rep(c("GRCh37", "hg19"), times = c(5, 1))
+    rebuild <- uniformBuilds(build)
+    expect_identical(1L, length(unique(rebuild)))
 
     ## NA imputed to rest of builds
-    nabuild <- c(rep(c("GRCh37", "hg19"), times = c(5, 1)), "NA")
-    nares <- uniformBuilds(nabuild)
-    expect_identical(1L, length(unique(resbuild)))
+    build <- c(rep(c("GRCh37", "hg19"), times = c(5, 1)), "NA")
+    rebuild <- uniformBuilds(build)
+    expect_identical(1L, length(unique(rebuild)))
 
-    nabuild <- c(rep(c("GRCh37", "hg19"), times = c(2, 1)), "NA")
-    expect_error(uniformBuilds(nabuild, cutoff = 0.2))
-    nabuild <- c(rep(c("GRCh37", "hg19"), times = c(7, 1)), "NA", "NA")
+    build <- c(rep(c("GRCh37", "hg19"), times = c(2, 1)), "NA")
+    expect_error(uniformBuilds(build, cutoff = 0.2))
+
     # NA prop > 0.2
-    expect_error(uniformBuilds(nabuild, cutoff = 0.2))
+    build <- c(rep(c("GRCh37", "hg19"), times = c(7, 1)), "NA", "NA")
+    expect_error(uniformBuilds(build, cutoff = 0.2))
 
     # NA converted to main build annotation
-    nabuild <- c(rep(c("GRCh37", "hg19"), times = c(7, 2)), NA_character_)
-    resbuild <- uniformBuilds(nabuild, cutoff = 0.2)
-    expect_identical(1L , length(unique(resbuild)))
+    build <- c(rep(c("GRCh37", "hg19"), times = c(7, 2)), NA_character_)
+    rebuild <- uniformBuilds(build, cutoff = 0.2)
+    expect_identical(1L , length(unique(rebuild)))
+
+    # if build numbers identical then replace with high prop
+    build <- rep(c("GRCh37", "37"), times = c(7, 2))
+    rebuild <- uniformBuilds(build, cutoff = 0.2)
+    expect_identical(rebuild, rep("GRCh37", length(rebuild)))
+
+    build <- c(rep(c("GRCh37", "37"), times = c(7, 2)), NA_character_)
+    rebuild <- uniformBuilds(build, cutoff = 0.2)
+    expect_identical(rebuild, rep("GRCh37", length(rebuild)))
+
+    build <- c(rep(c("GRCh37", "37"), times = c(7, 2)), rep(NA_character_, 3))
+    expect_error(uniformBuilds(build, cutoff = 0.2))
 })
+

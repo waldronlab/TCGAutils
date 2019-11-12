@@ -107,6 +107,19 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
     .isSingleValue(bnos)
 }
 
+
+.replaceHighProp <- function(charvec) {
+    tt <- table(charvec)
+    if (length(tt) > 2L)
+        stop("<internal> Table has more than 2 values")
+
+    proptt <- prop.table(tt)
+
+    highprop <- names(which.max(proptt))
+    charvec[charvec != highprop] <- highprop
+    charvec
+}
+
 #' @rdname builds
 #'
 #' @param builds A character vector of builds
@@ -127,8 +140,14 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
 #'
 #' @export uniformBuilds
 uniformBuilds <- function(builds, cutoff = 0.2, na = c("", "NA")) {
-    if (.isSingleValue(builds))
-        return(builds)
+    tbuild <- table(builds)
+    if (.consistentNumbers(builds)) {
+        if (identical(length(tbuild), 1L))
+            return(builds)
+        else
+            builds <- .replaceHighProp(builds)
+    }
+
     wbuilds <- toupper(builds)
     nabuilds <- wbuilds %in% na | is.na(wbuilds)
     wbuilds[nabuilds] <- NA_character_
