@@ -4,9 +4,15 @@
 \alias{oncoPrintTCGA}
 \title{OncoPrint for TCGA Mutation Assays}
 \usage{
-oncoPrintTCGA(multiassayexperiment, matchassay = "*_Mutation-*",
-  variantCol = "Variant_Classification", brewerPal = "Set3",
-  ntop = 25, incl.thresh = 0.01, rowcol = "Hugo_Symbol")
+oncoPrintTCGA(
+  multiassayexperiment,
+  matchassay = "*_Mutation-*",
+  variantCol = "Variant_Classification",
+  brewerPal = "Set3",
+  ntop = 25,
+  incl.thresh = 0.01,
+  rowcol = "Hugo_Symbol"
+)
 }
 \arguments{
 \item{multiassayexperiment}{A MultiAssayExperiment preferably from

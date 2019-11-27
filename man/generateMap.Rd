@@ -4,8 +4,14 @@
 \alias{generateMap}
 \title{Create a sampleMap from an experiment list and phenoData dataframe}
 \usage{
-generateMap(experiments, colData, idConverter = identity, sampleCol,
-  patientCol, ...)
+generateMap(
+  experiments,
+  colData,
+  idConverter = identity,
+  sampleCol,
+  patientCol,
+  ...
+)
 }
 \arguments{
 \item{experiments}{A named \code{list} of experiments compatible with the

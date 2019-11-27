@@ -4,10 +4,15 @@
 \alias{findGRangesCols}
 \title{Obtain minimum necessary names for the creation of a GRangesList object}
 \usage{
-findGRangesCols(df_colnames, seqnames.field = c("seqnames", "seqname",
-  "chromosome", "chrom", "chr", "chromosome_name", "seqid", "om"),
-  start.field = "start", end.field = c("end", "stop"),
-  strand.field = "strand", ignore.strand = FALSE)
+findGRangesCols(
+  df_colnames,
+  seqnames.field = c("seqnames", "seqname", "chromosome", "chrom", "chr",
+    "chromosome_name", "seqid", "om"),
+  start.field = "start",
+  end.field = c("end", "stop"),
+  strand.field = "strand",
+  ignore.strand = FALSE
+)
 }
 \arguments{
 \item{df_colnames}{A \code{character} vector of names in a dataset}

@@ -8,11 +8,13 @@
 \alias{filenameToBarcode}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
-UUIDtoBarcode(id_vector, from_type = c("case_id", "file_id",
-  "aliquot_ids"), legacy = FALSE)
+UUIDtoBarcode(
+  id_vector,
+  from_type = c("case_id", "file_id", "aliquot_ids"),
+  legacy = FALSE
+)
 
-UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"),
-  legacy = FALSE)
+UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"), legacy = FALSE)
 
 barcodeToUUID(barcodes, legacy = FALSE)
 

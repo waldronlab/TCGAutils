@@ -4,8 +4,11 @@
 \alias{getFileName}
 \title{Find the file names used in RTCGAToolbox}
 \usage{
-getFileName(disease, runDate = "20160128", dataType = c("CNASNP",
-  "CNVSNP", "CNAseq", "CNACGH", "Mutation"))
+getFileName(
+  disease,
+  runDate = "20160128",
+  dataType = c("CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Mutation")
+)
 }
 \arguments{
 \item{disease}{The TCGA cancer disease code, e.g., "COAD"}

@@ -4,8 +4,13 @@
 \alias{makeGRangesListFromExonFiles}
 \title{Read Exon level files and create a GRangesList}
 \usage{
-makeGRangesListFromExonFiles(filepaths, sampleNames = NULL,
-  fileNames = NULL, rangesColumn = "exon", nrows = Inf)
+makeGRangesListFromExonFiles(
+  filepaths,
+  sampleNames = NULL,
+  fileNames = NULL,
+  rangesColumn = "exon",
+  nrows = Inf
+)
 }
 \arguments{
 \item{filepaths}{A \code{character} vector of valid exon data file paths}
