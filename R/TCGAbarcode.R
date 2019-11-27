@@ -1,7 +1,11 @@
 .uniqueDelim <- function(ids) {
-    unique(unlist(
-        strsplit(gsub("[a-zA-Z0-9]", "", ids), "")
+    nonnum <- gsub("[a-zA-Z0-9]", "", ids)
+    dels <- unique(unlist(
+        strsplit(nonnum, "")
     ))
+    if (!length(dels))
+        dels <- ""
+    dels
 }
 
 .checkBarcodes <- function(barcodes, check.sample = FALSE) {
