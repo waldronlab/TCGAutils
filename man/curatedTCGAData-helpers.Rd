@@ -13,8 +13,7 @@ getSubtypeMap(multiassayexperiment)
 
 getClinicalNames(diseaseCode)
 
-splitAssays(multiassayexperiment, sampleCodes = NULL,
-  exclusive = FALSE)
+splitAssays(multiassayexperiment, sampleCodes = NULL, exclusive = FALSE)
 
 sampleTables(multiassayexperiment, vial = FALSE)
 }

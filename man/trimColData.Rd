@@ -4,8 +4,11 @@
 \alias{trimColData}
 \title{Minimize the number of variables in colData}
 \usage{
-trimColData(multiassayexperiment, maxNAfrac = 0.2,
-  keystring = c("portion", "analyte"))
+trimColData(
+  multiassayexperiment,
+  maxNAfrac = 0.2,
+  keystring = c("portion", "analyte")
+)
 }
 \arguments{
 \item{multiassayexperiment}{A \linkS4class{MultiAssayExperiment} object with colData}

@@ -14,25 +14,26 @@ rows, samples in the columns}
 \item{i}{A numeric, logical, or character \code{vector} indicating the
 assays to perform imputation on (default 1L)}
 
-\item{...}{Arguments passed on to \code{impute::impute.knn}
-\describe{
-  \item{data}{An expression matrix with genes in the rows, samples in the columns}
-  \item{k}{Number of neighbors to be used in the
+\item{...}{
+  Arguments passed on to \code{\link[impute:impute.knn]{impute::impute.knn}}
+  \describe{
+    \item{\code{data}}{An expression matrix with genes in the rows, samples in the columns}
+    \item{\code{k}}{Number of neighbors to be used in the
     imputation (default=10)}
-  \item{rowmax}{The maximum percent missing data allowed in any row
+    \item{\code{rowmax}}{The maximum percent missing data allowed in any row
     (default 50\%). For any rows with more than \code{rowmax}\% missing
     are imputed using the overall mean per sample.}
-  \item{colmax}{The maximum percent missing data allowed in any column
+    \item{\code{colmax}}{The maximum percent missing data allowed in any column
     (default 80\%). If any column has more than \code{colmax}\% missing data,
     the program halts and reports an error.}
-  \item{maxp}{The largest block of genes imputed using the knn
+    \item{\code{maxp}}{The largest block of genes imputed using the knn
     algorithm inside \code{impute.knn} (default
     1500); larger blocks are divided by two-means clustering
     (recursively) prior to imputation. If \code{maxp=p}, only knn
     imputation is done.}
-  \item{rng.seed}{The seed used for the random number generator (default
+    \item{\code{rng.seed}}{The seed used for the random number generator (default
     362436069) for reproducibility.}
-}}
+  }}
 }
 \value{
 MultiAssayExperiment with imputed assays values

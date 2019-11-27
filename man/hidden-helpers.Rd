@@ -14,11 +14,9 @@
 .getRangesOfMir(x)
 }
 \arguments{
-\item{x}{A character vector}
+\item{x}{A SummarizedExperiment containing hsa miR IDs as rownames}
 
 \item{gn}{A GRanges object with some of its names found in x}
-
-\item{x}{A SummarizedExperiment containing hsa miR IDs as rownames}
 }
 \value{
 A list of length 2: unmapped (character vector) and mapped (GRanges)
