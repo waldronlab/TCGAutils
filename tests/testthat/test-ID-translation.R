@@ -86,10 +86,25 @@ test_that("UUIDtoBarcode translates correctly", {
         all(entities %in% resframe[["associated_entities.entity_submitter_id"]])
     )
 
-    aliquotid <- "TCGA-CV-5443-01A-01D-1510-01"
-    aliquotfile <- "d85d8a17-8aea-49d3-8a03-8f13141c163b"
-    resframe <- UUIDtoBarcode(aliquotfile, from_type = "aliquot_ids")
+    aliquot_uuids <- c(
+        "f8c7d038-1182-42d0-8787-b84b5ca57eaf",
+        "b37ea112-340e-4613-8514-d8a8bd47410f",
+        "4a9967bf-444c-4573-a082-121a30be7f3b"
+    )
+    aliquot_submitters <- c(
+        "TCGA-UF-A71A-06A-11D-A390-01",
+        "TCGA-BB-4224-01A-01D-1432-01",
+        "TCGA-CN-4735-01A-01D-1432-01"
+    )
+    resframe <- UUIDtoBarcode(aliquot_uuids, from_type = "aliquot_ids")
     expect_true(
-        all(aliquotid %in% resframe[["analytes.aliquots.submitter_id"]])
+        all(
+            aliquot_uuids %in% resframe[[1L]]
+        )
+    )
+    expect_true(
+        all(
+            aliquot_submitters %in% resframe[[2L]]
+        )
     )
 })

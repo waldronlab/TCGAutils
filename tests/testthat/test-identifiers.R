@@ -6,7 +6,9 @@ context("Identifier tests")
 }
 
 test_that("TCGAbarcode works", {
-    example("TCGAbarcode")
+    barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+        "TCGA-B0-5094-11A-01D-1421-08",
+        "TCGA-E9-A295-10A-01D-A16D-09")
     expect_identical(.sectionNums(TCGAbarcode(barcodes)), 3L)
 
     expect_identical(.sectionNums(TCGAbarcode(barcodes, sample = TRUE)), 4L)
@@ -27,6 +29,9 @@ test_that("TCGAbarcode works", {
 })
 
 test_that("TCGAbiospec works", {
+    barcodes <- c("TCGA-B0-5117-11A-01D-1421-08",
+        "TCGA-B0-5094-11A-01D-1421-08",
+        "TCGA-E9-A295-10A-01D-A16D-09")
     bc0 <- TCGAbarcode(barcodes)
     expect_error(TCGAbiospec(bc0))
     bc1 <- TCGAbarcode(barcodes, sample = TRUE)

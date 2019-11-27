@@ -1,4 +1,5 @@
 library(testthat)
-#library(TCGAutils)
 
-#test_check("TCGAutils")
+library(TCGAutils)
+
+test_check("TCGAutils")
