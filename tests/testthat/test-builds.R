@@ -17,12 +17,20 @@ test_that("translateBuild works correctly", {
         translateBuild("hg19", to = "NCBI"),
         "GRCh37"
     )
-    expect_true(is.na(translateBuild(NA_character_)))
+    expect_true(
+        suppressWarnings(
+            is.na(translateBuild(NA_character_))
+        )
+    )
     expect_warning(
         translateBuild(NA_character_),
         "build could not be matched"
     )
-    expect_true(is.na(translateBuild("33")))
+    expect_true(
+        suppressWarnings(
+            is.na(translateBuild("33"))
+        )
+    )
     expect_warning(
         translateBuild("33"),
         "build could not be matched"

@@ -61,20 +61,19 @@
 }
 
 .cleanExpand <- function(result, ids) {
-    samps <- result[["samples"]][[1L]]
-    numrows <- nrow(samps)
-    resList <- vector(mode = "list", length = numrows)
-    for (i in seq_len(numrows)) {
-        blue <- unlist(samps[i, 1L])
-        sameNames <- gsub("[0-9]*$", "", names(blue))
-        splitted <- split(blue, sameNames)
-        res <- do.call(function(...) cbind.data.frame(..., stringsAsFactors = FALSE),
-            splitted)
-        rownames(res) <- NULL
-        resList[[i]] <- res
-    }
-    resframe <- do.call(rbind, resList)
-    resframe[resframe[[1L]] %in% ids, , drop = FALSE]
+    samps <- result[["samples"]]
+    usamps <- unlist(samps)
+    splitsamps <- split(unname(usamps), gsub("[0-9]*$", "", names(usamps)))
+    splits <- strsplit(names(splitsamps), "\\.")
+    cnames <- unique(vapply(splits, function(x) {
+        paste0(x[-1], collapse = ".") }, character(1)))
+    first <- unlist(splitsamps[c(TRUE, FALSE)])
+    second <- unlist(splitsamps[c(FALSE, TRUE)])
+    pos <- match(ids, first)
+    resframe <- cbind.data.frame(first[pos], second[pos], row.names = NULL,
+        stringsAsFactors = FALSE)
+    names(resframe) <- cnames
+    resframe
 }
 
 #' @name ID-translation
