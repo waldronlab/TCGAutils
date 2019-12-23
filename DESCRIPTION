@@ -1,6 +1,6 @@
 Package: TCGAutils
 Title: TCGA utility functions for data management
-Version: 1.7.6
+Version: 1.7.7
 Description: A suite of helper functions for checking and manipulating TCGA data
     including data obtained from the curatedTCGAData experiment package. These
     functions aim to simplify and make working with TCGA data more manageable.
@@ -58,4 +58,4 @@ LazyData: true
 BugReports: https://github.com/waldronlab/TCGAutils/issues
 biocViews: Software, WorkflowStep, Preprocessing
 VignetteBuilder: knitr
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
