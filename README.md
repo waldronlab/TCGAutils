@@ -10,27 +10,22 @@ from The Cancer Genome Atlas (TCGA), the `RTCGAToolbox` package and
 Please make sure to download the latest version of `RTCGAToolbox`
 from Bioconductor.
 
+## Installation
+
 ```
 if (!require("BiocManager"))
     install.packages("BiocManager")
 
 library(BiocManager)
 
-install(version = "devel")
-install("RTCGAToolbox")
+install("TCGAutils")
 ```
 
-Functions like `RTCGAToolbox::biocExtract` interact with derived data classes
-(such as `FirehoseData`). Other functions like `TCGAexonToGRangesList` work on
-text files to create a `GRangesList` object from exon level data.
+## Cheatsheet
 
-Additional helper functions are available to clean up datasets in preparation
-for integration to a `MultiAssayExperiment` object.
+<a href="https://github.com/waldronlab/cheatsheets/blob/master/TCGAutils_cheatsheet.pdf"><img src="https://raw.githubusercontent.com/waldronlab/cheatsheets/master/pngs/TCGAutils_cheatsheet.png" width="989" height="1091"/></a>
 
-`MultiAssayExperiment` can be downloaded from both the release and development
-versions of Bioconductor.
-
-Please feel free to report bugs at our [github issue page][]
+Please report minimally reproducible bugs at our [github issue page][]
 
 [github issue page]: https://github.com/waldronlab/TCGAutils/issues
 
