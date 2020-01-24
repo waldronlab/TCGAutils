@@ -248,6 +248,34 @@ chain <- suppressMessages(
 ranges19 <- rtracklayer::liftOver(rowRanges(coad[[4]]), chain)
 ```
 
+The same can be done to convert `hg19` to `hg38` (the same build that the
+Genomic Data Commons uses) with the corresponding chain file:
+
+```{r}
+liftchain <-
+"http://hgdownload.cse.ucsc.edu/goldenpath/hg19/liftOver/hg19ToHg38.over.chain.gz"
+bfc <- BiocFileCache()
+q38file <- bfcquery(bfc, "19to38chain", exact = TRUE)[["rpath"]]
+c38file <-
+if (length(q38file) && file.exists(q38file)) {
+    bfcquery(bfc, "19to38chain", exact = TRUE)[["rpath"]]
+} else {
+    bfcadd(bfc, "19to38chain", liftchain)
+}
+
+cloc38 <- file.path(tempdir(), gsub("\\.gz", "", basename(c38file)))
+R.utils::gunzip(c38file, destname = cloc38, remove = FALSE)
+
+chain38 <- suppressMessages(
+    rtracklayer::import.chain(cloc38)
+)
+
+## then use the liftOver function using the 'chain38' object
+## as above
+
+ranges38 <- rtracklayer::liftOver(unlist(ranges19), chain38)
+```
+
 This will give us a list of ranges, each element corresponding to a single row
 in the `RaggedExperiment`. We remove rows that had no matches in the `liftOver`
 process and replace the ranges in the original `RaggedExperiment` with the
@@ -258,6 +286,7 @@ replacement method. Finally, we put the `RaggedExperiment` object back into the
 rag <- coad[[4]][as.logical(lengths(ranges19))]
 rowRanges(rag) <- unlist(ranges19)
 coad[[4]] <- rag
+rowRanges(rag)
 ```
 
 Now that we have matching builds, we can finally run the `qreduceTCGA` function.
