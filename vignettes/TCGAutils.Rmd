@@ -23,7 +23,7 @@ It includes:
     which provides unrestricted TCGA data as `MultiAssayExperiment` objects,
     0.    helpers for importing TCGA data as from flat data structures such as
     `data.frame` or `DataFrame` read from delimited data structures provided by
-    the Broad Institute’s Firehose, and
+    the Broad Institute’s Firehose, GenomicDataCommons, and
     0.    functions for interpreting TCGA barcodes and for mapping between
     barcodes and Universally Unique Identifiers (UUIDs).
 
@@ -165,21 +165,6 @@ table(colData(coad)[["vital_status.y"]])
 Such conflicts should be inspected in this manner, and conflicts resolved by
 choosing the more complete variable, or by treating any conflicting values as
 unknown ("NA").
-
-## `mergeColData`: expanding the `colData` of a `MultiAssayExperiment`
-
-This function merges a `data.frame` or `DataFrame` into the
-`colData` of an existing `MultiAssayExperiment` object. It will match
-column names and row names to do a full merge of both data sets. This
-convenience function can be used, for example, to add subtype information
-available for a subset of patients to the `colData`. Here is a simplified
-example of adding a column to the `colData` `DataFrame`:
-
-```{r}
-race_df <- DataFrame(race_f = factor(colData(coad)[["race"]]),
-    row.names = rownames(colData(coad)))
-mergeColData(coad, race_df)
-```
 
 # Converting Assays to SummarizedExperiment
 
@@ -386,6 +371,21 @@ selectType(co, "GISTIC")
 class(selectType(co, "GISTIC"))
 
 makeSummarizedExperimentFromGISTIC(co, "Peaks")
+```
+
+## `mergeColData`: expanding the `colData` of a `MultiAssayExperiment`
+
+This function merges a `data.frame` or `DataFrame` into the
+`colData` of an existing `MultiAssayExperiment` object. It will match
+column names and row names to do a full merge of both data sets. This
+convenience function can be used, for example, to add subtype information
+available for a subset of patients to the `colData`. Here is a simplified
+example of adding a column to the `colData` `DataFrame`:
+
+```{r}
+race_df <- DataFrame(race_f = factor(colData(coad)[["race"]]),
+    row.names = rownames(colData(coad)))
+mergeColData(coad, race_df)
 ```
 
 # Translating and interpreting TCGA identifiers
