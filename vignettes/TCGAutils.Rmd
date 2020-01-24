@@ -497,6 +497,20 @@ column names.
 TCGAbiospec(xbarcode)
 ```
 
+# OncoPrint - oncoPrintTCGA
+
+We provide a convenience function that investigates metadata within
+`curatedTCGAData` objects to present a plot of molecular alterations
+within a paricular cancer. `MultiAssayExperiment` objects are required to
+have an identifiable '*Mutation*' assay (using text search). The `variantCol`
+argument identifies the mutation type column within the data.
+
+**Note**. Functionality streamlined from the `ComplexHeatmap` package.
+
+```{r}
+oncoPrintTCGA(coad)
+```
+
 # Reference data
 
 The `TCGAutils` package provides several helper datasets for working with TCGA barcodes.
