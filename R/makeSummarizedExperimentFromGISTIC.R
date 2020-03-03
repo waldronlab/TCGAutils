@@ -7,6 +7,7 @@
 #'
 #' @param gistic A \link[RTCGAToolbox]{FirehoseGISTIC-class} object
 #' @param dataType Either one of "ThresholdedByGene", "AllByGene", "Peaks"
+#' @param ... Additional arguments passed to 'RTCGAToolbox::getGISTICPeaks'.
 #'
 #' @author L. Geistlinger, M. Ramos
 #'
@@ -19,13 +20,16 @@
 #'
 #' @return A \code{SummarizedExperiment} object
 #' @export
-makeSummarizedExperimentFromGISTIC <- function(gistic, dataType) {
+makeSummarizedExperimentFromGISTIC <- function(gistic, dataType, ...) {
     if (!requireNamespace("RTCGAToolbox"))
         stop("Please install 'RTCGAToolbox' to use this function")
     gist <- RTCGAToolbox::getData(gistic, "GISTIC", dataType)
     rel.cols <- grepl("^TCGA", colnames(gist))
     gistData <- as.matrix(gist[, rel.cols])
     if (dataType == "Peaks") {
+        gist <- RTCGAToolbox::getGISTICPeaks(gistic, ...)
+        rel.cols <- grepl("^TCGA", colnames(gist))
+        gistData <- as.matrix(gist[, rel.cols])
         rowranges <- gist[["rowRanges"]]
         rowranges <- as(rowranges, "GRanges")
         # get the peak type (amplification / deletion)

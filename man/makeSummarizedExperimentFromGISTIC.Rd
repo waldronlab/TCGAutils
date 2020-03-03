@@ -4,12 +4,14 @@
 \alias{makeSummarizedExperimentFromGISTIC}
 \title{Create a SummarizedExperiment from FireHose GISTIC}
 \usage{
-makeSummarizedExperimentFromGISTIC(gistic, dataType)
+makeSummarizedExperimentFromGISTIC(gistic, dataType, ...)
 }
 \arguments{
 \item{gistic}{A \link[RTCGAToolbox]{FirehoseGISTIC-class} object}
 
 \item{dataType}{Either one of "ThresholdedByGene", "AllByGene", "Peaks"}
+
+\item{...}{Additional arguments passed to 'RTCGAToolbox::getGISTICPeaks'.}
 }
 \value{
 A \code{SummarizedExperiment} object
