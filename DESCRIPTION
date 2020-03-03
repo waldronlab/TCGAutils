@@ -1,6 +1,6 @@
 Package: TCGAutils
 Title: TCGA utility functions for data management
-Version: 1.7.8
+Version: 1.7.9
 Description: A suite of helper functions for checking and manipulating TCGA data
     including data obtained from the curatedTCGAData experiment package. These
     functions aim to simplify and make working with TCGA data more manageable.
@@ -46,7 +46,7 @@ Suggests:
     org.Hs.eg.db,
     RColorBrewer,
     readr,
-    RTCGAToolbox (>= 2.7.5),
+    RTCGAToolbox (>= 2.17.4),
     rtracklayer,
     R.utils,
     testthat,
