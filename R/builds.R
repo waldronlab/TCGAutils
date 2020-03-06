@@ -41,6 +41,12 @@ translateBuild <- function(from, to = c("UCSC", "NCBI")) {
     if (!.isSingleValue(from))
         stop("Enter a consistent vector of genomic builds")
 
+    if (
+        grepl("^[Hh][Gg]", from) && identical(to, "UCSC") ||
+        grepl("^[Gg][Rr][Cc][Hh]", from) && identical(to, "NCBI")
+    )
+        return(rep(from, lfro))
+
     buildDF <- S4Vectors::DataFrame(
         Date = c("July 2004", "May 2004", "March 2006", "February 2009",
             "December 2013"),

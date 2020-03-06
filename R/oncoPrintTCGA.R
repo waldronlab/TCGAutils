@@ -95,6 +95,8 @@ oncoPrintTCGA <-
     gn <- sort(.getGN(genomeannot, "genes"))
     gn <- BiocGenerics::unstrand(gn)
     gn <- gn[!is.na(names(gn))]
+    sqls <- seqlevelsStyle(ragex)
+    seqlevelsStyle(gn) <- sqls
 
     simplify_fun <- function(scores, ranges, qranges)
         { any(scores != "Silent") }

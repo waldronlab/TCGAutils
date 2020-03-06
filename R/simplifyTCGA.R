@@ -275,6 +275,8 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     isMut <- function(x) grepl("Mutation", names(x))
 
     for (i in which(isMut(obj))) {
+        sqls <- seqlevelsStyle(obj[[i]])
+        seqlevelsStyle(gn) <- sqls
         mutations <- RaggedExperiment::qreduceAssay(obj[[i]], gn, nonsilent,
             "Variant_Classification")
         rownames(mutations) <- names(gn)
@@ -287,6 +289,8 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
         obj <- c(obj, el)
     }
     for (i in which(isRE(obj) & !isMut(obj))) {
+        sqls <- seqlevelsStyle(obj[[i]])
+        seqlevelsStyle(gn) <- sqls
         suppressWarnings(
             cn <- RaggedExperiment::qreduceAssay(obj[[i]], gn,
                 weightedmean, "Segment_Mean")
