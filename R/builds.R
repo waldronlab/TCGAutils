@@ -188,12 +188,12 @@ uniformBuilds <- function(builds, cutoff = 0.2, na = c("", "NA")) {
     if (samebuilds) {
         builds[wbuilds == offbuild] <- mainbuild
     } else {
-        results <- Filter(function(x) !is.na(x),
-            lapply(c("NCBI", "UCSC"), function(buildfmt) {
-                suppressWarnings(translateBuild(offbuild, buildfmt))
-            })
-        )
-        builds[wbuilds == offbuild] <- unlist(results)
+        pattrn <- vapply(
+            c(UCSC = "[Hh][Gg][0-9]{2}", NCBI = "[Gg][Rr][Cc][Hh][0-9]{2}"),
+            grepl, logical(1L), offbuild)
+        toconv <- names(pattrn)[!pattrn]
+        results <- translateBuild(offbuild, toconv)
+        builds[wbuilds == offbuild] <- results
     }
     builds
 }

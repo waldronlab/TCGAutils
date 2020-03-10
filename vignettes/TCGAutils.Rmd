@@ -296,7 +296,7 @@ rowRanges(re19)
 Now that we have matching builds, we can finally run the `qreduceTCGA` function.
 
 ```{r}
-coad1 <- qreduceTCGA(coad, keep.assay = TRUE)
+coad <- qreduceTCGA(coad, keep.assay = TRUE)
 ```
 
 ## `symbolsToRanges`
@@ -438,7 +438,7 @@ Here we translate the first two TCGA barcodes of the previous copy-number
 alterations dataset to UUID:
 
 ```{r}
-(xbarcode <- head(colnames(coad1)[["COAD_CNASeq-20160128_simplified"]], 4L))
+(xbarcode <- head(colnames(coad)[["COAD_CNASeq-20160128_simplified"]], 4L))
 barcodeToUUID(xbarcode)
 ```
 
@@ -541,9 +541,7 @@ argument identifies the mutation type column within the data.
 **Note**. Functionality streamlined from the `ComplexHeatmap` package.
 
 ```{r}
-# coad2 <- c(coad, COAD_Mutation = re19,
-#     mapFrom = "COAD_Mutation-20160128_simplified")
-oncoPrintTCGA(coad)
+oncoPrintTCGA(coad, matchassay = rag)
 ```
 
 # Reference data
