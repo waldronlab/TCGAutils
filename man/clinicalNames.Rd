@@ -4,7 +4,9 @@
 \name{clinicalNames}
 \alias{clinicalNames}
 \title{Clinical dataset names in TCGA}
-\format{A \linkS4class{CharacterList} of names for 33 cancer codes}
+\format{
+A \linkS4class{CharacterList} of names for 33 cancer codes
+}
 \usage{
 clinicalNames
 }

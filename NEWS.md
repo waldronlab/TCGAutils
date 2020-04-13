@@ -1,3 +1,18 @@
+## Changes in version 1.8.0
+
+### New features
+
+* `README.md` now includes a cheat sheet for reference
+* `mergeColData` and `oncoPrintTCGA` sections updated/included in the vignette
+
+### Minor changes and bug fixes
+
+* `translateBuild` more robust to consistent inputs
+* `translateBuild` returns vector output instead of single string as before
+* `makeSummarizedExperimentFromGISTIC` now has a more open interface with
+`...` input to `RTCGAToolbox::getGISTICPeaks`
+* `oncoPrintTCGA` now uses `seqlevels` from input throughout
+
 ## Changes in version 1.6.0
 
 ### New features
@@ -26,7 +41,7 @@
 package and `minfi`
 * Overhaul of the barcode translation services allows accurate translation
 of identifiers
-* `splitAssays` now seperates all assays by sample codes contained therein
+* `splitAssays` now separates all assays by sample codes contained therein
 by default, previous behavior had default values
 * Documentation for `simplifyTCGA` was modified to include similar operations,
 such as, `symbolsToRanges`, `mirToRanges`, `CpGtoRanges`, etc.
