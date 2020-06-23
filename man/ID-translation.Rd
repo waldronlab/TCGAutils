@@ -34,8 +34,8 @@ either files or cases (default assumes case_ids)}
 
 \item{barcodes}{A \code{character} vector of TCGA barcodes}
 
-\item{filenames}{A \code{character} vector of filenames obtained from
-the GenomicDataCommons}
+\item{filenames}{A \code{character} vector of filenames usually obtained
+from the GenomicDataCommons}
 }
 \value{
 A \code{data.frame} of TCGA barcode identifiers and UUIDs

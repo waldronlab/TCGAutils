@@ -281,10 +281,15 @@ barcodeToUUID <-
     rframe[na.omit(match(barcodes, rframe[[endtargets]])), , drop = FALSE]
 }
 
+.matchSort <- function(major, minor) {
+    hits <- S4Vectors::findMatches(major, minor)
+    order(S4Vectors::subjectHits(hits))
+}
+
 #' @rdname ID-translation
 #'
-#' @param filenames A \code{character} vector of filenames obtained from
-#' the GenomicDataCommons
+#' @param filenames A \code{character} vector of filenames usually obtained
+#' from the GenomicDataCommons
 #'
 #' @examples
 #' library(GenomicDataCommons)
@@ -307,11 +312,12 @@ filenameToBarcode <- function(filenames, legacy = FALSE) {
             "cases.samples.portions.analytes.aliquots.submitter_id"))
     )
 
-    res <- data.frame(file_name = info[["file_name"]],
-        file_id = info[["file_id"]],
+    reps <- lengths(lapply(info[["cases"]], unlist))
+    res <- data.frame(file_name = rep(info[["file_name"]], reps),
+        file_id = rep(info[["file_id"]], reps),
         aliquots.submitter_id = unname(unlist(info[["cases"]])),
         row.names = NULL,
         stringsAsFactors = FALSE)
-
-    res[na.omit(match(res[["file_name"]], filenames)), ]
+    idx <- .matchSort(res[["file_name"]], filenames)
+    res[idx, ]
 }
