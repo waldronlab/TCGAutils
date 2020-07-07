@@ -213,14 +213,20 @@ It uses 'hg19' transcript database ('TxDb') package internally to summarize
 regions using `qreduceAssay`. The current genome build ('hg18') in the data
 must be translated to 'hg19'.
 
-In this example, we first translate the genome strings in the `RaggedExperiment`
-`COAD_Mutation-20160128` dataset using `translateBuild`. We do this for the
-entire vector by using `vapply`.
+In this example, we first set the appropriate build name in the mutation
+dataset `COAD_Mutation-20160128` according to the
+[NCBI website](https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.12/)
+and we then use `seqlevelsStyle` to match the `UCSC` style in the chain.
 
 ```{r}
 rag <- "COAD_Mutation-20160128"
-genome(coad[[rag]]) <- translateBuild(genome(coad[[rag]]))
-seqlevelsStyle(coad[[rag]]) <- "UCSC"
+# add the appropriate genome annotation
+genome(coad[[rag]]) <- "NCBI36"
+# change the style to UCSC
+seqlevelsStyle(rowRanges(coad[[rag]])) <- "UCSC"
+
+# inspect changes
+seqlevels(rowRanges(coad[[rag]]))
 genome(coad[[rag]])
 ```
 
