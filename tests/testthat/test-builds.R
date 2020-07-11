@@ -1,39 +1,38 @@
 context("Build information testing")
 
 test_that("translateBuild works correctly", {
+    buildDF <- human_builds()
     ncbinos <- as.character(34:38)
-    ucscnos <- paste0("hg", c(16:19, 38))
     resbuilds <- vapply(ncbinos, translateBuild, character(1L))
 
-    Map(function(x, y) {
+    expect_identical(unname(resbuilds), buildDF[["UCSC"]])
 
-        expect_identical(x, y)
+    ucscnos <- paste0("hg", c(16:19, 38))
+    resbuilds <- vapply(ucscnos, translateBuild, character(1L), "NCBI")
+    expect_identical(unname(resbuilds), buildDF[["NCBI"]])
 
-    }, ucscnos, unname(resbuilds))
-
+    ## UCSC (default 'to')
     expect_identical(translateBuild("Grch37"), "hg19")
     expect_identical(translateBuild("GrCh37"), "hg19")
+    expect_identical(translateBuild("grch37"), "hg19")
+
     expect_identical(
         translateBuild("hg19", to = "NCBI"),
         "GRCh37"
     )
+    expect_identical(
+        translateBuild("HG19", to = "NCBI"),
+        "GRCh37"
+    )
+    expect_identical(
+        translateBuild("hG19", to = "NCBI"),
+        "GRCh37"
+    )
     expect_true(
-        suppressWarnings(
             is.na(translateBuild(NA_character_))
-        )
-    )
-    expect_warning(
-        translateBuild(NA_character_),
-        "build could not be matched"
     )
     expect_true(
-        suppressWarnings(
             is.na(translateBuild("33"))
-        )
-    )
-    expect_warning(
-        translateBuild("33"),
-        "build could not be matched"
     )
 })
 

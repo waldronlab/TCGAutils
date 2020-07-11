@@ -1,6 +1,19 @@
+human_builds <- function() {
+    S4Vectors::DataFrame(
+        Date = c("July 2004", "May 2004", "March 2006", "February 2009",
+            "December 2013"),
+        NCBI_PRE = c("NCBI", "NCBI", "NCBI", "GRCh", "GRCh"),
+        NCBI_NO = c("34", "35", "36", "37", "38"),
+        NCBI =  c("NCBI34", "NCBI35", "NCBI36", "GRCh37", "GRCh38"),
+        UCSC_PRE = c("hg", "hg", "hg", "hg", "hg"),
+        UCSC_NO = c("16", "17", "18", "19", "38"),
+        UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
+    )
+}
+
 #' @name builds
 #'
-#' @title Utilities for working with build numbers
+#' @title Utilities for working with *HUMAN* genome builds
 #'
 #' @description A few functions are available to search for build versions,
 #' either from NCBI or UCSC.
@@ -12,7 +25,17 @@
 #'   within the string input
 #'   \item \code{uniformBuilds}: replace build occurrences below a threshold
 #'   level of occurence with the alternative build
+#'   \item \code{correctBuild}: Ensure that the build annotation is correct
+#'   based on the NCBI/UCSC website
+#'   \item \code{isCorrect}: Check to see if the build is exactly as annotated
 #' }
+#'
+#' @details The `correctBuild` function takes the input and ensures that
+#' the style specified matches the input. Otherwise, it will
+#' return the correct style for use with  `seqlevelsStyle`.
+#' Currently, the function does not support patched builds
+#' (e.g., 'GRCh38.p13') Build names are taken from the website:
+#' \url{https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.26/}
 #'
 #' @param from character() A vector of build versions typically from `genome()`
 #'     (e.g., "37"). The build vector must be homogenous (i.e.,
@@ -20,6 +43,10 @@
 #'
 #' @param to character(1) The name of the desired build version (either "UCSC"
 #'     or "NCBI"; default: "UCSC")
+#'
+#' @param build character(1) A string providing the genome build
+#'
+#' @param style character(1) The annotation style, either 'UCSC' or 'NCBI'
 #'
 #' @examples
 #'
@@ -32,47 +59,73 @@
 #'
 #'     uniformBuilds: A character vector of builds where all builds are
 #'         identical `identical(length(unique(build)), 1L)`
+#'
+#'     correctBuild: A character string of the 'corrected' build name
+#'
+#'     isCorrect: A logical indicating if the build is exactly as annotated
+#'
 #' @export
 translateBuild <- function(from, to = c("UCSC", "NCBI")) {
     lfro <- length(from)
     from <- unique(from)
-    to <- match.arg(to)
-
     if (!.isSingleValue(from))
         stop("Enter a consistent vector of genomic builds")
 
+    to <- match.arg(to)
+    buildDF <- human_builds()
+
+    bnames <- c("UCSC", "NCBI")
+    from_build <- bnames[bnames != to]
+
+    bfrom <- correctBuild(from, from_build)
+
+    buildIndex <- match(bfrom, buildDF[[from_build]])
+    rep(buildDF[[to]][buildIndex], lfro)
+}
+
+#' @rdname builds
+#'
+#' @param build character(1) A string providing the genome build
+#'
+#' @param style character(1) The annotation style, either 'UCSC' or 'NCBI'
+#'
+#' @examples
+#'
+#' correctBuild("grch38", "NCBI")
+#'
+#' @export
+correctBuild <- function(build, style = c("UCSC", "NCBI")) {
+    build.df <- human_builds()
+    pre <- paste0(style, "_PRE")
+    digits <- as.character(gsub(".*([[:digit:]]{2})", "\\1", build))
+    pref <- gsub("(.*)([[:digit:]]{2})", "\\1", build)
+    if (identical(tolower(pref), "hg") && identical(style, "NCBI"))
+        stop("<internal> Incorrect build")
     if (
-        grepl("^[Hh][Gg]", from) && identical(to, "UCSC") ||
-        grepl("^[Gg][Rr][Cc][Hh]", from) && identical(to, "NCBI")
+        tolower(pref) %in% tolower(build.df[["NCBI_PRE"]]) &&
+        identical(style, "UCSC")
     )
-        return(rep(from, lfro))
-
-    buildDF <- S4Vectors::DataFrame(
-        Date = c("July 2004", "May 2004", "March 2006", "February 2009",
-            "December 2013"),
-        NCBI = c("34", "35", "36", "37", "38"),
-        UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
-    )
-
-    if (identical(to, "UCSC"))
-        from <- gsub("[GgRrCcHh]", "", from)
-    else
-        from <- tolower(from)
-
-    matchBuild <- switch(to, UCSC = "NCBI", NCBI = "UCSC")
-    buildIndex <- match(from, buildDF[[matchBuild]])
-
-    if (is.na(buildIndex)) {
-        warning("build could not be matched")
+        stop("<internal> Incorrect build")
+    idx <- match(digits, build.df[[paste0(style, "_NO")]])
+    if (is.na(idx))
         return(NA_character_)
-    }
+    num <- build.df[[paste0(style, "_NO")]][idx]
+    pref <- build.df[[pre]][idx]
+    paste0(pref, num)
+}
 
-    build <-
-        if (identical(to, "NCBI"))
-            paste0("GRCh", buildDF[[to]][buildIndex])
-        else
-            buildDF[[to]][buildIndex]
-    rep(build, lfro)
+#' @rdname builds
+#'
+#' @examples
+#'
+#' isCorrect("GRCh38", "NCBI")
+#'
+#' @export
+isCorrect <- function(build, style = c("UCSC", "NCBI")) {
+    identical(
+        correctBuild(build, style),
+        build
+    )
 }
 
 #' @rdname builds

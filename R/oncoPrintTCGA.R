@@ -85,9 +85,11 @@ oncoPrintTCGA <-
     if (length(genomeannot) > 1)
         stop("'genome' annotation is not consistent")
 
-    if (!startsWith(genomeannot, "hg")) {
+    if (!grepl("^[HhGg]", genomeannot)) {
+        cbuild <- correctBuild(genomeannot, "NCBI")
+        ragex <- GenomeInfoDb::`genome<-`(ragex, cbuild)
+        ragex <- GenomeInfoDb::`seqlevelsStyle<-`(ragex, "UCSC")
         genomeannot <- translateBuild(genomeannot)
-        ragex <- GenomeInfoDb::`genome<-`(ragex, rep(genomeannot, genomelen))
     }
 
     .checkPkgsAvail(paste0("TxDb.Hsapiens.UCSC.", genomeannot, ".knownGene"))

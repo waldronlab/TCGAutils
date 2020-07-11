@@ -3,11 +3,17 @@
 \name{builds}
 \alias{builds}
 \alias{translateBuild}
+\alias{correctBuild}
+\alias{isCorrect}
 \alias{extractBuild}
 \alias{uniformBuilds}
-\title{Utilities for working with build numbers}
+\title{Utilities for working with *HUMAN* genome builds}
 \usage{
 translateBuild(from, to = c("UCSC", "NCBI"))
+
+correctBuild(build, style = c("UCSC", "NCBI"))
+
+isCorrect(build, style = c("UCSC", "NCBI"))
 
 extractBuild(string, build = c("UCSC", "NCBI"))
 
@@ -21,9 +27,11 @@ uniformBuilds(builds, cutoff = 0.2, na = c("", "NA"))
 \item{to}{character(1) The name of the desired build version (either "UCSC"
 or "NCBI"; default: "UCSC")}
 
-\item{string}{A single character string}
-
 \item{build}{A vector of build version names (default UCSC, NCBI)}
+
+\item{style}{character(1) The annotation style, either 'UCSC' or 'NCBI'}
+
+\item{string}{A single character string}
 
 \item{builds}{A character vector of builds}
 
@@ -40,6 +48,10 @@ translateBuild: A character vector of translated genome builds
 
     uniformBuilds: A character vector of builds where all builds are
         identical `identical(length(unique(build)), 1L)`
+
+    correctBuild: A character string of the 'corrected' build name
+
+    isCorrect: A logical indicating if the build is exactly as annotated
 }
 \description{
 A few functions are available to search for build versions,
@@ -52,11 +64,28 @@ either from NCBI or UCSC.
   within the string input
   \item \code{uniformBuilds}: replace build occurrences below a threshold
   level of occurence with the alternative build
+  \item \code{correctBuild}: Ensure that the build annotation is correct
+  based on the NCBI/UCSC website
+  \item \code{isCorrect}: Check to see if the build is exactly as annotated
 }
+}
+\details{
+The `correctBuild` function takes the input and ensures that
+the style specified matches the input. Otherwise, it will
+return the correct style for use with  `seqlevelsStyle`.
+Currently, the function does not support patched builds
+(e.g., 'GRCh38.p13') Build names are taken from the website:
+\url{https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.26/}
 }
 \examples{
 
 translateBuild("GRCh35", "UCSC")
+
+
+correctBuild("grch38", "NCBI")
+
+
+isCorrect("GRCh38", "NCBI")
 
 
 extractBuild(
