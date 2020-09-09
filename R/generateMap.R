@@ -61,10 +61,15 @@ generateMap <- function(experiments, colData, idConverter = identity,
         samples <- colData[[sampleCol]]
         autoMap <- cbind.data.frame(assay = NA_character_, primary = pts,
             colname = samples, stringsAsFactors = FALSE)
-        for (i in expnames) {
-            autoMap[samps[[i]] %in% samples, "assay"] <- i
-        }
-        autoMap[, "assay"] <- factor(autoMap[["assay"]])
+        autoMap <- Map(function(cnames, i) {
+            submap <- autoMap[autoMap[["colname"]] %in% cnames, ]
+            submap[["assay"]] <- i
+            submap
+        }, cnames = samps, i = names(samps))
+        autoMap <- do.call(function(...) {
+            rbind(..., make.row.names = FALSE)
+        }, autoMap)
+        autoMap[["assay"]] <- factor(autoMap[["assay"]])
     } else {
         matches <- match(idConverter(colname, ...), rownames(colData))
         if (length(matches) && all(is.na(matches)))

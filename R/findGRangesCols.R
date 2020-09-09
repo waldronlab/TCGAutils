@@ -29,6 +29,28 @@
         list(c(start.field = start.field, end.field = end.field), fixint)
 }
 
+.tallySameLength <- function(fix1, fix2) {
+    if (!length(fix1) && !length(fix2)) {
+        0L
+    } else {
+        hasPos <- sum(vapply(c(fix1, fix2),
+            function(x) grepl("pos", x, ignore.case = TRUE),
+            logical(1L)
+        ))
+        sum(
+            identical(fix1, fix2),
+            identical(length(fix1), length(fix2)),
+            hasPos
+        )
+    }
+}
+
+.strMatch <- function(strings, table) {
+    unlist(lapply(strings, function(x)
+        grep(x, table, ignore.case = TRUE)
+    ))
+}
+
 ## Helper functions
 .find_start_end_cols <- function (df_colnames, start.field, end.field) {
     idx1 <- which(df_colnames %in% start.field)
@@ -36,29 +58,34 @@
     if (length(idx1) == 1L && length(idx2) == 1L) {
         return(list(c(start = idx1, end = idx2), list(c(none = ""))))
     }
+    idx1 <- .strMatch(start.field, df_colnames)
+    idx2 <- .strMatch(end.field, df_colnames)
+    if (length(idx1) == 1L && length(idx2) == 1L) {
+        return(list(c(start = idx1, end = idx2), list(c(none = ""))))
+    }
     prefixes1 <- .collect_prefixes(df_colnames, start.field)
     prefixes2 <- .collect_prefixes(df_colnames, end.field)
     suffixes1 <- .collect_suffixes(df_colnames, start.field)
     suffixes2 <- .collect_suffixes(df_colnames, end.field)
-    if (length(idx1) != 1L && length(prefixes1) ||
-        length(idx2) != 1L && length(prefixes2)) {
-    startend.fields <- .find_with_xfix(df_colnames, prefixes1, prefixes2,
-        start.field, end.field, "pre")
+    tallypre <- .tallySameLength(prefixes1, prefixes2)
+    tallysuff <- .tallySameLength(suffixes1, suffixes2)
+    tally <- sort(c(prefixes = tallypre, suffixes = tallysuff))[2]
+    reslist <- list(
+        c(start = NA_integer_, end = NA_integer_), list(c(none = ""))
+    )
+    if (!tally) return(reslist)
+    fix <- names(tally)
+    startend.fields <- .find_with_xfix(
+        df_colnames, get(paste0(fix, 1)), get(paste0(fix, 2)),
+        start.field, end.field, substr(fix, 1, 3)
+    )
     idx1 <- which(df_colnames %in% startend.fields[[1L]][["start.field"]])
     idx2 <- which(df_colnames %in% startend.fields[[1L]][["end.field"]])
-    }
-    if (length(idx1) != 1L && length(suffixes1) ||
-        length(idx2) != 1L && length(suffixes2)) {
-    startend.fields <- .find_with_xfix(df_colnames, suffixes1, suffixes2,
-        start.field, end.field, "suf")
-    idx1 <- which(df_colnames %in% startend.fields[[1L]][["start.field"]])
-    idx2 <- which(df_colnames %in% startend.fields[[1L]][["end.field"]])
-    }
     if (length(idx1) == 1L && length(idx2) == 1L) {
-        list(c(start = idx1, end = idx2), startend.fields[2L])
-    } else {
-        list(c(start = NA_integer_, end = NA_integer_), list(c(none = "")))
+        reslist[[1L]] <- c(start = idx1, end = idx2)
+        reslist[[2L]][[1L]] <- startend.fields[[2L]]
     }
+    reslist
 }
 
 .collect_prefixes <- function (df_colnames, field) {
