@@ -340,7 +340,8 @@ vectors of file paths. There are options to provide file names when file names
 are too long to download (Windows OS). The `nrows` argument only keeps the
 first 5 rows in each of the files read in due to invalid character exon ranges.
 
-```{r}
+```{r, eval=FALSE}
+## FALSE until gdcdata works
 qu <- manifest(queso)
 qq <- gdcdata(qu$id[1:4])
 
