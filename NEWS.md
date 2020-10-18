@@ -1,3 +1,20 @@
+## Changes in version 1.10.0
+
+### New features
+
+* `correctBuild` attempts to provide the official name of a particular human
+genome build to agree with changes in `GenomeInfoDb`
+* `isCorrect` checks that the build name matches the official name
+
+### Minor changes and bug fixes
+
+* Documentation improvements to `simplifyTCGA`
+* Improvements to `findGRangesCols` to locate ranged columns in a `DataFrame`
+* Fixed a bug in `UUIDtoBarcode` where only the first record was returned
+(#26, @DarioS)
+* Fixed a bug in `filenameToBarcode` when multiple inputs were used (#22,
+@DarioS)
+
 ## Changes in version 1.8.0
 
 ### New features

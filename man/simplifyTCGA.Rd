@@ -23,18 +23,18 @@ qreduceTCGA(obj, keep.assay = FALSE, suffix = "_simplified")
 \item{obj}{A MultiAssayExperiment object obtained from curatedTCGAData}
 
 \item{keep.assay}{logical (default FALSE) Whether to keep the
-SummarizedExperiment assays that have been converted to
-RangedSummarizedExperiment}
+\code{SummarizedExperiment} assays that have been converted to
+\code{RangedSummarizedExperiment}}
 
 \item{unmapped}{logical (default TRUE) Include an assay of data that was
 not able to be mapped in reference database}
 
 \item{suffix}{character (default "_simplified") A character string to append
-to the newly modified assay for `qreduceTCGA`.}
+to the newly modified assay for \code{qreduceTCGA}.}
 }
 \value{
 A \linkS4class{MultiAssayExperiment} with any gene expression, miRNA,
-  copy number, and mutations converted to RangedSummarizedExperiment objects
+copy number, and mutations converted to RangedSummarizedExperiment objects
 }
 \description{
 This group of functions will convert row annotations as
@@ -45,20 +45,25 @@ representation of \linkS4class{RaggedExperiment} objects to
 }
 \details{
 The original SummarizedExperiment containing either gene symbol
-  or miR annotations is replaced or supplemented by a
-  \linkS4class{RangedSummarizedExperiment} for those that could be mapped to
-  \linkS4class{GRanges}, and optionally another
-  \linkS4class{SummarizedExperiment} for annotations that
-  could not be mapped to \linkS4class{GRanges}.
+or miR annotations is replaced or supplemented by a
+\linkS4class{RangedSummarizedExperiment} for those that could be mapped to
+\linkS4class{GRanges}, and optionally another
+\linkS4class{SummarizedExperiment} for annotations that
+could not be mapped to \linkS4class{GRanges}.
 
 RaggedExperiment mutation objects become a genes by patients
 RangedSummarizedExperiment object containing '1' if there is a non-silent
-mutation somewhere in the gene, and '0' otherwise. "CNA" and "CNV" segmented
-copy number are reduced using a weighted mean in the rare cases of
-overlapping (non-disjoint) copy number regions.
+mutation somewhere in the gene, and '0' otherwise as obtained from the
+\code{Variant_Classification} column in the data.
+
+"CNA" and "CNV" segmented copy number are reduced using a weighted mean in
+the rare cases of overlapping (non-disjoint) copy number regions.
 
 These functions rely on 'TxDb.Hsapiens.UCSC.hg19.knownGene' and
-'org.Hs.eg.db' to map to the 'hg19' NCBI build.
+'org.Hs.eg.db' to map to the 'hg19' NCBI build. Users should use the
+\code{liftOver} procedure for datasets that are provided against a different
+reference genome (usually 'hg18'). An example of this procedure is provided
+in the vignette.
 }
 \examples{
 
