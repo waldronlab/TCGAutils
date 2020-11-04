@@ -83,9 +83,12 @@ translateBuild("GRCh35", "UCSC")
 
 
 correctBuild("grch38", "NCBI")
+correctBuild("hg19", "NCBI")
 
 
 isCorrect("GRCh38", "NCBI")
+
+isCorrect("hg19", "UCSC")
 
 
 extractBuild(

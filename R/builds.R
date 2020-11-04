@@ -92,6 +92,7 @@ translateBuild <- function(from, to = c("UCSC", "NCBI")) {
 #' @examples
 #'
 #' correctBuild("grch38", "NCBI")
+#' correctBuild("hg19", "NCBI")
 #'
 #' @export
 correctBuild <- function(build, style = c("UCSC", "NCBI")) {
@@ -100,12 +101,12 @@ correctBuild <- function(build, style = c("UCSC", "NCBI")) {
     digits <- as.character(gsub(".*([[:digit:]]{2})", "\\1", build))
     pref <- gsub("(.*)([[:digit:]]{2})", "\\1", build)
     if (identical(tolower(pref), "hg") && identical(style, "NCBI"))
-        stop("<internal> Incorrect build")
+        return(translateBuild(build, style))
     if (
         tolower(pref) %in% tolower(build.df[["NCBI_PRE"]]) &&
         identical(style, "UCSC")
     )
-        stop("<internal> Incorrect build")
+        return(translateBuild(build, style))
     idx <- match(digits, build.df[[paste0(style, "_NO")]])
     if (is.na(idx))
         return(NA_character_)
@@ -119,6 +120,8 @@ correctBuild <- function(build, style = c("UCSC", "NCBI")) {
 #' @examples
 #'
 #' isCorrect("GRCh38", "NCBI")
+#'
+#' isCorrect("hg19", "UCSC")
 #'
 #' @export
 isCorrect <- function(build, style = c("UCSC", "NCBI")) {

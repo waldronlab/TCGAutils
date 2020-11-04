@@ -36,6 +36,16 @@ test_that("translateBuild works correctly", {
     )
 })
 
+test_that("correctBuild returns an appropriate build name", {
+    build <- correctBuild("grch38", "NCBI")
+    expect_identical("GRCh38", build)
+    build <- correctBuild("hg19", "NCBI")
+    expect_identical(translateBuild("hg19", "NCBI"), build)
+    build <- correctBuild("HG19", "NCBI")
+    expect_identical(translateBuild("hg19", "NCBI"), build)
+    build <- correctBuild("HG19", "UCSC")
+    expect_identical("hg19", build)
+})
 
 test_that("uniformBuilds is returning the appropriate output", {
     build <- rep(c("GRCh37", "hg19"), times = c(5, 1))
