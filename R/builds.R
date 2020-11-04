@@ -26,7 +26,8 @@ human_builds <- function() {
 #'   \item \code{uniformBuilds}: replace build occurrences below a threshold
 #'   level of occurence with the alternative build
 #'   \item \code{correctBuild}: Ensure that the build annotation is correct
-#'   based on the NCBI/UCSC website
+#'   based on the NCBI/UCSC website. If not, use \code{translateBuild} with
+#'   the indicated 'style' input
 #'   \item \code{isCorrect}: Check to see if the build is exactly as annotated
 #' }
 #'
