@@ -21,29 +21,8 @@
 #' @return A \code{SummarizedExperiment} object
 #' @export
 makeSummarizedExperimentFromGISTIC <- function(gistic, dataType, ...) {
+    .Deprecated("RTCGAToolbox::makeSummarizedExperimentFromGISTIC")
     if (!requireNamespace("RTCGAToolbox"))
         stop("Please install 'RTCGAToolbox' to use this function")
-    gist <- RTCGAToolbox::getData(gistic, "GISTIC", dataType)
-    rel.cols <- grepl("^TCGA", colnames(gist))
-    gistData <- as.matrix(gist[, rel.cols])
-    if (dataType == "Peaks") {
-        gist <- RTCGAToolbox::getGISTICPeaks(gistic, ...)
-        rel.cols <- grepl("^TCGA", colnames(gist))
-        gistData <- as.matrix(gist[, rel.cols])
-        rowranges <- gist[["rowRanges"]]
-        rowranges <- as(rowranges, "GRanges")
-        # get the peak type (amplification / deletion)
-        peak.type <- vapply(strsplit(gist[["Unique.Name"]], " "),
-            function(x) x[[1L]], character(1L))
-        # create the SE
-        rowdata <- cbind.data.frame(gist[, !rel.cols], type = peak.type,
-            stringsAsFactors = FALSE)
-        gisticSE <- SummarizedExperiment(gistData,
-            rowRanges = rowranges)
-        rowData(gisticSE) <- rowdata
-    } else if (dataType %in% c("ThresholdedByGene", "AllByGene")) {
-        colnames(gistData) <- .standardBarcodes(colnames(gistData))
-        gisticSE <- SummarizedExperiment(gistData)
-    }
-    gisticSE
+    RTCGAToolbox::makeSummarizedExperimentFromGISTIC(gistic, dataType, ...)
 }
