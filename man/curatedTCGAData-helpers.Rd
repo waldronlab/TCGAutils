@@ -69,7 +69,7 @@ across most cancer codes.
 
 library(curatedTCGAData)
 
-gbm <- curatedTCGAData("GBM", c("RPPA*", "CNA*"), FALSE)
+gbm <- curatedTCGAData("GBM", c("RPPA*", "CNA*"), version = "2.0.0", FALSE)
 
 getSubtypeMap(gbm)
 
