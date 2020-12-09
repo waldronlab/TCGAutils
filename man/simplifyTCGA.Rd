@@ -73,6 +73,7 @@ library(GenomeInfoDb)
 accmae <-
     curatedTCGAData(diseaseCode = "ACC",
     assays = c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
+    version = "1.1.38",
     dry.run = FALSE)
 
 ## update genome annotation
