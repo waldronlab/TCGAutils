@@ -61,9 +61,10 @@ using`curatedTCGAData` via `ExperimentHub`. This command will download any
 data type that starts with `CN*` such as `CNASeq`:
 
 ```{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}
-coad <- curatedTCGAData::curatedTCGAData(diseaseCode = "COAD",
-    assays = c("CNASeq", "Mutation", "miRNA*",
-        "RNASeq2*", "mRNAArray", "Methyl*"), dry.run = FALSE)
+coad <- curatedTCGAData(
+    diseaseCode = "COAD", assays = c("CNASeq", "Mutation", "miRNA*",
+    "RNASeq2*", "mRNAArray", "Methyl*"), version = "2.0.0", dry.run = FALSE
+)
 ```
 
 For a list of all available data types, use `dry.run = FALSE` and an
