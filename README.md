@@ -1,4 +1,4 @@
-# TCGAutils
+# TCGAutils <a href='https://waldronlab.io/'><img src='https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/TCGAutils/TCGAutils.png' align="right" height="139" /></a>
 
 The `TCGAutils` package provides a suite of helper functions that aid in
 the management and cleaning of data from The Cancer Genome Atlas (TCGA).
