@@ -56,22 +56,22 @@ operations on these `MultiAssayExperiment` objects.
 
 ## obtaining TCGA as `MultiAssayExperiment` objects from `curatedTCGAData`
 
-For demonstration we download part of the Colon Adenocarcinoma (COAD) dataset
-using`curatedTCGAData` via `ExperimentHub`. This command will download any
-data type that starts with `CN*` such as `CNASeq`:
+For a list of all available data types, use `dry.run = TRUE` and an
+asterisk `*` as the assay input value:
+
+```{r}
+curatedTCGAData("COAD", "*", dry.run = TRUE, version = "1.1.38")
+```
+
+In this example, we download part of the Colon Adenocarcinoma (COAD) dataset
+using `curatedTCGAData` via `ExperimentHub`. This command will download
+data types such as `CNASeq`, `Mutation`, etc.:
 
 ```{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}
 coad <- curatedTCGAData(
     diseaseCode = "COAD", assays = c("CNASeq", "Mutation", "miRNA*",
-    "RNASeq2*", "mRNAArray", "Methyl*"), version = "2.0.0", dry.run = FALSE
+    "RNASeq2*", "mRNAArray", "Methyl*"), version = "1.1.38", dry.run = FALSE
 )
-```
-
-For a list of all available data types, use `dry.run = FALSE` and an
-asterisk `*` as the assay input value:
-
-```{r}
-curatedTCGAData("COAD", "*")
 ```
 
 ## `sampleTables`: what sample types are present in the data?
@@ -514,7 +514,7 @@ TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE)
 TCGAbarcode(xbarcode, participant = TRUE, sample = TRUE, portion = TRUE)
 ```
 
-## Sample select
+## Sample selection
 
 Based on lookup table values, the user can select certain sample types from a
 vector of sample barcodes. Below we select "Primary Solid Tumors" from a vector
@@ -526,6 +526,15 @@ TCGAsampleSelect(xbarcode, "01")
 
 ## Select blood derived normals
 TCGAsampleSelect(xbarcode, "10")
+```
+
+### Primary tumors
+
+We provide a `TCGAprimaryTumors` helper function to facilitate the selection
+of primary tumor samples only:
+
+```{r}
+TCGAprimaryTumors(coad)
 ```
 
 ## `data.frame` representation of barcode
