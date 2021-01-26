@@ -47,6 +47,10 @@ NULL
 #'
 #' getSubtypeMap(gbm)
 #'
+#' sampleTables(gbm)
+#'
+#' splitAssays(gbm, c("01", "10"))
+#'
 #' @return \itemize{
 #'     \item{getSubtypeMap}: A \code{data.frame} with columns representing
 #'     actual data variables and explanatory names
@@ -175,10 +179,10 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL,
             expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
             lapply(expnames, function(code) {
                 logitype <- TCGAsampleSelect(colnames(exps), code)
-                exps[, logitype]
+                exps[, logitype, drop = FALSE]
             })
     }, exps = exps, sampcodes = validExp,
-    enames = names(validExp), USE.NAMES = FALSE))
+    enames = names(validExp), USE.NAMES = FALSE), recursive = FALSE)
 
     sampmap <- generateMap(egroups, colData(multiassayexperiment),
         idConverter = TCGAbarcode)
