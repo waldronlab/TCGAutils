@@ -171,21 +171,21 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL,
         sampList <- sampList[subCodes]
     }
 
-   validExp <- Filter(length, sampList)
+    validExp <- Filter(length, sampList)
     exps <- experiments(multiassayexperiment)
     exps <- exps[names(exps) %in% names(validExp)]
 
     egroups <- unlist(Map(function(exps, sampcodes, enames) {
-            expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
-            lapply(expnames, function(code) {
-                logitype <- TCGAsampleSelect(colnames(exps), code)
-                exps[, logitype, drop = FALSE]
-            })
-    }, exps = exps, sampcodes = validExp,
-    enames = names(validExp), USE.NAMES = FALSE), recursive = FALSE)
+        expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
+        lapply(expnames, function(code) {
+            logitype <- TCGAsampleSelect(colnames(exps), code)
+            exps[, logitype, drop = FALSE]
+        })
+    }, exps = exps, sampcodes = validExp, enames = names(validExp),
+    USE.NAMES = FALSE), recursive = FALSE)
 
-    sampmap <- generateMap(egroups, colData(multiassayexperiment),
-        idConverter = TCGAbarcode)
+    sampmap <- generateMap(experiments = egroups,
+        colData = colData(multiassayexperiment), idConverter = TCGAbarcode)
 
     BiocGenerics:::replaceSlots(multiassayexperiment,
         ExperimentList = ExperimentList(egroups),
