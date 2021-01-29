@@ -43,7 +43,7 @@ NULL
 #'
 #' library(curatedTCGAData)
 #'
-#' gbm <- curatedTCGAData("GBM", c("RPPA*", "CNA*"), version = "2.0.0", FALSE)
+#' gbm <- curatedTCGAData("GBM", c("RPPA*", "CNA*"), version = "2.0.1", FALSE)
 #'
 #' getSubtypeMap(gbm)
 #'
