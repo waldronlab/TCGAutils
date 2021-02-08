@@ -175,21 +175,26 @@ splitAssays <- function(multiassayexperiment, sampleCodes = NULL,
     exps <- experiments(multiassayexperiment)
     exps <- exps[names(exps) %in% names(validExp)]
 
-    egroups <- unlist(Map(function(exps, sampcodes, enames) {
-        expnames <- setNames(sampcodes, paste0(sampcodes, "_", enames))
+    egroups <- unlist(Map(function(exprmt, sampcodes, ename) {
+        expnames <- setNames(sampcodes, paste0(sampcodes, "_", ename))
         lapply(expnames, function(code) {
-            logitype <- TCGAsampleSelect(colnames(exps), code)
-            exps[, logitype, drop = FALSE]
+            logitype <- TCGAsampleSelect(colnames(exprmt), code)
+            exprmt[, logitype, drop = FALSE]
         })
-    }, exps = exps, sampcodes = validExp, enames = names(validExp),
+    }, exprmt = exps, sampcodes = validExp, ename = names(validExp),
     USE.NAMES = FALSE), recursive = FALSE)
 
-    sampmap <- generateMap(experiments = egroups,
-        colData = colData(multiassayexperiment), idConverter = TCGAbarcode)
+    sampmap <- generateMap(
+        experiments = egroups,
+        colData = colData(multiassayexperiment),
+        idConverter = TCGAbarcode
+    )
 
-    BiocGenerics:::replaceSlots(multiassayexperiment,
+    BiocGenerics:::replaceSlots(
+        object = multiassayexperiment,
         ExperimentList = ExperimentList(egroups),
-        sampleMap = sampmap)
+        sampleMap = sampmap
+    )
 }
 
 #' @rdname curatedTCGAData-helpers
