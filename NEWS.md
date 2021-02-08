@@ -5,6 +5,8 @@
 * `correctBuild` attempts to provide the official name of a particular human
 genome build to agree with changes in `GenomeInfoDb`
 * `isCorrect` checks that the build name matches the official name
+* `splitAssays` now deprecated for `TCGAsplitAssays` to avoid conflict with
+`MultiAssayExperiment::splitAssays`
 
 ### Minor changes and bug fixes
 
