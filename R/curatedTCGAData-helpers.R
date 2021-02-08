@@ -49,7 +49,7 @@ NULL
 #'
 #' sampleTables(gbm)
 #'
-#' TCGAutils::splitAssays(gbm, c("01", "10"))
+#' TCGAsplitAssays(gbm, c("01", "10"))
 #'
 #' @return \itemize{
 #'     \item{getSubtypeMap}: A \code{data.frame} with columns representing
@@ -132,22 +132,35 @@ getClinicalNames <- function(diseaseCode) {
     vect
 }
 
+#' @export
+splitAssays <- function(...) {
+    .Deprecated("TCGAsplitAssays")
+    TCGAsplitAssays(...)
+}
+
 #' @rdname curatedTCGAData-helpers
 #'
+#' @aliases splitAssays
+#'
 #' @param sampleCodes character (default NULL) A string of sample type codes
-#' (refer to \code{data(sampleTypes)}; splitAssays section)
+#' (refer to \code{data(sampleTypes)}; TCGAsplitAssays section)
 #' @param exclusive logical (default FALSE) Whether to return only assays that
 #' contain all codes in `sampleCodes`
 #'
-#' @section splitAssays:
+#' @section TCGAsplitAssays:
 #'     Separates samples by indicated sample codes into different assays
 #'     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
 #'     data object for a list of available codes. This operation generates
 #'     \strong{n} times the number of assays based on the number of sample codes
 #'     entered. By default, all assays will be split by samples present in
 #'     the data.
+#'
+#' @section splitAssays:
+#'     The \code{splitAssays} function is deprecated and has been renamed to
+#'     \code{TCGAsplitAssays}.
+#'
 #' @export
-splitAssays <- function(multiassayexperiment, sampleCodes = NULL,
+TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
     exclusive = FALSE) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")

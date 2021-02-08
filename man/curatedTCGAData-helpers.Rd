@@ -4,6 +4,7 @@
 \alias{curatedTCGAData-helpers}
 \alias{getSubtypeMap}
 \alias{getClinicalNames}
+\alias{TCGAsplitAssays}
 \alias{splitAssays}
 \alias{sampleTables}
 \title{Helper functions for managing MultiAssayExperiment from
@@ -13,7 +14,7 @@ getSubtypeMap(multiassayexperiment)
 
 getClinicalNames(diseaseCode)
 
-splitAssays(multiassayexperiment, sampleCodes = NULL, exclusive = FALSE)
+TCGAsplitAssays(multiassayexperiment, sampleCodes = NULL, exclusive = FALSE)
 
 sampleTables(multiassayexperiment, vial = FALSE)
 }
@@ -23,7 +24,7 @@ sampleTables(multiassayexperiment, vial = FALSE)
 \item{diseaseCode}{A TCGA cancer code (e.g., "BRCA")}
 
 \item{sampleCodes}{character (default NULL) A string of sample type codes
-(refer to \code{data(sampleTypes)}; splitAssays section)}
+(refer to \code{data(sampleTypes)}; TCGAsplitAssays section)}
 
 \item{exclusive}{logical (default FALSE) Whether to return only assays that
 contain all codes in `sampleCodes`}
@@ -50,7 +51,7 @@ object. These variables are obtained from
 \link[RTCGAToolbox]{getFirehoseData} by default and tend to be present
 across most cancer codes.
 }
-\section{splitAssays}{
+\section{TCGAsplitAssays}{
 
     Separates samples by indicated sample codes into different assays
     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
@@ -58,6 +59,12 @@ across most cancer codes.
     \strong{n} times the number of assays based on the number of sample codes
     entered. By default, all assays will be split by samples present in
     the data.
+}
+
+\section{splitAssays}{
+
+    The \code{splitAssays} function is deprecated and has been renamed to
+    \code{TCGAsplitAssays}.
 }
 
 \section{sampleTables}{
@@ -75,7 +82,7 @@ getSubtypeMap(gbm)
 
 sampleTables(gbm)
 
-TCGAutils::splitAssays(gbm, c("01", "10"))
+TCGAsplitAssays(gbm, c("01", "10"))
 
 getClinicalNames("COAD")
 

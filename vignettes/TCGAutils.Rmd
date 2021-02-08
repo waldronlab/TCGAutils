@@ -51,8 +51,8 @@ library(R.utils)
 
 Functions such as `getSubtypeMap` and `getClinicalNames` provide information
 on data inside a `r Biocpkg("MultiAssayExperiment")` object downloaded from
-`r Biocpkg("curatedTCGAData")`. `sampleTables` and `splitAssays` support useful
-operations on these `MultiAssayExperiment` objects.
+`r Biocpkg("curatedTCGAData")`. `sampleTables` and `TCGAsplitAssays` support
+useful operations on these `MultiAssayExperiment` objects.
 
 ## obtaining TCGA as `MultiAssayExperiment` objects from `curatedTCGAData`
 
@@ -91,21 +91,21 @@ data("sampleTypes")
 head(sampleTypes)
 ```
 
-## `splitAssays`: separate the data from different tissue types
+## `TCGAsplitAssays`: separate the data from different tissue types
 
 TCGA datasets include multiple -omics for solid tumors, adjacent normal
 tissues, blood-derived cancers and normals, and other tissue types, which may
 be mixed together in a single dataset. The `MultiAssayExperiment` object
 generated here has one patient per row of its `colData`, but each patient may
 have two or more -omics profiles by any assay, whether due to assaying of
-different types of tissues or to technical replication. `splitAssays` separates
-profiles from different tissue types (such as tumor and adjacent normal) into
-different assays of the `MultiAssayExperiment` by taking a vector of sample
-codes, and partitioning the current assays into assays with an appended sample
-code:
+different types of tissues or to technical replication. `TCGAsplitAssays`
+separates profiles from different tissue types (such as tumor and adjacent
+normal) into different assays of the `MultiAssayExperiment` by taking a vector
+of sample codes, and partitioning the current assays into assays with an
+appended sample code:
 
 ```{r}
-(tnmae <- TCGAutils::splitAssays(coad, c("01", "11")))
+(tnmae <- TCGAsplitAssays(coad, c("01", "11")))
 ```
 
 The `r Biocpkg("MultiAssayExperiment")` package then provides functionality to
