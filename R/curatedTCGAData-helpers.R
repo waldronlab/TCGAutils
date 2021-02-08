@@ -49,7 +49,7 @@ NULL
 #'
 #' sampleTables(gbm)
 #'
-#' splitAssays(gbm, c("01", "10"))
+#' TCGAutils::splitAssays(gbm, c("01", "10"))
 #'
 #' @return \itemize{
 #'     \item{getSubtypeMap}: A \code{data.frame} with columns representing

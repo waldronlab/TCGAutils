@@ -105,7 +105,7 @@ codes, and partitioning the current assays into assays with an appended sample
 code:
 
 ```{r}
-(tnmae <- splitAssays(coad, c("01", "11")))
+(tnmae <- TCGAutils::splitAssays(coad, c("01", "11")))
 ```
 
 The `r Biocpkg("MultiAssayExperiment")` package then provides functionality to
