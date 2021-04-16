@@ -46,6 +46,7 @@ Suggests:
     org.Hs.eg.db,
     RColorBrewer,
     readr,
+    rmarkdown,
     RTCGAToolbox (>= 2.17.4),
     rtracklayer,
     R.utils,
