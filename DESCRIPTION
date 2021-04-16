@@ -12,7 +12,7 @@ Authors@R: c(
     person("Levi", "Waldron", role = "aut")
     )
 Depends:
-    R (>= 3.6.0)
+    R (>= 4.0.0)
 Imports:
     AnnotationDbi,
     BiocGenerics,
@@ -46,6 +46,7 @@ Suggests:
     org.Hs.eg.db,
     RColorBrewer,
     readr,
+    rmarkdown,
     RTCGAToolbox (>= 2.17.4),
     rtracklayer,
     R.utils,
@@ -54,7 +55,6 @@ Suggests:
     TxDb.Hsapiens.UCSC.hg19.knownGene
 License: Artistic-2.0
 Encoding: UTF-8
-LazyData: true
 BugReports: https://github.com/waldronlab/TCGAutils/issues
 biocViews: Software, WorkflowStep, Preprocessing
 VignetteBuilder: knitr
