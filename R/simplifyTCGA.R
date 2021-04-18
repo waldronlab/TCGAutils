@@ -99,7 +99,7 @@ NULL
 .checkPkgsAvail <- function(pkgnames) {
     vapply(pkgnames, function(pkgname) {
     if (!requireNamespace(pkgname, quietly = TRUE)) {
-        func <- as.character(sys.call(1L)[[1L]])
+        func <- as.character(sys.call(-3L)[[1L]])
         func <- func[!(func %in% c("::", "TCGAutils"))]
         stop("Install the '", pkgname, "' package to use '", func, "'",
             call. = FALSE)
@@ -247,7 +247,7 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
         .checkHas(y, "^cg") & .isSummarizedExperiment(y)
     }, logical(1L))
 
-    .checkPkgsAvail(c("IlluminaHumanMethylation450kanno.ilmn12.hg19"))
+    .checkPkgsAvail("IlluminaHumanMethylation450kanno.ilmn12.hg19")
 
     .convertTo(
         x = obj,
