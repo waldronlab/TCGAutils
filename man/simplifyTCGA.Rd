@@ -64,6 +64,11 @@ These functions rely on 'TxDb.Hsapiens.UCSC.hg19.knownGene' and
 \code{liftOver} procedure for datasets that are provided against a different
 reference genome (usually 'hg18'). An example of this procedure is provided
 in the vignette.
+
+\code{qreduceTCGA} will update \code{genome(x)} based on the NCBI reference annotation
+which includes the patch number, e.g., GRCh37.p14, as provided by the
+\code{seqlevelsStyle} setter, \code{seqlevelsStyle(gn) <- "NCBI"}. \code{qreduceTCGA}
+uses the NCBI genome annotation as the default reference.
 }
 \examples{
 

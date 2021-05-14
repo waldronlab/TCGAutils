@@ -155,6 +155,11 @@ NULL
 #' reference genome (usually 'hg18'). An example of this procedure is provided
 #' in the vignette.
 #'
+#' `qreduceTCGA` will update `genome(x)` based on the NCBI reference annotation
+#' which includes the patch number, e.g., GRCh37.p14, as provided by the
+#' `seqlevelsStyle` setter, `seqlevelsStyle(gn) <- "NCBI"`. `qreduceTCGA`
+#' uses the NCBI genome annotation as the default reference.
+#'
 #' @param obj A MultiAssayExperiment object obtained from curatedTCGAData
 #'
 #' @param keep.assay logical (default FALSE) Whether to keep the
@@ -288,13 +293,19 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     for (i in which(isMut(obj))) {
         sqls <- seqlevelsStyle(obj[[i]])
         seqlevelsStyle(gn) <- sqls
+        ## remove patch release info
+        gname <- genome(gn)
+        genome(gn) <- gsub("\\.p[0-9]{1,2}$", "", genome(gn))
         mutations <- RaggedExperiment::qreduceAssay(obj[[i]], gn, nonsilent,
             "Variant_Classification")
         rownames(mutations) <- names(gn)
         mutations[is.na(mutations)] <- 0
         remove.rows <- is.na(rownames(mutations))
+        mut_ranges <- gn[!remove.rows]
+        ## replace patch release info
+        genome(mut_ranges) <- gname
         mutations <- SummarizedExperiment(mutations[!remove.rows,],
-            rowRanges = gn[!remove.rows])
+            rowRanges = mut_ranges)
         el <- ExperimentList(x = mutations)
         names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)
