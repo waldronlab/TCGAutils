@@ -85,7 +85,7 @@ oncoPrintTCGA <-
     if (length(genomeannot) > 1)
         stop("'genome' annotation is not consistent")
 
-    if (!grepl("^[HhGg]", genomeannot)) {
+    if (!grepl("^[Hh][Gg]", genomeannot)) {
         cbuild <- correctBuild(genomeannot, "NCBI")
         ragex <- GenomeInfoDb::`genome<-`(ragex, cbuild)
         ragex <- GenomeInfoDb::`seqlevelsStyle<-`(ragex, "UCSC")
