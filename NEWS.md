@@ -1,3 +1,17 @@
+## Changes in version 1.12.0
+
+### New features
+
+* `makeSummarizedExperimentFromGISTIC` has been moved to `RTCGAToolbox`.
+* `splitAssays` now deprecated for `TCGAsplitAssays` to avoid conflict with
+`MultiAssayExperiment::splitAssays`
+
+### Minor changes and bug fixes
+
+* Properly identifies genome annotation (`hg*`) in `oncoPrintTCGA`
+* `qreduceTCGA` now works with updates to `seqlevelsStyle` where genome
+annotation include patch versions when available
+
 ## Changes in version 1.10.0
 
 ### New features
@@ -5,8 +19,6 @@
 * `correctBuild` attempts to provide the official name of a particular human
 genome build to agree with changes in `GenomeInfoDb`
 * `isCorrect` checks that the build name matches the official name
-* `splitAssays` now deprecated for `TCGAsplitAssays` to avoid conflict with
-`MultiAssayExperiment::splitAssays`
 
 ### Minor changes and bug fixes
 

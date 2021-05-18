@@ -12,7 +12,7 @@ Authors@R: c(
     person("Levi", "Waldron", role = "aut")
     )
 Depends:
-    R (>= 3.6.0)
+    R (>= 4.0.0)
 Imports:
     AnnotationDbi,
     BiocGenerics,
