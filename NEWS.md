@@ -1,3 +1,10 @@
+## Changes in version 1.14.0
+
+### Minor changes and bug fixes
+
+* `UUIDtoBarcode` with the `from_type = "file_id"` argument now returns the IDs
+in the proper order when more than one `UUID` is input.
+
 ## Changes in version 1.12.0
 
 ### New features
