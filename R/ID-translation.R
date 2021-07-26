@@ -76,6 +76,13 @@
     resframe
 }
 
+.nestedlisttodf <- function(x) {
+    data.frame(
+        rep(names(x), vapply(x, nrow, integer(1))),
+        unlist(x, use.names = FALSE)
+    )
+}
+
 #' @name ID-translation
 #'
 #' @title Translate study identifiers from barcode to UUID and vice versa
@@ -156,9 +163,7 @@ UUIDtoBarcode <-  function(id_vector,
         data.frame(info[[from_type]], info[[targetElement]],
             stringsAsFactors = FALSE)
     else if (identical(from_type, "file_id"))
-        data.frame(names(info[[targetElement]]),
-            unlist(info[[targetElement]], use.names = FALSE),
-            stringsAsFactors = FALSE)
+        .nestedlisttodf(info[[targetElement]])
     else
         return(.cleanExpand(info, id_vector))
 
