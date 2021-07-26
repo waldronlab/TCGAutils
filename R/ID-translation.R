@@ -139,10 +139,19 @@ UUIDtoBarcode <-  function(id_vector,
         APIendpoint <- "samples.portions.analytes.aliquots.submitter_id"
         targetElement <- "samples"
     }
-    selector <- switch(from_type, case_id = identity, aliquot_ids =
-        function(x) select(x = x, fields =
-            c(APIendpoint, "samples.portions.analytes.aliquots.aliquot_id")),
-        function(x) select(x = x, fields = APIendpoint))
+    selector <- switch(from_type,
+        case_id = identity,
+        aliquot_ids =
+            function(x)
+                select(
+                    x = x,
+                    fields = c(
+                        APIendpoint,
+                        "samples.portions.analytes.aliquots.aliquot_id"
+                    )
+                ),
+        function(x) select(x = x, fields = APIendpoint)
+    )
 
     funcRes <- switch(from_type,
         file_id = files(legacy = legacy),
@@ -159,13 +168,15 @@ UUIDtoBarcode <-  function(id_vector,
         stop("No barcodes found, only case and file UUIDs are supported.")
 
     rframe <-
-    if (identical(from_type, "case_id"))
-        data.frame(info[[from_type]], info[[targetElement]],
-            stringsAsFactors = FALSE)
-    else if (identical(from_type, "file_id"))
-        .nestedlisttodf(info[[targetElement]])
-    else
-        return(.cleanExpand(info, id_vector))
+        if (identical(from_type, "case_id"))
+            data.frame(
+                info[[from_type]], info[[targetElement]],
+                stringsAsFactors = FALSE
+            )
+        else if (identical(from_type, "file_id"))
+            .nestedlisttodf(info[[targetElement]])
+        else
+            return(.cleanExpand(info, id_vector))
 
     names(rframe) <- c(from_type, APIendpoint)
     rframe[[from_type]] <- factor(rframe[[from_type]], levels = id_vector)
