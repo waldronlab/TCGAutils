@@ -240,11 +240,11 @@ lifturl <-
 bfc <- BiocFileCache()
 qfile <- bfcquery(bfc, "18to19chain", exact = TRUE)[["rpath"]]
 cfile <-
-if (length(qfile) && file.exists(qfile)) {
-    bfcquery(bfc, "18to19chain", exact = TRUE)[["rpath"]]
-} else {
-    bfcadd(bfc, "18to19chain", lifturl)
-}
+    if (length(qfile) && file.exists(qfile)) {
+        bfcquery(bfc, "18to19chain", exact = TRUE)[["rpath"]]
+    } else {
+        bfcadd(bfc, "18to19chain", lifturl)
+    }
 
 chainfile <- file.path(tempdir(), gsub("\\.gz", "", basename(cfile)))
 R.utils::gunzip(cfile, destname = chainfile, remove = FALSE)

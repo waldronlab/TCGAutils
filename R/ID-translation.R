@@ -179,8 +179,20 @@ UUIDtoBarcode <-  function(id_vector,
             return(.cleanExpand(info, id_vector))
 
     names(rframe) <- c(from_type, APIendpoint)
+    idin <- id_vector %in% rframe[[from_type]]
+    if (!all(idin))
+        warning("Identifiers not found: ",
+            paste(
+                S4Vectors:::selectSome(id_vector[!idin], 4), collapse = ", "
+            ),
+            call. = FALSE
+        )
+
     rframe[[from_type]] <- factor(rframe[[from_type]], levels = id_vector)
-    rframe[order(rframe[[from_type]]), , drop = FALSE]
+    rframe <- rframe[order(rframe[[from_type]]), , drop = FALSE]
+    # set rownames to NULL after ordering
+    rownames(rframe) <- NULL
+    rframe
 }
 
 #' @rdname ID-translation

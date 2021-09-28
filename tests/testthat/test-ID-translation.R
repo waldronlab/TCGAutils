@@ -123,4 +123,11 @@ test_that("UUIDtoBarcode shows multiple entries per file_id", {
 
     expect_identical(results, UUIDtoBarcode(file_ids, "file_id"))
 
+    file_ids <- c(
+        "01ef8a08-1de5-4ceb-be51-979418465f1a",
+        "82279af5-7b83-46ec-814d-877e97c884a2",
+        "edce3d0c-efad-4b00-9a53-f26d714b755d"
+    )
+
+    expect_warning(UUIDtoBarcode(file_ids, "file_id"))
 })
