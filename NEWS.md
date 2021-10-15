@@ -4,6 +4,8 @@
 
 * `UUIDtoBarcode` with the `from_type = "file_id"` argument now returns the IDs
 in the proper order when more than one `UUID` is input.
+* Update `makeGRangesListFromCopyNumber` examples with new names from API e.g.,
+'associated_entities.entity_submitter_id'
 
 ## Changes in version 1.12.0
 
