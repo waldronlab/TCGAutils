@@ -26,7 +26,7 @@
 #'
 #' @export
 imputeAssay <- function(multiassayexperiment, i = 1, ...) {
-    if (!requireNamespace("impute"))
+    if (!requireNamespace("impute", quietly = TRUE))
         stop("Install the 'impute' package to run 'imputeAssay'")
 
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
