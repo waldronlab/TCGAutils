@@ -23,7 +23,7 @@ install("TCGAutils")
 
 ## Cheatsheet
 
-<a href="https://github.com/waldronlab/cheatsheets/blob/devel/TCGAutils_cheatsheet.pdf"><img src="https://raw.githubusercontent.com/waldronlab/cheatsheets/devel/pngs/TCGAutils_cheatsheet.png" width="989" height="1091"/></a>
+<a href="https://github.com/waldronlab/cheatsheets/blob/main/TCGAutils_cheatsheet.pdf"><img src="https://raw.githubusercontent.com/waldronlab/cheatsheets/main/pngs/TCGAutils_cheatsheet.png" width="989" height="1091"/></a>
 
 Please report minimally reproducible bugs at our [github issue page][]
 
