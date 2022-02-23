@@ -316,8 +316,16 @@ barcodeToUUID <-
 
 #' @rdname ID-translation
 #'
-#' @param filenames A \code{character} vector of filenames usually obtained
-#' from the GenomicDataCommons
+#' @param filenames A \code{character} vector of file names usually obtained
+#' from the `GenomicDataCommons`
+#'
+#' @param slides logical(1L) Whether the provided file names correspond to
+#'   slides with an `.svs` extension. **Note** The barcodes provided are
+#'   associated with the case and not the file itself. Always triple check the
+#'   output against the Genomic Data Commons Data Portal by searching the
+#'   results.
+#'
+#' @md
 #'
 #' @examples
 #' library(GenomicDataCommons)
@@ -331,21 +339,38 @@ barcodeToUUID <-
 #'
 #' filenameToBarcode(fnames)
 #'
+#' filenameToBarcode(
+#'     filenames =
+#'         "TCGA-A8-A06X-01A-02-MS2.0554a423-cfcb-4daa-9c57-dd3960aa2614.svs",
+#'     slides = TRUE
+#' )
+#'
 #' @export filenameToBarcode
-filenameToBarcode <- function(filenames, legacy = FALSE) {
+filenameToBarcode <- function(filenames, legacy = FALSE, slides = FALSE) {
     filesres <- files(legacy = legacy)
+    if (slides)
+        endpoint <- "cases.samples.portions.slides.submitter_id"
+    else
+        endpoint <- "cases.samples.portions.analytes.aliquots.submitter_id"
     info <- results_all(
-        select(filter(filesres, ~ file_name %in% filenames),
-            c("file_name",
-            "cases.samples.portions.analytes.aliquots.submitter_id"))
+        GenomicDataCommons::select(
+            GenomicDataCommons::filter(filesres, ~ file_name %in% filenames),
+            c(
+                "file_name", endpoint
+            )
+        )
     )
 
     reps <- lengths(lapply(info[["cases"]], unlist))
-    res <- data.frame(file_name = rep(info[["file_name"]], reps),
+    res <- data.frame(
+        file_name = rep(info[["file_name"]], reps),
         file_id = rep(info[["file_id"]], reps),
-        aliquots.submitter_id = unname(unlist(info[["cases"]])),
+        placeholder = unname(unlist(info[["cases"]])),
         row.names = NULL,
-        stringsAsFactors = FALSE)
+        stringsAsFactors = FALSE
+    )
+    names(res)[3] <- endpoint
+    res <- res[!duplicated(res), ]
     idx <- .matchSort(res[["file_name"]], filenames)
     res[idx, ]
 }
