@@ -18,7 +18,7 @@ UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"), legacy = FALSE)
 
 barcodeToUUID(barcodes, legacy = FALSE)
 
-filenameToBarcode(filenames, legacy = FALSE)
+filenameToBarcode(filenames, legacy = FALSE, slides = FALSE)
 }
 \arguments{
 \item{id_vector}{A \code{character} vector of UUIDs corresponding to
@@ -34,8 +34,14 @@ either files or cases (default assumes case_ids)}
 
 \item{barcodes}{A \code{character} vector of TCGA barcodes}
 
-\item{filenames}{A \code{character} vector of filenames usually obtained
-from the GenomicDataCommons}
+\item{filenames}{A \code{character} vector of file names usually obtained
+from the \code{GenomicDataCommons}}
+
+\item{slides}{logical(1L) Whether the provided file names correspond to
+slides with an \code{.svs} extension. \strong{Note} The barcodes provided are
+associated with the case and not the file itself. Always triple check the
+output against the Genomic Data Commons Data Portal by searching the
+results.}
 }
 \value{
 A \code{data.frame} of TCGA barcode identifiers and UUIDs
@@ -104,6 +110,12 @@ fquery <- files() \%>\%
 fnames <- results(fquery)$file_name[1:6]
 
 filenameToBarcode(fnames)
+
+filenameToBarcode(
+    filenames =
+        "TCGA-A8-A06X-01A-02-MS2.0554a423-cfcb-4daa-9c57-dd3960aa2614.svs",
+    slides = TRUE
+)
 
 }
 \author{
