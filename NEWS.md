@@ -1,3 +1,11 @@
+## Changes in version 1.16.0
+
+### New features
+
+* The `slides` argument has been added to filenameToBarcode function for
+translating slide file names into barcodes. Currently, the API returns all
+barcodes of the associated case ID.
+
 ## Changes in version 1.14.0
 
 ### Minor changes and bug fixes
