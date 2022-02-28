@@ -2,9 +2,13 @@
 
 ### New features
 
-* The `slides` argument has been added to filenameToBarcode function for
+* The `slides` argument has been added to the `filenameToBarcode` function for
 translating slide file names into barcodes. Currently, the API returns all
 barcodes of the associated case ID.
+
+### Minor changes and bug fixes
+
+* Improved error messages and documentation for `makeGRangesListFromExonFiles`
 
 ## Changes in version 1.14.0
 
