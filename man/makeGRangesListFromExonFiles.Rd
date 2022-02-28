@@ -2,30 +2,36 @@
 % Please edit documentation in R/makeGRangesListFromExonFiles.R
 \name{makeGRangesListFromExonFiles}
 \alias{makeGRangesListFromExonFiles}
-\title{Read Exon level files and create a GRangesList}
+\title{Read exon-level expression files and create a \code{GRangesList}}
 \usage{
 makeGRangesListFromExonFiles(
   filepaths,
   sampleNames = NULL,
-  fileNames = NULL,
+  fileNames = basename(filepaths),
+  getBarcodes = TRUE,
   rangesColumn = "exon",
   nrows = Inf
 )
 }
 \arguments{
-\item{filepaths}{A \code{character} vector of valid exon data file paths}
+\item{filepaths}{character() vector of file paths containing TCGA exon
+data usually obtained from the GDC}
 
-\item{sampleNames}{A \code{character} vector of TCGA barcodes to be applied
-if not present in the data (default NULL)}
+\item{sampleNames}{character() vector of TCGA barcodes to be used as
+names for the \code{GRangesList} output (default NULL)}
 
-\item{fileNames}{A \code{character} vector of file names as downloaded from
-the Genomic Data Commons Legacy archive (default NULL)}
+\item{fileNames}{character() vector of file names as downloaded from
+the Genomic Data Commons Legacy archive (default \code{basename(filepaths)})}
 
-\item{rangesColumn}{(default "exon") A single string indicating the name of
-the column in the data containing the ranges information}
+\item{getBarcodes}{logical(1). Whether to query the GDC API with the
+\code{filenameToBarcode} and obtain the TCGA barcodes from the file names
+(default TRUE); see details.}
 
-\item{nrows}{The number of rows to return from each of the files read in
-(all rows by default)}
+\item{rangesColumn}{character(1). The name of the column in the data
+containing the ranges information (default "exon"); see details.}
+
+\item{nrows}{numeric(1). The number of rows to return from each of the files
+read in (all rows by default; default Inf)}
 }
 \value{
 A \linkS4class{GRangesList} object
@@ -33,12 +39,17 @@ A \linkS4class{GRangesList} object
 \description{
 This function serves to read exon-level expression data. It works for exon
 quantification (raw counts and RPKM) and junction quantification
-(raw counts) files paths and represent such data as a
-\linkS4class{GRangesList}. The data can be downloaded
-via the TCGA Legacy Archive. File name and structure requirements are as
-follows: The third position delimited by dots (".") in the file name should
-be the universally unique identifier (UUID). The column containing the
-ranged information is labeled "exon."
+(raw counts) file paths and represents such data as a
+\linkS4class{GRangesList}. The data files can be downloaded
+via the Genomic Data Commons (GDC) Legacy Archive.
+}
+\details{
+The \code{rangesColumn} name in the GDC data files is usually "exon"
+but can be changed with the \code{rangesColumn} argument, if different.
+To avoid programmatically obtaining TCGA barcodes from the GDC
+API, set the \code{getBarcodes} to \code{FALSE}. When \code{getBarcodes} is set to
+\code{FALSE}, the file names are used to name the elements of the \code{GRangesList}
+output.
 }
 \examples{
 
