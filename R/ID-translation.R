@@ -361,6 +361,9 @@ filenameToBarcode <- function(filenames, legacy = FALSE, slides = FALSE) {
         )
     )
 
+    if (!length(info))
+        stop("Query did not return any results. Check 'filenames' input.")
+
     reps <- lengths(lapply(info[["cases"]], unlist))
     res <- data.frame(
         file_name = rep(info[["file_name"]], reps),
