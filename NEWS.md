@@ -8,6 +8,8 @@ barcodes of the associated case ID.
 
 ### Minor changes and bug fixes
 
+* Slide file names now resolve to a single TCGA barcode in `filenameToBarcode`
+(Thanks @hermidalc)
 * Improved error messages and documentation for `makeGRangesListFromExonFiles`
 
 ## Changes in version 1.14.0
