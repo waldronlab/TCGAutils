@@ -334,21 +334,19 @@ barcodeToUUID <-
 #' ### Query CNV data and get file names
 #'
 #' cnv <- files() |>
-#'     GenomicDataCommons::filter(
+#'     filter(
 #'         ~ cases.project.project_id == "TCGA-COAD" &
 #'         data_category == "Copy Number Variation" &
 #'         data_type == "Copy Number Segment"
 #'     ) |>
 #'     results(size = 6)
 #'
-#' cnv_files <- results(cnv$file_name, size = 6)$file_name
-#'
-#' filenameToBarcode(cnv_files)
+#' filenameToBarcode(cnv$file_name)
 #'
 #' ### Query slides data and get file names
 #'
 #' slides <- files() |>
-#'     GenomicDataCommons::filter(
+#'     filter(
 #'         ~ cases.project.project_id == "TCGA-BRCA" &
 #'         cases.samples.sample_type == "Primary Tumor" &
 #'         data_type == "Slide Image" &
