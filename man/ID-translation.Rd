@@ -38,10 +38,11 @@ either files or cases (default assumes case_ids)}
 from the \code{GenomicDataCommons}}
 
 \item{slides}{logical(1L) Whether the provided file names correspond to
-slides with an \code{.svs} extension. \strong{Note} The barcodes provided are
-associated with the case and not the file itself. Always triple check the
+slides typically with an \code{.svs} extension. \strong{Note} The barcodes returned
+correspond 1:1 with the \code{filename} inputs. Always triple check the
 output against the Genomic Data Commons Data Portal by searching the
-results.}
+file name and comparing associated "Entity ID" with the \code{submitter_id}
+given by the function.}
 }
 \value{
 A \code{data.frame} of TCGA barcode identifiers and UUIDs
@@ -102,20 +103,32 @@ barcodeToUUID(participant_ids)
 
 library(GenomicDataCommons)
 
-fquery <- files() \%>\%
-    filter(~ cases.project.project_id == "TCGA-COAD" &
+### Query CNV data and get file names
+
+cnv <- files() |>
+    GenomicDataCommons::filter(
+        ~ cases.project.project_id == "TCGA-COAD" &
         data_category == "Copy Number Variation" &
-        data_type == "Copy Number Segment")
+        data_type == "Copy Number Segment"
+    ) |>
+    results(size = 6)
 
-fnames <- results(fquery)$file_name[1:6]
+cnv_files <- results(cnv$file_name, size = 6)$file_name
 
-filenameToBarcode(fnames)
+filenameToBarcode(cnv_files)
 
-filenameToBarcode(
-    filenames =
-        "TCGA-A8-A06X-01A-02-MS2.0554a423-cfcb-4daa-9c57-dd3960aa2614.svs",
-    slides = TRUE
-)
+### Query slides data and get file names
+
+slides <- files() |>
+    GenomicDataCommons::filter(
+        ~ cases.project.project_id == "TCGA-BRCA" &
+        cases.samples.sample_type == "Primary Tumor" &
+        data_type == "Slide Image" &
+        experimental_strategy == "Diagnostic Slide"
+    ) |>
+    results(size = 3)
+
+filenameToBarcode(slides$file_name, slides = TRUE)
 
 }
 \author{

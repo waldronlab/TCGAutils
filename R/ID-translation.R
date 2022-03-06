@@ -320,60 +320,73 @@ barcodeToUUID <-
 #' from the `GenomicDataCommons`
 #'
 #' @param slides logical(1L) Whether the provided file names correspond to
-#'   slides with an `.svs` extension. **Note** The barcodes provided are
-#'   associated with the case and not the file itself. Always triple check the
+#'   slides typically with an `.svs` extension. **Note** The barcodes returned
+#'   correspond 1:1 with the `filename` inputs. Always triple check the
 #'   output against the Genomic Data Commons Data Portal by searching the
-#'   results.
+#'   file name and comparing associated "Entity ID" with the `submitter_id`
+#'   given by the function.
 #'
 #' @md
 #'
 #' @examples
 #' library(GenomicDataCommons)
 #'
-#' fquery <- files() %>%
-#'     filter(~ cases.project.project_id == "TCGA-COAD" &
+#' ### Query CNV data and get file names
+#'
+#' cnv <- files() |>
+#'     GenomicDataCommons::filter(
+#'         ~ cases.project.project_id == "TCGA-COAD" &
 #'         data_category == "Copy Number Variation" &
-#'         data_type == "Copy Number Segment")
+#'         data_type == "Copy Number Segment"
+#'     ) |>
+#'     results(size = 6)
 #'
-#' fnames <- results(fquery)$file_name[1:6]
+#' cnv_files <- results(cnv$file_name, size = 6)$file_name
 #'
-#' filenameToBarcode(fnames)
+#' filenameToBarcode(cnv_files)
 #'
-#' filenameToBarcode(
-#'     filenames =
-#'         "TCGA-A8-A06X-01A-02-MS2.0554a423-cfcb-4daa-9c57-dd3960aa2614.svs",
-#'     slides = TRUE
-#' )
+#' ### Query slides data and get file names
+#'
+#' slides <- files() |>
+#'     GenomicDataCommons::filter(
+#'         ~ cases.project.project_id == "TCGA-BRCA" &
+#'         cases.samples.sample_type == "Primary Tumor" &
+#'         data_type == "Slide Image" &
+#'         experimental_strategy == "Diagnostic Slide"
+#'     ) |>
+#'     results(size = 3)
+#'
+#' filenameToBarcode(slides$file_name, slides = TRUE)
 #'
 #' @export filenameToBarcode
 filenameToBarcode <- function(filenames, legacy = FALSE, slides = FALSE) {
     filesres <- files(legacy = legacy)
-    if (slides)
-        endpoint <- "cases.samples.portions.slides.submitter_id"
-    else
-        endpoint <- "cases.samples.portions.analytes.aliquots.submitter_id"
-    info <- results_all(
-        GenomicDataCommons::select(
-            GenomicDataCommons::filter(filesres, ~ file_name %in% filenames),
-            c(
-                "file_name", endpoint
-            )
+    endpoint <- "cases.samples.portions.analytes.aliquots.submitter_id"
+    reselem <- "cases"
+    if (slides) {
+        endpoint <- c(
+            "cases.samples.portions.slides.submitter_id",
+            "associated_entities.entity_submitter_id"
         )
-    )
+        reselem <- "associated_entities"
+    }
+
+    info <- GenomicDataCommons::filter(filesres, ~ file_name %in% filenames) |>
+        GenomicDataCommons::select(c("file_name", endpoint))  |>
+        results_all()
 
     if (!length(info))
         stop("Query did not return any results. Check 'filenames' input.")
 
-    reps <- lengths(lapply(info[["cases"]], unlist))
+    reps <- lengths(lapply(info[[reselem]], unlist))
     res <- data.frame(
         file_name = rep(info[["file_name"]], reps),
         file_id = rep(info[["file_id"]], reps),
-        placeholder = unname(unlist(info[["cases"]])),
+        placeholder = unname(unlist(info[[reselem]])),
         row.names = NULL,
         stringsAsFactors = FALSE
     )
-    names(res)[3] <- endpoint
-    res <- res[!duplicated(res), ]
+    names(res)[3] <- head(endpoint, 1L)
     idx <- .matchSort(res[["file_name"]], filenames)
     res[idx, ]
 }
