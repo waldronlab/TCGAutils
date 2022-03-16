@@ -339,7 +339,7 @@ queso <- files(legacy = TRUE) %>%
         data_category == "Gene expression" &
         data_type == "Exon quantification")
 
-gdc_set_cache(directory = tempdir())
+gdc_set_cache()
 ```
 
 We then use `makeGRangesListFromExonFiles` to create a `GRangesList` from
@@ -347,10 +347,9 @@ vectors of file paths. There are options to provide file names when file names
 are too long to download (Windows OS). The `nrows` argument only keeps the
 first 5 rows in each of the files read in due to invalid character exon ranges.
 
-```{r,eval=FALSE}
-## FALSE until gdcdata works
+```{r}
 qu <- manifest(queso)
-qq <- gdcdata(qu$id[1:4])
+qq <- gdcdata(qu$id[1:4], legacy = TRUE)
 
 makeGRangesListFromExonFiles(qq, nrows = 4)
 ```
