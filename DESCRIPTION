@@ -6,7 +6,7 @@ Description: A suite of helper functions for checking and manipulating TCGA data
     functions aim to simplify and make working with TCGA data more manageable.
 Authors@R: c(
     person("Marcel", "Ramos", email = "marcel.ramos@roswellpark.org",
-        role = c("aut", "cre")),
+        role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3242-0582")),
     person("Lucas", "Schiffer", role = "aut"),
     person("Sean", "Davis", role = "ctb"),
     person("Levi", "Waldron", role = "aut")
