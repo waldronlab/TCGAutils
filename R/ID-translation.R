@@ -115,9 +115,9 @@
 #' @examples
 #' ## Translate UUIDs >> TCGA Barcode
 #'
-#' uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
-#' "002c67f2-ff52-4246-9d65-a3f69df6789e",
-#' "003143c8-bbbf-46b9-a96f-f58530f4bb82")
+#' uuids <- c("b4bce3ff-7fdc-4849-880b-56f2b348ceac",
+#' "5ca9fa79-53bc-4e91-82cd-5715038ee23e",
+#' "b7c3e5ad-4ffc-4fc4-acbf-1dfcbd2e5382")
 #'
 #' UUIDtoBarcode(uuids, from_type = "file_id")
 #'
