@@ -398,6 +398,16 @@ mergeColData(coad, race_df)
 
 # Translating and interpreting TCGA identifiers
 
+## GDC Data Updates
+
+The recent Data Release
+([version 32.0](https://docs.gdc.cancer.gov/Data/Release_Notes/Data_Release_Notes/#data-release-320))
+has changed the behavior of the ID translation functions. This is due to the
+removal of files whose UUIDs were translated. These files have been replaced
+with newer runs of the pipeline. The new UUIDs can be mapped to the old UUIDs
+with project specific maps located on GitHub at
+https://github.com/NCI-GDC/gdc-docs/tree/develop/docs/Data/Release_Notes/GCv36_Manifests
+
 ## Translation
 
 The TCGA project has generated massive amounts of data. Some data can be
