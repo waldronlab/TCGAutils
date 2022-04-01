@@ -113,9 +113,9 @@ test_that("UUIDtoBarcode translates correctly", {
 test_that("UUIDtoBarcode shows multiple entries per file_id", {
 
     file_ids <- c(
-        "01ef8a08-1de5-4ceb-be51-979418465f1a",
-        "81179af5-7b83-46ec-814d-877e97c884a2",
-        "edce3d0c-efad-4b00-9a53-f26d714b755d"
+        "f9f06937-ac64-4660-baf3-0174736d25b2",
+        "5dec335c-83c3-4a4a-80f5-9ec1d1847960",
+        "514bc5eb-006d-423b-8432-8fbe7795a312"
     )
 
     restabs <- lapply(file_ids, UUIDtoBarcode, "file_id")
@@ -123,11 +123,9 @@ test_that("UUIDtoBarcode shows multiple entries per file_id", {
 
     expect_identical(results, UUIDtoBarcode(file_ids, "file_id"))
 
-    file_ids <- c(
-        "01ef8a08-1de5-4ceb-be51-979418465f1a",
-        "82279af5-7b83-46ec-814d-877e97c884a2",
-        "edce3d0c-efad-4b00-9a53-f26d714b755d"
-    )
+    file_ids0 <- file_ids
+    ## create phony ID
+    file_ids0[2] <- paste(rev(unlist(strsplit(file_ids[2], ""))), collapse = "")
 
-    expect_warning(UUIDtoBarcode(file_ids, "file_id"))
+    expect_warning(UUIDtoBarcode(file_ids0, "file_id"))
 })
