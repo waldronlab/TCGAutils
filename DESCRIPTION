@@ -39,6 +39,7 @@ Suggests:
     ComplexHeatmap,
     devtools,
     dplyr,
+    httr,
     IlluminaHumanMethylation450kanno.ilmn12.hg19,
     impute,
     knitr,
