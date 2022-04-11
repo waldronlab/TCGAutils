@@ -407,6 +407,19 @@ removal of files whose UUIDs were translated. These files have been replaced
 with newer runs of the pipeline. The new UUIDs can be mapped to the old UUIDs
 with project specific maps located on GitHub at
 https://github.com/NCI-GDC/gdc-docs/tree/develop/docs/Data/Release_Notes/GCv36_Manifests
+as well as with the history lookup API endpoint.
+
+### UUID History Lookup
+
+Facilities in the GDC API allow one to look up old UUIDs and obtain new ones.
+The `UUIDhistory` function returns a `data.frame` with old and new UUIDs for
+a single UUID lookup. This will allow one to map old UUIDs with new ones in
+order to run a translation query. Old UUIDs have been removed from the API and
+can no longer be translated by the functions provided in this package.
+
+```{r}
+UUIDhistory("0001801b-54b0-4551-8d7a-d66fb59429bf")
+```
 
 ## Translation
 

@@ -6,6 +6,7 @@
 \alias{UUIDtoUUID}
 \alias{barcodeToUUID}
 \alias{filenameToBarcode}
+\alias{UUIDhistory}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
 UUIDtoBarcode(
@@ -19,33 +20,45 @@ UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"), legacy = FALSE)
 barcodeToUUID(barcodes, legacy = FALSE)
 
 filenameToBarcode(filenames, legacy = FALSE, slides = FALSE)
+
+UUIDhistory(id, endpoint = .HISTORY_ENDPOINT)
 }
 \arguments{
-\item{id_vector}{A \code{character} vector of UUIDs corresponding to
+\item{id_vector}{character() A vector of UUIDs corresponding to
 either files or cases (default assumes case_ids)}
 
-\item{from_type}{Either \code{case_id} or \code{file_id} indicating the type of
-\code{id_vector} entered (default "case_id")}
+\item{from_type}{character(1) Either \code{case_id} or \code{file_id} indicating the
+type of \code{id_vector} entered (default \code{"case_id"})}
 
-\item{legacy}{(logical default FALSE) whether to search the legacy archives}
+\item{legacy}{logical(1) Whether to search the legacy archives (default:
+\code{FALSE})}
 
-\item{to_type}{The desired UUID type to obtain, can either be "case_id" or
-"file_id"}
+\item{to_type}{character(1) The desired UUID type to obtain, can either be
+`"case_id"` (default) or `"file_id"`}
 
-\item{barcodes}{A \code{character} vector of TCGA barcodes}
+\item{barcodes}{character() A vector of TCGA barcodes}
 
-\item{filenames}{A \code{character} vector of file names usually obtained
-from the \code{GenomicDataCommons}}
+\item{filenames}{character() A vector of file names usually obtained
+from a `GenomicDataCommons` query}
 
 \item{slides}{logical(1L) Whether the provided file names correspond to
-slides typically with an \code{.svs} extension. \strong{Note} The barcodes returned
-correspond 1:1 with the \code{filename} inputs. Always triple check the
+slides typically with an `.svs` extension. **Note** The barcodes returned
+correspond 1:1 with the `filename` inputs. Always triple check the
 output against the Genomic Data Commons Data Portal by searching the
-file name and comparing associated "Entity ID" with the \code{submitter_id}
+file name and comparing associated "Entity ID" with the `submitter_id`
 given by the function.}
+
+\item{id}{character(1) A UUID whose history of versions is sought}
+
+\item{endpoint}{character(1) Generally a constant pertaining to the location
+of the history api endpoint. This argument rarely needs to change.}
 }
 \value{
-A \code{data.frame} of TCGA barcode identifiers and UUIDs
+Generally, a \code{data.frame} of identifier mappings
+
+UUIDhistory: A `data.frame` containting a list of associated UUIDs
+    for the given input along with `file_change` status, `data_release`
+    versions, etc.
 }
 \description{
 These functions allow the user to enter a character vector of
@@ -63,7 +76,7 @@ converted to lower case.
 Based on the file UUID supplied, the appropriate entity_id (TCGA barcode) is
 returned. In previous versions of the package, the 'end_point' parameter
 would require the user to specify what type of barcode needed. This is no
-longer supported as `entity_id` returns the appropriate one.
+longer supported as \code{entity_id} returns the appropriate one.
 }
 \examples{
 ## Translate UUIDs >> TCGA Barcode
@@ -127,6 +140,9 @@ slides <- files() |>
     results(size = 3)
 
 filenameToBarcode(slides$file_name, slides = TRUE)
+
+## Get the version history of a BAM file in TCGA-KIRC
+UUIDhistory("0001801b-54b0-4551-8d7a-d66fb59429bf")
 
 }
 \author{

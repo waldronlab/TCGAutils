@@ -104,13 +104,18 @@
 #' would require the user to specify what type of barcode needed. This is no
 #' longer supported as `entity_id` returns the appropriate one.
 #'
-#' @param id_vector A \code{character} vector of UUIDs corresponding to
-#' either files or cases (default assumes case_ids)
-#' @param from_type Either \code{case_id} or \code{file_id} indicating the type of
-#' \code{id_vector} entered (default "case_id")
-#' @param legacy (logical default FALSE) whether to search the legacy archives
+#' @param id_vector character() A vector of UUIDs corresponding to
+#'     either files or cases (default assumes case_ids)
 #'
-#' @return A \code{data.frame} of TCGA barcode identifiers and UUIDs
+#' @param from_type character(1) Either `case_id` or `file_id` indicating the
+#'     type of `id_vector` entered (default `"case_id"`)
+#'
+#' @param legacy logical(1) Whether to search the legacy archives (default:
+#'     `FALSE`)
+#'
+#' @return Generally, a `data.frame` of identifier mappings
+#'
+#' @md
 #'
 #' @examples
 #' ## Translate UUIDs >> TCGA Barcode
@@ -197,8 +202,8 @@ UUIDtoBarcode <-  function(id_vector,
 
 #' @rdname ID-translation
 #'
-#' @param to_type The desired UUID type to obtain, can either be "case_id" or
-#' "file_id"
+#' @param to_type character(1) The desired UUID type to obtain, can either be
+#'     `"case_id"` (default) or `"file_id"`
 #'
 #' @examples
 #' ## Translate file UUIDs >> case UUIDs
@@ -241,7 +246,7 @@ UUIDtoUUID <- function(id_vector, to_type = c("case_id", "file_id"),
 
 #' @rdname ID-translation
 #'
-#' @param barcodes A \code{character} vector of TCGA barcodes
+#' @param barcodes character() A vector of TCGA barcodes
 #'
 #' @examples
 #' ## Translate TCGA Barcode >> UUIDs
@@ -316,8 +321,8 @@ barcodeToUUID <-
 
 #' @rdname ID-translation
 #'
-#' @param filenames A \code{character} vector of file names usually obtained
-#' from the `GenomicDataCommons`
+#' @param filenames character() A vector of file names usually obtained
+#'     from a `GenomicDataCommons` query
 #'
 #' @param slides logical(1L) Whether the provided file names correspond to
 #'   slides typically with an `.svs` extension. **Note** The barcodes returned
@@ -325,8 +330,6 @@ barcodeToUUID <-
 #'   output against the Genomic Data Commons Data Portal by searching the
 #'   file name and comparing associated "Entity ID" with the `submitter_id`
 #'   given by the function.
-#'
-#' @md
 #'
 #' @examples
 #' library(GenomicDataCommons)
@@ -387,4 +390,30 @@ filenameToBarcode <- function(filenames, legacy = FALSE, slides = FALSE) {
     names(res)[3] <- head(endpoint, 1L)
     idx <- .matchSort(res[["file_name"]], filenames)
     res[idx, ]
+}
+
+.HISTORY_ENDPOINT <- "https://api.gdc.cancer.gov/history"
+
+#' @rdname ID-translation
+#'
+#' @param id character(1) A UUID whose history of versions is sought
+#'
+#' @param endpoint character(1) Generally a constant pertaining to the location
+#'     of the history api endpoint. This argument rarely needs to change.
+#'
+#' @return UUIDhistory: A `data.frame` containting a list of associated UUIDs
+#'     for the given input along with `file_change` status, `data_release`
+#'     versions, etc.
+#'
+#' @examples
+#' ## Get the version history of a BAM file in TCGA-KIRC
+#' UUIDhistory("0001801b-54b0-4551-8d7a-d66fb59429bf")
+#'
+#' @export
+UUIDhistory <- function(id, endpoint = .HISTORY_ENDPOINT) {
+    if (!requireNamespace("httr", quietly = TRUE))
+        stop("Install 'httr' to check UUID status")
+    qurl <- paste(endpoint, id, sep = "/")
+    resp <- httr::GET(qurl)
+    do.call(rbind.data.frame, httr::content(resp))
 }
