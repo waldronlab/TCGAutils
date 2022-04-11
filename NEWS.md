@@ -2,6 +2,9 @@
 
 ### New features
 
+* The `UUIDhistory` function allows users to map old UUIDs to new UUIDs
+according to the latest data release for UUIDs that were affected and no longer
+query-able.
 * The `slides` argument has been added to the `filenameToBarcode` function for
 translating slide file names into barcodes. Currently, the API returns all
 barcodes of the associated case ID.
