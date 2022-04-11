@@ -129,3 +129,30 @@ test_that("UUIDtoBarcode shows multiple entries per file_id", {
 
     expect_warning(UUIDtoBarcode(file_ids0, "file_id"))
 })
+
+test_that("UUIDhistory correctly returns the appropriate identifiers", {
+
+    old_uuids <- c("0001801b-54b0-4551-8d7a-d66fb59429bf",
+    "002c67f2-ff52-4246-9d65-a3f69df6789e",
+    "003143c8-bbbf-46b9-a96f-f58530f4bb82")
+
+    updated_ids <- vapply(
+        stats::setNames(nm = old_uuids),
+        function(x) {
+            hist <- UUIDhistory(x)
+            ## test for data release version 32.0
+            cond <- hist[["file_change"]] == "released" &
+                hist[["data_release"]] == "32.0"
+            hist[cond, "uuid"]
+        },
+        character(1L)
+    )
+
+    ## Updated IDs taken from the GDC Data Portal
+    new_uuids <- c("b4bce3ff-7fdc-4849-880b-56f2b348ceac",
+    "5ca9fa79-53bc-4e91-82cd-5715038ee23e",
+    "b7c3e5ad-4ffc-4fc4-acbf-1dfcbd2e5382")
+
+    expect_identical(updated_ids, setNames(new_uuids, old_uuids))
+
+})
