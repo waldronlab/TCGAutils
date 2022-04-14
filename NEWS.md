@@ -8,12 +8,15 @@ query-able.
 * The `slides` argument has been added to the `filenameToBarcode` function for
 translating slide file names into barcodes. Currently, the API returns all
 barcodes of the associated case ID.
+* Add sections in the vignette regarding GDC Data Updates and UUID history
+lookup
 
 ### Minor changes and bug fixes
 
 * Slide file names now resolve to a single TCGA barcode in `filenameToBarcode`
 (Thanks @hermidalc)
 * Improved error messages and documentation for `makeGRangesListFromExonFiles`
+* Use `AnnotationHub` to download chain file in main vignette.
 
 ## Changes in version 1.14.0
 
