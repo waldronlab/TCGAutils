@@ -14,11 +14,10 @@ lookup
 ### Minor changes and bug fixes
 
 * Update examples in package to new GDC Data Release, see vignette.
-* Use `AnnotationHub` to download chain file in examples
+* Use `AnnotationHub` to download chain file in main vignette.
 * Slide file names now resolve to a single TCGA barcode in `filenameToBarcode`
 (Thanks @hermidalc)
 * Improved error messages and documentation for `makeGRangesListFromExonFiles`
-* Use `AnnotationHub` to download chain file in main vignette.
 
 ## Changes in version 1.14.0
 
