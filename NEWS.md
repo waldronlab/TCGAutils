@@ -11,6 +11,8 @@ barcodes of the associated case ID.
 
 ### Minor changes and bug fixes
 
+* Update examples in package to new GDC Data Release, see vignette.
+* Use `AnnotationHub` to download chain file in examples
 * Slide file names now resolve to a single TCGA barcode in `filenameToBarcode`
 (Thanks @hermidalc)
 * Improved error messages and documentation for `makeGRangesListFromExonFiles`
