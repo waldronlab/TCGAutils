@@ -20,7 +20,7 @@ CpGtoRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 qreduceTCGA(obj, keep.assay = FALSE, suffix = "_simplified")
 }
 \arguments{
-\item{obj}{A MultiAssayExperiment object obtained from curatedTCGAData}
+\item{obj}{A \code{MultiAssayExperiment} object obtained from \code{curatedTCGAData}}
 
 \item{keep.assay}{logical (default FALSE) Whether to keep the
 \code{SummarizedExperiment} assays that have been converted to
@@ -34,7 +34,8 @@ to the newly modified assay for \code{qreduceTCGA}.}
 }
 \value{
 A \linkS4class{MultiAssayExperiment} with any gene expression, miRNA,
-copy number, and mutations converted to RangedSummarizedExperiment objects
+copy number, and mutations converted to
+\linkS4class{RangedSummarizedExperiment} objects
 }
 \description{
 This group of functions will convert row annotations as
@@ -44,32 +45,54 @@ representation of \linkS4class{RaggedExperiment} objects to
 \linkS4class{RangedSummarizedExperiment}.
 }
 \details{
-The original SummarizedExperiment containing either gene symbol
+The original \code{SummarizedExperiment} containing either gene symbol
 or miR annotations is replaced or supplemented by a
 \linkS4class{RangedSummarizedExperiment} for those that could be mapped to
 \linkS4class{GRanges}, and optionally another
 \linkS4class{SummarizedExperiment} for annotations that
 could not be mapped to \linkS4class{GRanges}.
+}
+\section{qreduceTCGA}{
 
-RaggedExperiment mutation objects become a genes by patients
-RangedSummarizedExperiment object containing '1' if there is a non-silent
-mutation somewhere in the gene, and '0' otherwise as obtained from the
-\code{Variant_Classification} column in the data.
 
-"CNA" and "CNV" segmented copy number are reduced using a weighted mean in
-the rare cases of overlapping (non-disjoint) copy number regions.
-
-These functions rely on 'TxDb.Hsapiens.UCSC.hg19.knownGene' and
-'org.Hs.eg.db' to map to the 'hg19' NCBI build. Users should use the
-\code{liftOver} procedure for datasets that are provided against a different
-reference genome (usually 'hg18'). An example of this procedure is provided
-in the vignette.
+Using \code{TxDb.Hsapiens.UCSC.hg19.knownGene} as the reference, \code{qreduceTCGA}
+reduces the data by applying either the \code{weightedmean} or \code{nonsilent}
+function (see below) to non-mutation or mutation data, respectively.
+Internally, it uses \code{\link[RaggedExperiment:assay-functions]{RaggedExperiment::qreduceAssay()}} to reduce the ranges
+to the gene-level.
 
 \code{qreduceTCGA} will update \code{genome(x)} based on the NCBI reference annotation
 which includes the patch number, e.g., GRCh37.p14, as provided by the
 \code{seqlevelsStyle} setter, \code{seqlevelsStyle(gn) <- "NCBI"}. \code{qreduceTCGA}
 uses the NCBI genome annotation as the default reference.
+
+\preformatted{
+    nonsilent <- function(scores, ranges, qranges)
+        any(scores != "Silent")
 }
+
+\code{RaggedExperiment} mutation objects become a genes by patients
+\code{RangedSummarizedExperiment} object containing '1' if there is a non-silent
+mutation somewhere in the gene, and '0' otherwise as obtained from the
+\code{Variant_Classification} column in the data.
+
+\preformatted{
+    weightedmean <- function(scores, ranges, qranges) {
+        isects <- GenomicRanges::pintersect(ranges, qranges)
+        sum(scores * BiocGenerics::width(isects)) /
+            sum(BiocGenerics::width(isects))
+    }
+}
+
+"CNA" and "CNV" segmented copy number are reduced using a weighted mean in
+the rare cases of overlapping (non-disjoint) copy number regions.
+
+These functions rely on \code{TxDb.Hsapiens.UCSC.hg19.knownGene} and
+\code{org.Hs.eg.db} to map to the 'hg19' NCBI build. Use the \code{liftOver} procedure
+for datasets that are provided against a different reference genome (usually
+'hg18'). See an example in the vignette.
+}
+
 \examples{
 
 library(curatedTCGAData)
