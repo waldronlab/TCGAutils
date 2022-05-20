@@ -56,14 +56,23 @@ generateMap <- function(experiments, colData, idConverter = identity,
         if (!S4Vectors::isSingleString(sampleCol) ||
             !S4Vectors::isSingleString(patientCol))
             stop("Provide character names in colData for mapping")
-        pts <- if (patientCol == "row.names") rownames(colData)
-            else colData[[patientCol]]
+        if (identical(patientCol, "row.names"))
+            pts <- rownames(colData)
+        else
+            pts <- colData[[patientCol]]
         samples <- colData[[sampleCol]]
         autoMap <- cbind.data.frame(assay = NA_character_, primary = pts,
             colname = samples, stringsAsFactors = FALSE)
         autoMap <- Map(function(cnames, i) {
             submap <- autoMap[autoMap[["colname"]] %in% cnames, ]
-            submap[["assay"]] <- i
+            if (nrow(submap)) {
+                submap[["assay"]] <- i
+            } else {
+                warning(
+                    "'", i, "' assay dropped; 'colnames' not mappable",
+                    call. = FALSE
+                )
+            }
             submap
         }, cnames = samps, i = names(samps))
         autoMap <- do.call(function(...) {
