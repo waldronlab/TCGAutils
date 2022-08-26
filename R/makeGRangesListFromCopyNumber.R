@@ -19,11 +19,10 @@
 #'
 #' @examples
 #' library(GenomicDataCommons)
-#' library(magrittr)
 #'
-#' manif <- files() %>%
+#' manif <- files() |>
 #'     filter(~ cases.project.project_id == "TCGA-COAD" &
-#'         data_type == "Copy Number Segment") %>%
+#'         data_type == "Copy Number Segment") |>
 #'     manifest(size = 1)
 #'
 #' fname <- gdcdata(manif$id)

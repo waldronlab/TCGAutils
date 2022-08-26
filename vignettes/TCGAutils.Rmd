@@ -302,7 +302,7 @@ _Note_. File downloads disabled on Windows due to long file names.
 ```{r}
 library(GenomicDataCommons)
 
-queso <- files(legacy = TRUE) %>%
+queso <- files(legacy = TRUE) |>
     filter( ~ cases.project.project_id == "TCGA-COAD" &
         data_category == "Gene expression" &
         data_type == "Exon quantification")

@@ -4,8 +4,8 @@ if (!requireNamespace("GenomicDataCommons"))
 
 library(GenomicDataCommons)
 
-manifile <- files(legacy = TRUE) %>%
-    filter(~ file_id == "d56a5dec-cb55-457f-8d93-dd1f3911ae9f") %>%
+manifile <- files(legacy = TRUE) |>
+    filter(~ file_id == "d56a5dec-cb55-457f-8d93-dd1f3911ae9f") |>
         manifest()
 
 gdcdata(manifile[["id"]], use_cached = TRUE)
