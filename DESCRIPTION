@@ -1,9 +1,12 @@
 Package: TCGAutils
 Title: TCGA utility functions for data management
 Version: 1.17.2
-Description: A suite of helper functions for checking and manipulating TCGA data
-    including data obtained from the curatedTCGAData experiment package. These
-    functions aim to simplify and make working with TCGA data more manageable.
+Description: A suite of helper functions for checking and manipulating TCGA
+  data including data obtained from the curatedTCGAData experiment package.
+  These functions aim to simplify and make working with TCGA data more
+  manageable. Exported functions include those that import data from flat files
+  into Bioconductor objects, convert row annotations, and identifier
+  translation via the GDC API.
 Authors@R: c(
     person("Marcel", "Ramos", email = "marcel.ramos@roswellpark.org",
         role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3242-0582")),
