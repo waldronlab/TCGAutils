@@ -1,5 +1,5 @@
 .isSingleType <- function(x, test = is.character) {
-     test(x) && length(x) == 1L && !is.na(x)
+    test(x) && length(x) == 1L && !is.na(x)
 }
 
 #' OncoPrint for TCGA Mutation Assays

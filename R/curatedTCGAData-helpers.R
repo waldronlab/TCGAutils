@@ -176,7 +176,7 @@ TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
         if (exclusive) {
             inCodes <-
                 S4Vectors::`%in%`(IRanges::CharacterList(sampleCodes), sampList)
-           sampList <- sampList[all(inCodes)]
+            sampList <- sampList[all(inCodes)]
         }
         if (!length(sampList))
             stop("Not all 'sampleCodes' were found in data")
@@ -223,5 +223,5 @@ sampleTables <- function(multiassayexperiment, vial = FALSE) {
         if (!vial)
             scodes <- substr(scodes, 1L, 2L)
         table(unname(scodes))
-   })
+    })
 }

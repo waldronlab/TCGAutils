@@ -306,8 +306,8 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     nonsilent <- function(scores, ranges, qranges)
         any(scores != "Silent")
 
-    isRE <- function(x) vapply(experiments(x), function(y)
-          is(y, "RaggedExperiment"), logical(1L))
+    isRE <-
+        function(x) vapply(experiments(x), is, logical(1L), "RaggedExperiment")
 
     isMut <- function(x) grepl("Mutation", names(x))
 
@@ -340,7 +340,9 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
         )
         rownames(cn) <- names(gn)
         remove.rows <- is.na(rownames(cn))
-        cn <- SummarizedExperiment(cn[!remove.rows, ], rowRanges = gn[!remove.rows])
+        cn <- SummarizedExperiment(
+            cn[!remove.rows, ], rowRanges = gn[!remove.rows]
+        )
         el <- ExperimentList(x = cn)
         names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)

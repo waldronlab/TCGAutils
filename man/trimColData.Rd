@@ -11,7 +11,8 @@ trimColData(
 )
 }
 \arguments{
-\item{multiassayexperiment}{A \linkS4class{MultiAssayExperiment} object with colData}
+\item{multiassayexperiment}{A \linkS4class{MultiAssayExperiment} object with
+colData}
 
 \item{maxNAfrac}{(numeric default 0.2) A decimal between 0 and 1 to indicate
 the amount of NA values allowed per column}
