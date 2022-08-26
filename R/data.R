@@ -11,6 +11,7 @@
 #'      \item{Study.Name}{The full length study name (i.e., type of cancer)}
 #' }
 #' @return The TCGA `diseaseCodes` table
+#' @usage data("diseaseCodes")
 #' @source \url{https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations}
 "diseaseCodes"
 
@@ -25,6 +26,7 @@
 #'      \item{Short.Letter.Code}{Letter code for the sample type}
 #' }
 #' @return The TCGA `sampleTypes` table
+#' @usage data("sampleTypes")
 #' @source \url{https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type-codes}
 "sampleTypes"
 
@@ -39,4 +41,5 @@
 #'
 #' @return The clinical dataset column names in TCGA as provided by the
 #' \code{RTCGAToolbox}
+#' @usage data("clinicalNames")
 "clinicalNames"

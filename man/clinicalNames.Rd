@@ -8,7 +8,7 @@
 A \linkS4class{CharacterList} of names for 33 cancer codes
 }
 \usage{
-clinicalNames
+data("clinicalNames")
 }
 \value{
 The clinical dataset column names in TCGA as provided by the

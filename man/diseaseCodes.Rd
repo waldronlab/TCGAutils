@@ -17,7 +17,7 @@ A data frame with 37 rows and 2 variables:
 \url{https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations}
 }
 \usage{
-diseaseCodes
+data("diseaseCodes")
 }
 \value{
 The TCGA `diseaseCodes` table
