@@ -16,7 +16,7 @@ A data frame with 19 rows and 3 variables:
 \url{https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type-codes}
 }
 \usage{
-sampleTypes
+data("sampleTypes")
 }
 \value{
 The TCGA `sampleTypes` table
