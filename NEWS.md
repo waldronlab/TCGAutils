@@ -1,3 +1,12 @@
+## Changes in version 1.18.0
+
+### Minor changes and bug fixes
+
+* Use https instead of http in `getFileName` helper.
+* Warn when column names in assays are not mappable and subsequently dropped in
+`generateMap`.
+* Updated `qreduceTCGA` documentation for clarity.
+
 ## Changes in version 1.16.0
 
 ### New features
