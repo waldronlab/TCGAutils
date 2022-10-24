@@ -38,7 +38,7 @@ getFileName <- function(disease, runDate = "20160128",
     dataType <- match.arg(dataType,
         c("CNASNP", "CNVSNP", "CNAseq", "CNACGH", "Mutation"))
 
-    fh_url <- "http://gdac.broadinstitute.org/runs/stddata__"
+    fh_url <- "https://gdac.broadinstitute.org/runs/stddata__"
     fh_url <- paste0(fh_url, substr(runDate,1,4), "_",
         substr(runDate,5,6), "_", substr(runDate,7,8), "/data/")
     fh_url <- paste0(fh_url, disease, "/", runDate, "/")
