@@ -29,13 +29,17 @@ NULL
 #' @description
 #' Additional helper functions for cleaning and uncovering metadata
 #' within a downloaded \code{MultiAssayExperiment} from \code{curatedTCGAData}.
-#' The \code{getSubtypeMap} function provides a 2 column \code{data.frame}
-#' with in-data variable names and an interpreted names. The
-#' \code{getClinicalNames} function provides a vector of variable names that
-#' exist in the \code{colData} slot of a downloaded \code{MultiAssayExperiment}
-#' object. These variables are obtained from
-#' \link[RTCGAToolbox]{getFirehoseData} by default and tend to be present
-#' across most cancer codes.
+#'
+#' @section getSubtypeMap: provides a two column \code{data.frame} with
+#'   interpreted names and in-data variable names. 'Name' usually refers to the
+#'   \code{colData} row names a.k.a. the \code{patientID}.
+#'
+#' @section getClinicalNames: provides a vector of common variable names that
+#'   exist in the \code{colData} \code{DataFrame} of a \code{curatedTCGAData}
+#'   \code{MultiAssayExperiment} object. These variables are directly obtained
+#'   from the BroadFirehose clinical data (downloaded with
+#'   \link[RTCGAToolbox]{getFirehoseData}) and tend to be present across cancer
+#'   disease codes.
 #'
 #' @param multiassayexperiment A \linkS4class{MultiAssayExperiment} object
 #'
@@ -52,10 +56,11 @@ NULL
 #' TCGAsplitAssays(gbm, c("01", "10"))
 #'
 #' @return \itemize{
-#'     \item{getSubtypeMap}: A \code{data.frame} with columns representing
-#'     actual data variables and explanatory names
-#'     \item{getClinicalNames}: A \code{vector} of names that correspond to
-#'     a particular disease code.
+#'     \item{getSubtypeMap}: A \code{data.frame} with explanatory names
+#'     and their in-data variable names. They may not be present for all
+#'     cancer types.
+#'     \item{getClinicalNames}: A \code{vector} of common variable names that
+#'     may be found across several cancer disease codes.
 #' }
 #'
 #' @export
