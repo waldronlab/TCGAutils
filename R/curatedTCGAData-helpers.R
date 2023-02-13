@@ -140,13 +140,13 @@ getClinicalNames <- function(diseaseCode) {
 #' @rdname curatedTCGAData-helpers
 #'
 #' @param sampleCodes character (default NULL) A string of sample type codes
-#' (refer to \code{data(sampleTypes)}; TCGAsplitAssays section)
+#' (refer to `data(sampleTypes)`; `TCGAsplitAssays` section)
 #' @param exclusive logical (default FALSE) Whether to return only assays that
 #' contain all codes in `sampleCodes`
 #'
 #' @section TCGAsplitAssays:
 #'     Separates samples by indicated sample codes into different assays
-#'     in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
+#'     in a `MultiAssayExperiment`. Refer to the `sampleTypes`
 #'     data object for a list of available codes. This operation generates
 #'     \strong{n} times the number of assays based on the number of sample codes
 #'     entered. By default, all assays will be split by samples present in

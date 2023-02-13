@@ -23,21 +23,21 @@ sampleTables(multiassayexperiment, vial = FALSE)
 \item{diseaseCode}{A TCGA cancer code (e.g., "BRCA")}
 
 \item{sampleCodes}{character (default NULL) A string of sample type codes
-(refer to \code{data(sampleTypes)}; TCGAsplitAssays section)}
+(refer to \code{data(sampleTypes)}; \code{TCGAsplitAssays} section)}
 
 \item{exclusive}{logical (default FALSE) Whether to return only assays that
-contain all codes in `sampleCodes`}
+contain all codes in \code{sampleCodes}}
 
 \item{vial}{(logical default FALSE) whether to display vials in the
 table output}
 }
 \value{
 \itemize{
-    \item{getSubtypeMap}: A \code{data.frame} with explanatory names
-    and their in-data variable names. They may not be present for all
-    cancer types.
-    \item{getClinicalNames}: A \code{vector} of common variable names that
-    may be found across several cancer disease codes.
+\item{getSubtypeMap}: A \code{data.frame} with explanatory names
+and their in-data variable names. They may not be present for all
+cancer types.
+\item{getClinicalNames}: A \code{vector} of common variable names that
+may be found across several cancer disease codes.
 }
 }
 \description{
@@ -46,32 +46,32 @@ within a downloaded \code{MultiAssayExperiment} from \code{curatedTCGAData}.
 }
 \section{getSubtypeMap}{
  provides a two column \code{data.frame} with
-  interpreted names and in-data variable names. 'Name' usually refers to the
-  \code{colData} row names a.k.a. the \code{patientID}.
+interpreted names and in-data variable names. 'Name' usually refers to the
+\code{colData} row names a.k.a. the \code{patientID}.
 }
 
 \section{getClinicalNames}{
  provides a vector of common variable names that
-  exist in the \code{colData} \code{DataFrame} of a \code{curatedTCGAData}
-  \code{MultiAssayExperiment} object. These variables are directly obtained
-  from the BroadFirehose clinical data (downloaded with
-  \link[RTCGAToolbox]{getFirehoseData}) and tend to be present across cancer
-  disease codes.
+exist in the \code{colData} \code{DataFrame} of a \code{curatedTCGAData}
+\code{MultiAssayExperiment} object. These variables are directly obtained
+from the BroadFirehose clinical data (downloaded with
+\link[RTCGAToolbox]{getFirehoseData}) and tend to be present across cancer
+disease codes.
 }
 
 \section{TCGAsplitAssays}{
 
-    Separates samples by indicated sample codes into different assays
-    in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
-    data object for a list of available codes. This operation generates
-    \strong{n} times the number of assays based on the number of sample codes
-    entered. By default, all assays will be split by samples present in
-    the data.
+Separates samples by indicated sample codes into different assays
+in a \code{MultiAssayExperiment}. Refer to the \code{sampleTypes}
+data object for a list of available codes. This operation generates
+\strong{n} times the number of assays based on the number of sample codes
+entered. By default, all assays will be split by samples present in
+the data.
 }
 
 \section{sampleTables}{
 
-    Display all the available samples in each of the assays
+Display all the available samples in each of the assays
 }
 
 \examples{
