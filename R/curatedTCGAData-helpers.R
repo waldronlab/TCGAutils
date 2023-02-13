@@ -137,15 +137,7 @@ getClinicalNames <- function(diseaseCode) {
     vect
 }
 
-#' @export
-splitAssays <- function(...) {
-    .Deprecated("TCGAsplitAssays")
-    TCGAsplitAssays(...)
-}
-
 #' @rdname curatedTCGAData-helpers
-#'
-#' @aliases splitAssays
 #'
 #' @param sampleCodes character (default NULL) A string of sample type codes
 #' (refer to \code{data(sampleTypes)}; TCGAsplitAssays section)
@@ -159,10 +151,6 @@ splitAssays <- function(...) {
 #'     \strong{n} times the number of assays based on the number of sample codes
 #'     entered. By default, all assays will be split by samples present in
 #'     the data.
-#'
-#' @section splitAssays:
-#'     The \code{splitAssays} function is deprecated and has been renamed to
-#'     \code{TCGAsplitAssays}.
 #'
 #' @export
 TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,

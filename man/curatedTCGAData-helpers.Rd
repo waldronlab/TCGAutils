@@ -5,7 +5,6 @@
 \alias{getSubtypeMap}
 \alias{getClinicalNames}
 \alias{TCGAsplitAssays}
-\alias{splitAssays}
 \alias{sampleTables}
 \title{Helper functions for managing MultiAssayExperiment from
 curatedTCGAData}
@@ -68,12 +67,6 @@ within a downloaded \code{MultiAssayExperiment} from \code{curatedTCGAData}.
     \strong{n} times the number of assays based on the number of sample codes
     entered. By default, all assays will be split by samples present in
     the data.
-}
-
-\section{splitAssays}{
-
-    The \code{splitAssays} function is deprecated and has been renamed to
-    \code{TCGAsplitAssays}.
 }
 
 \section{sampleTables}{
