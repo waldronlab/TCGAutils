@@ -15,7 +15,7 @@ See the \code{sampleType} dataset.}
 }
 \value{
 A logical vector or \linkS4class{LogicalList} of the same length as
-  'barcodes' indicating sample type matches
+'barcodes' indicating sample type matches
 }
 \description{
 The TCGA barcode contains several pieces of information which can

@@ -7,7 +7,7 @@
 \alias{isCorrect}
 \alias{extractBuild}
 \alias{uniformBuilds}
-\title{Utilities for working with *HUMAN* genome builds}
+\title{Utilities for working with \emph{HUMAN} genome builds}
 \usage{
 translateBuild(from, to = c("UCSC", "NCBI"))
 
@@ -20,9 +20,9 @@ extractBuild(string, build = c("UCSC", "NCBI"))
 uniformBuilds(builds, cutoff = 0.2, na = c("", "NA"))
 }
 \arguments{
-\item{from}{character() A vector of build versions typically from `genome()`
+\item{from}{character() A vector of build versions typically from \code{genome()}
 (e.g., "37"). The build vector must be homogenous (i.e.,
-`length(unique(x)) == 1L`).}
+\code{length(unique(x)) == 1L}).}
 
 \item{to}{character(1) The name of the desired build version (either "UCSC"
 or "NCBI"; default: "UCSC")}
@@ -42,38 +42,39 @@ values and translating builds that are below the threshold}
 c("", "NA"))}
 }
 \value{
-translateBuild: A character vector of translated genome builds
+\if{html}{\out{<div class="sourceCode">}}\preformatted{translateBuild: A character vector of translated genome builds
 
-    extractBuild: A character string of the build information available
+extractBuild: A character string of the build information available
 
-    uniformBuilds: A character vector of builds where all builds are
-        identical `identical(length(unique(build)), 1L)`
+uniformBuilds: A character vector of builds where all builds are
+    identical `identical(length(unique(build)), 1L)`
 
-    correctBuild: A character string of the 'corrected' build name
+correctBuild: A character string of the 'corrected' build name
 
-    isCorrect: A logical indicating if the build is exactly as annotated
+isCorrect: A logical indicating if the build is exactly as annotated
+}\if{html}{\out{</div>}}
 }
 \description{
 A few functions are available to search for build versions,
 either from NCBI or UCSC.
 
 \itemize{
-  \item \code{translateBuild}: translates between UCSC and NCBI build
-  versions
-  \item \code{extractBuild}: use grep patterns to find the first build
-  within the string input
-  \item \code{uniformBuilds}: replace build occurrences below a threshold
-  level of occurence with the alternative build
-  \item \code{correctBuild}: Ensure that the build annotation is correct
-  based on the NCBI/UCSC website. If not, use \code{translateBuild} with
-  the indicated 'style' input
-  \item \code{isCorrect}: Check to see if the build is exactly as annotated
+\item \code{translateBuild}: translates between UCSC and NCBI build
+versions
+\item \code{extractBuild}: use grep patterns to find the first build
+within the string input
+\item \code{uniformBuilds}: replace build occurrences below a threshold
+level of occurence with the alternative build
+\item \code{correctBuild}: Ensure that the build annotation is correct
+based on the NCBI/UCSC website. If not, use \code{translateBuild} with
+the indicated 'style' input
+\item \code{isCorrect}: Check to see if the build is exactly as annotated
 }
 }
 \details{
-The `correctBuild` function takes the input and ensures that
+The \code{correctBuild} function takes the input and ensures that
 the style specified matches the input. Otherwise, it will
-return the correct style for use with  `seqlevelsStyle`.
+return the correct style for use with  \code{seqlevelsStyle}.
 Currently, the function does not support patched builds
 (e.g., 'GRCh38.p13') Build names are taken from the website:
 \url{https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.26/}

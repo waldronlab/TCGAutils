@@ -34,18 +34,18 @@ type of \code{id_vector} entered (default \code{"case_id"})}
 \code{FALSE})}
 
 \item{to_type}{character(1) The desired UUID type to obtain, can either be
-`"case_id"` (default) or `"file_id"`}
+\code{"case_id"} (default) or \code{"file_id"}}
 
 \item{barcodes}{character() A vector of TCGA barcodes}
 
 \item{filenames}{character() A vector of file names usually obtained
-from a `GenomicDataCommons` query}
+from a \code{GenomicDataCommons} query}
 
 \item{slides}{logical(1L) Whether the provided file names correspond to
-slides typically with an `.svs` extension. **Note** The barcodes returned
-correspond 1:1 with the `filename` inputs. Always triple check the
+slides typically with an \code{.svs} extension. \strong{Note} The barcodes returned
+correspond 1:1 with the \code{filename} inputs. Always triple check the
 output against the Genomic Data Commons Data Portal by searching the
-file name and comparing associated "Entity ID" with the `submitter_id`
+file name and comparing associated "Entity ID" with the \code{submitter_id}
 given by the function.}
 
 \item{id}{character(1) A UUID whose history of versions is sought}
@@ -56,9 +56,9 @@ of the history api endpoint. This argument rarely needs to change.}
 \value{
 Generally, a \code{data.frame} of identifier mappings
 
-UUIDhistory: A `data.frame` containting a list of associated UUIDs
-    for the given input along with `file_change` status, `data_release`
-    versions, etc.
+UUIDhistory: A \code{data.frame} containting a list of associated UUIDs
+for the given input along with \code{file_change} status, \code{data_release}
+versions, etc.
 }
 \description{
 These functions allow the user to enter a character vector of

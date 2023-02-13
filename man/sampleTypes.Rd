@@ -7,9 +7,9 @@
 \format{
 A data frame with 19 rows and 3 variables:
 \describe{
-     \item{Code}{Two digit code number found in the barcode}
-     \item{Definition}{Long name for the sample type}
-     \item{Short.Letter.Code}{Letter code for the sample type}
+\item{Code}{Two digit code number found in the barcode}
+\item{Definition}{Long name for the sample type}
+\item{Short.Letter.Code}{Letter code for the sample type}
 }
 }
 \source{
@@ -19,7 +19,7 @@ A data frame with 19 rows and 3 variables:
 data("sampleTypes")
 }
 \value{
-The TCGA `sampleTypes` table
+The TCGA \code{sampleTypes} table
 }
 \description{
 A dataset that contains the mappings for sample codes in the TCGA

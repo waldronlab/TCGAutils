@@ -13,7 +13,7 @@ makeSummarizedExperimentFromGISTIC(gistic, dataType, ...)
 \arguments{
 \item{...}{Additional arguments passed to 'RTCGAToolbox::getGISTICPeaks'.}
 
-\item{gistic}{An `FirehoseGISTIC` object from `RTCGAToolbox`}
+\item{gistic}{An \code{FirehoseGISTIC} object from \code{RTCGAToolbox}}
 
 \item{dataType}{Either one of "ThresholdedByGene", "AllByGene", "Peaks"}
 }
@@ -21,14 +21,14 @@ makeSummarizedExperimentFromGISTIC(gistic, dataType, ...)
 Defunct functions return errors
 }
 \description{
-These functions have been moved to either `MultiAssayExperiment`
-  or `RTCGAToolbox`
+These functions have been moved to either \code{MultiAssayExperiment}
+or \code{RTCGAToolbox}
 }
 \details{
-`splitAssays` was moved to `MultiAssayExperiment` and the TCGA
-  specific implementation was named `TCGAsplitAssays` which resided in this
-  package. `makeSummarizedExperimentFromGISTIC` now resides in
-  `RTCGAToolbox`. See there for details.
+\code{splitAssays} was moved to \code{MultiAssayExperiment} and the TCGA
+specific implementation was named \code{TCGAsplitAssays} which resided in this
+package. \code{makeSummarizedExperimentFromGISTIC} now resides in
+\code{RTCGAToolbox}. See there for details.
 }
 \author{
 L. Geistlinger, M. Ramos

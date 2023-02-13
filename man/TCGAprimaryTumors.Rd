@@ -14,7 +14,7 @@ data as obtained from \code{\link[curatedTCGAData]{curatedTCGAData}}}
 A MultiAssayExperiment containing only primary tumor samples
 }
 \description{
-Tumor selection is decided using the `sampleTypes` data. For 'LAML' datasets,
+Tumor selection is decided using the \code{sampleTypes} data. For 'LAML' datasets,
 the primary tumor code used is "03" otherwise, "01" is used.
 }
 \examples{

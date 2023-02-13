@@ -7,10 +7,10 @@
 \format{
 A data frame with 37 rows and 2 variables:
 \describe{
-     \item{Study.Abbreviation}{Disease Code used in TCGA}
-     \item{Available}{Cancer datasets available via curatedTCGAData}
-     \item{SubtypeData}{Subtype curation data available via curatedTCGAData}
-     \item{Study.Name}{The full length study name (i.e., type of cancer)}
+\item{Study.Abbreviation}{Disease Code used in TCGA}
+\item{Available}{Cancer datasets available via curatedTCGAData}
+\item{SubtypeData}{Subtype curation data available via curatedTCGAData}
+\item{Study.Name}{The full length study name (i.e., type of cancer)}
 }
 }
 \source{
@@ -20,7 +20,7 @@ A data frame with 37 rows and 2 variables:
 data("diseaseCodes")
 }
 \value{
-The TCGA `diseaseCodes` table
+The TCGA \code{diseaseCodes} table
 }
 \description{
 A dataset for obtaining the cancer codes in TCGA for about 13 different

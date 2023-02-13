@@ -19,12 +19,12 @@ oncoPrintTCGA(
 `curatedTCGAData``}
 
 \item{matchassay}{character(1) The name of the assay containing mutation
-data, this can be a pattern (e.g., "*_Mutation-*", the default)}
+data, this can be a pattern (e.g., "\emph{_Mutation-}", the default)}
 
 \item{variantCol}{character(1) The name of the metadata column containing
 the mutation categories, usually "Variant_Classification" in TCGA}
 
-\item{brewerPal}{character(1) The name of the `RColorBrewer::brewer.pal`
+\item{brewerPal}{character(1) The name of the \code{RColorBrewer::brewer.pal}
 palette, (default: "Set3")}
 
 \item{ntop}{integer(1) The number of the top N genes for displaying based
