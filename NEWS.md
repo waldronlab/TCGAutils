@@ -1,3 +1,9 @@
+## Changes in version 1.20.0
+
+### New features
+
+* `makeSummarizedExperimentFromGISTIC` and `splitAssays` are now defunct.
+
 ## Changes in version 1.18.0
 
 ### Minor changes and bug fixes
