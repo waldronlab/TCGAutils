@@ -11,7 +11,14 @@
 #'
 #' @export
 splitAssays <- function(...) {
-    .Defunct("TCGAsplitAssays")
+    .Defunct(
+        "TCGAsplitAssays", "TCGAutils",
+        c(
+            "'splitAssays' is deprecated.\n",
+            "Use 'TCGAsplitAssays' instead.\n",
+            "See help(\"TCGAutils-defunct\")"
+        )
+    )
 }
 
 #' @name TCGAutils-defunct
@@ -29,5 +36,13 @@ splitAssays <- function(...) {
 #'
 #' @export
 makeSummarizedExperimentFromGISTIC <- function(gistic, dataType, ...) {
-    .Defunct("RTCGAToolbox::makeSummarizedExperimentFromGISTIC")
+    .Defunct(
+        "makeSummarizedExperimentFromGISTIC", "RTCGAToolbox",
+        c(
+            "'makeSummarizedExperimentFromGISTIC' is deprecated.\n",
+            "Use 'RTCGAToolbox::makeSummarizedExperimentFromGISTIC' instead.\n",
+            "See help(\"TCGAutils-defunct\")"
+        )
+        
+    )
 }
