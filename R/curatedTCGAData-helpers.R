@@ -196,7 +196,7 @@ TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
         idConverter = TCGAbarcode
     )
 
-    BiocGenerics:::replaceSlots(
+    BiocBaseUtils::setSlots(
         object = multiassayexperiment,
         ExperimentList = ExperimentList(egroups),
         sampleMap = sampmap

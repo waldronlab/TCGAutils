@@ -19,6 +19,7 @@ Depends:
 Imports:
     AnnotationDbi,
     BiocGenerics,
+    BiocBaseUtils,
     GenomeInfoDb,
     GenomicFeatures,
     GenomicRanges,

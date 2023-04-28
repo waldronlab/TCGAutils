@@ -188,7 +188,7 @@ UUIDtoBarcode <-  function(id_vector,
     if (!all(idin))
         warning("Identifiers not found: ",
             paste(
-                S4Vectors:::selectSome(id_vector[!idin], 4), collapse = ", "
+                BiocBaseUtils::selectSome(id_vector[!idin], 4), collapse = ", "
             ),
             call. = FALSE
         )
