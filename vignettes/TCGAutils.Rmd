@@ -292,39 +292,6 @@ A few functions in the package accept either files or classes such as
 `data.frame` and `FirehoseGISTIC` as input and return standard Bioconductor
 classes.
 
-## `makeGRangesListFromExonFiles`
-
-The `GenomicDataCommons` package can be used to obtain 'legacy' exon
-quantification files via:
-
-_Note_. File downloads disabled on Windows due to long file names.
-
-```{r}
-library(GenomicDataCommons)
-
-queso <- files(legacy = TRUE) |>
-    filter( ~ cases.project.project_id == "TCGA-COAD" &
-        data_category == "Gene expression" &
-        data_type == "Exon quantification")
-
-gdc_set_cache()
-```
-
-We then use `makeGRangesListFromExonFiles` to create a `GRangesList` from
-vectors of file paths. There are options to provide file names when file names
-are too long to download (Windows OS). The `nrows` argument only keeps the
-first 5 rows in each of the files read in due to invalid character exon ranges.
-
-```{r}
-qu <- manifest(queso)
-qq <- gdcdata(qu$id[1:4], legacy = TRUE)
-
-makeGRangesListFromExonFiles(qq, nrows = 4)
-```
-
-Note `GRangesList` objects must be converted to `r Biocpkg("RaggedExperiment")`
-class to incorporate them into a `MultiAssayExperiment`.
-
 ### Work around for long file names on Windows
 
 Due to file name length, Windows may not be able to read / display all files.
@@ -400,14 +367,18 @@ mergeColData(coad, race_df)
 
 ## GDC Data Updates
 
-The recent Data Release
-([version 32.0](https://docs.gdc.cancer.gov/Data/Release_Notes/Data_Release_Notes/#data-release-320))
-has changed the behavior of the ID translation functions. This is due to the
+Data Release ([version 32.0](https://docs.gdc.cancer.gov/Data/Release_Notes/Data_Release_Notes/#data-release-320))
+changed the behavior of the ID translation functions. This is due to the
 removal of files whose UUIDs were translated. These files have been replaced
 with newer runs of the pipeline. The new UUIDs can be mapped to the old UUIDs
 with project specific maps located on GitHub at
 https://github.com/NCI-GDC/gdc-docs/tree/develop/docs/Data/Release_Notes/GCv36_Manifests
 as well as with the history lookup API endpoint.
+
+Note. The GDC API version
+[v3.28.0](https://docs.gdc.cancer.gov/API/Release_Notes/API_Release_Notes/#v3280)
+has deprecated the `/legacy/files` endpoint; therefore, legacy data is no
+longer available.
 
 ### UUID History Lookup
 
