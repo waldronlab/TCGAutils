@@ -4,6 +4,12 @@
 
 * `makeSummarizedExperimentFromGISTIC` and `splitAssays` are now defunct.
 
+### Minor changes and bug fixes
+
+* `makeGRangesListFromExonFiles` example removed from the vignette, the GDC
+`legacy` endpoint has been deprecated. For more information see the GDC API
+release notes version v3.28.0.
+
 ## Changes in version 1.18.0
 
 ### Minor changes and bug fixes
