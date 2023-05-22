@@ -309,9 +309,14 @@ exonFile
 filePrefix <- "unc.edu.32741f9a-9fec-441f-96b4-e504e62c5362.1755371."
 
 ## Add actual file name manually
-makeGRangesListFromExonFiles(exonFile,
+makeGRangesListFromExonFiles(exonFile, getBarcodes = FALSE,
     fileNames = paste0(filePrefix, basename(exonFile)))
 ```
+
+**NOTE**. Querying the API for legacy file names is no longer supported. In
+this example, we leave the file name in rather than translate the file name
+to a TCGA barcode, i.e., `getBarcodes = FALSE`. However, `filenameToBarcode` is
+still supported for other file types.
 
 ## `makeGRangesListFromCopyNumber`
 
