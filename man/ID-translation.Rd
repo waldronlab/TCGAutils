@@ -30,8 +30,8 @@ either files or cases (default assumes case_ids)}
 \item{from_type}{character(1) Either \code{case_id} or \code{file_id} indicating the
 type of \code{id_vector} entered (default \code{"case_id"})}
 
-\item{legacy}{logical(1) Whether to search the legacy archives (default:
-\code{FALSE})}
+\item{legacy}{logical(1) DEPRECATED; whether to search the legacy archives
+(default: \code{FALSE})}
 
 \item{to_type}{character(1) The desired UUID type to obtain, can either be
 \code{"case_id"} (default) or \code{"file_id"}}
