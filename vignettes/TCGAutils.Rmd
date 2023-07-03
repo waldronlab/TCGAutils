@@ -14,6 +14,10 @@ vignette: >
 
 # Overview
 
+```{r,include=FALSE,results="hide",message=FALSE,warning=FALSE}
+library(BiocStyle)
+```
+
 The `TCGAutils` package completes a suite of Bioconductor packages for
 convenient access, integration, and analysis of *The Cancer Genome Atlas*.
 It includes:
