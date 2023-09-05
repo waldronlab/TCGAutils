@@ -50,61 +50,54 @@ test_that("barcodeToUUID translates correctly", {
 
 
 test_that("UUIDtoBarcode translates correctly", {
-    exuuid <- "6b7d7a7f-f16d-472d-9b7b-3482c434cc99"
-    entities <- c(
-        "TCGA-ND-A4W6-01A-11D-A28Q-01", "TCGA-N9-A4Q8-01A-31D-A28Q-01",
-        "TCGA-NG-A4VW-01A-11D-A28Q-01", "TCGA-N9-A4Q4-01A-11D-A28Q-01",
-        "TCGA-NA-A4QW-01A-11D-A28Q-01", "TCGA-N6-A4VF-01A-31D-A28Q-01",
-        "TCGA-N5-A4RD-01A-11D-A28Q-01", "TCGA-N8-A56S-01A-11D-A28Q-01",
-        "TCGA-N5-A4RS-01A-11D-A28Q-01", "TCGA-NA-A5I1-01A-21D-A28Q-01",
-        "TCGA-ND-A4WF-01A-11D-A28Q-01", "TCGA-N5-A4RU-01A-31D-A28Q-01",
-        "TCGA-N5-A4RT-01A-11D-A28Q-01", "TCGA-N5-A4RA-01A-11D-A28Q-01",
-        "TCGA-ND-A4WA-01A-12D-A28Q-01", "TCGA-NA-A4R0-01A-11D-A28Q-01",
-        "TCGA-N8-A4PN-01A-11D-A28Q-01", "TCGA-N9-A4PZ-01A-22D-A28Q-01",
-        "TCGA-N5-A4RF-01A-11D-A28Q-01", "TCGA-NG-A4VU-01A-11D-A28Q-01",
-        "TCGA-QN-A5NN-01A-11D-A28Q-01", "TCGA-N9-A4Q1-01A-11D-A28Q-01",
-        "TCGA-N6-A4VC-01A-11D-A28Q-01", "TCGA-N7-A4Y0-01A-12D-A28Q-01",
-        "TCGA-N8-A4PQ-01A-11D-A28Q-01", "TCGA-N5-A4RJ-01A-11D-A28Q-01",
-        "TCGA-N9-A4Q3-01A-11D-A28Q-01", "TCGA-N5-A4RM-01A-11D-A28Q-01",
-        "TCGA-N8-A4PI-01A-21D-A28Q-01", "TCGA-N6-A4VG-01A-31D-A28Q-01",
-        "TCGA-N6-A4V9-01A-11D-A28Q-01", "TCGA-N5-A59F-01A-11D-A28Q-01",
-        "TCGA-N7-A4Y5-01A-12D-A28Q-01", "TCGA-NA-A4QX-01A-11D-A28Q-01",
-        "TCGA-NA-A4QV-01A-11D-A28Q-01", "TCGA-N6-A4VE-01A-11D-A28Q-01",
-        "TCGA-N6-A4VD-01A-11D-A28Q-01", "TCGA-N8-A4PM-01A-11D-A28Q-01",
-        "TCGA-NF-A4X2-01A-11D-A28Q-01", "TCGA-N8-A4PL-01A-11D-A28Q-01",
-        "TCGA-N5-A59E-01A-11D-A28Q-01", "TCGA-N8-A4PO-01A-11D-A28Q-01",
-        "TCGA-ND-A4WC-01A-21D-A28Q-01", "TCGA-N7-A4Y8-01A-11D-A28Q-01",
-        "TCGA-NF-A4WU-01A-11D-A28Q-01", "TCGA-N7-A59B-01A-11D-A28Q-01",
-        "TCGA-QM-A5NM-01A-11D-A28Q-01", "TCGA-N5-A4RV-01A-21D-A28Q-01",
-        "TCGA-NA-A4QY-01A-11D-A28Q-01", "TCGA-N9-A4Q7-01A-11D-A28Q-01",
-        "TCGA-NF-A4WX-01A-11D-A28Q-01", "TCGA-NF-A5CP-01A-12D-A28Q-01",
-        "TCGA-NA-A4R1-01A-11D-A28Q-01", "TCGA-N5-A4RO-01A-11D-A28Q-01",
-        "TCGA-N8-A4PP-01A-11D-A28Q-01", "TCGA-N5-A4RN-01A-12D-A28Q-01"
+    file_id <- c(
+        "6b7d7a7f-f16d-472d-9b7b-3482c434cc99",
+        "2ea70743-f3c6-4b01-8e20-9c8957a71229"
     )
-    resframe <- UUIDtoBarcode(exuuid, from_type = "file_id")
-    expect_true(
-        all(entities %in% resframe[["associated_entities.entity_submitter_id"]])
+    `associated_entities.entity_submitter_id` <- c(
+        "TCGA-NA-A4QY-01A-11D-A28Q-01", "TCGA-NA-A4QY-01A-11D-A28S-05"
+    )
+    resframe <- UUIDtoBarcode(file_id, from_type = "file_id")
+    expect_identical(
+        resframe,
+        data.frame(
+            file_id,
+            `associated_entities.entity_submitter_id`
+        )
     )
 
-    aliquot_uuids <- c(
+    `portions.analytes.aliquots.aliquot_id` <- c(
         "f8c7d038-1182-42d0-8787-b84b5ca57eaf",
         "b37ea112-340e-4613-8514-d8a8bd47410f",
         "4a9967bf-444c-4573-a082-121a30be7f3b"
     )
-    aliquot_submitters <- c(
+    `portions.analytes.aliquots.submitter_id` <- c(
         "TCGA-UF-A71A-06A-11D-A390-01",
         "TCGA-BB-4224-01A-01D-1432-01",
         "TCGA-CN-4735-01A-01D-1432-01"
     )
-    resframe <- UUIDtoBarcode(aliquot_uuids, from_type = "aliquot_ids")
-    expect_true(
-        all(
-            aliquot_uuids %in% resframe[[1L]]
+    resframe <- UUIDtoBarcode(
+        `portions.analytes.aliquots.aliquot_id`, from_type = "aliquot_ids"
+    )
+    expect_identical(
+        resframe,
+        data.frame(
+            `portions.analytes.aliquots.aliquot_id`,
+            `portions.analytes.aliquots.submitter_id`
         )
     )
-    expect_true(
-        all(
-            aliquot_submitters %in% resframe[[2L]]
+
+    case_id <- c(
+        "ce2b2c41-7d28-4d8b-a037-af842a8fe20f",
+        "58574e35-8a30-4207-b127-59fff7c87a43"
+    )
+    submitter_id <- c("TCGA-NA-A4QY", "TCGA-BB-4224")
+    resframe <- UUIDtoBarcode(case_id, from_type = "case_id")
+    expect_identical(
+        resframe,
+        data.frame(
+            case_id,
+            submitter_id
         )
     )
 })
@@ -123,11 +116,9 @@ test_that("UUIDtoBarcode shows multiple entries per file_id", {
 
     expect_identical(results, UUIDtoBarcode(file_ids, "file_id"))
 
-    file_ids0 <- file_ids
-    ## create phony ID
-    file_ids0[2] <- paste(rev(unlist(strsplit(file_ids[2], ""))), collapse = "")
+    file_ids[2] <- paste(rev(unlist(strsplit(file_ids[2], ""))), collapse = "")
 
-    expect_warning(UUIDtoBarcode(file_ids0, "file_id"))
+    expect_warning(UUIDtoBarcode(file_ids, "file_id"))
 })
 
 test_that("UUIDhistory correctly returns the appropriate identifiers", {
