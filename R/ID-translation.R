@@ -76,11 +76,24 @@
     resframe
 }
 
-.nestedlisttodf <- function(x) {
+.nestedlisttodf <- function(x, orderBy) {
+    .check_ids_found(names(x), orderBy)
+    x <- Filter(length, x[orderBy])
     data.frame(
         rep(names(x), vapply(x, nrow, integer(1))),
-        unlist(x, use.names = FALSE)
+        unlist(x, use.names = FALSE),
+        stringsAsFactors = FALSE
     )
+}
+
+.check_ids_found <- function(resnames, id_vector) {
+    idin <- id_vector %in% resnames
+    if (!all(idin)) {
+        mids <- paste(
+            BiocBaseUtils::selectSome(id_vector[!idin], 4), collapse = ", "
+        )
+        warning("Identifiers not found: ", mids, call. = FALSE)
+    }
 }
 
 #' @name ID-translation
@@ -173,7 +186,7 @@ UUIDtoBarcode <-  function(
         aliquot_ids = cases())
     info <- results_all(
         selector(
-            filter(funcRes, as.formula(
+            GenomicDataCommons::filter(funcRes, as.formula(
                 paste("~ ", from_type, "%in% id_vector")
             ))
         )
@@ -188,24 +201,11 @@ UUIDtoBarcode <-  function(
                 stringsAsFactors = FALSE
             )
         else if (identical(from_type, "file_id"))
-            .nestedlisttodf(info[[targetElement]])
+            .nestedlisttodf(info[[targetElement]], id_vector)
         else
             return(.cleanExpand(info, id_vector))
 
     names(rframe) <- c(from_type, APIendpoint)
-    idin <- id_vector %in% rframe[[from_type]]
-    if (!all(idin))
-        warning("Identifiers not found: ",
-            paste(
-                BiocBaseUtils::selectSome(id_vector[!idin], 4), collapse = ", "
-            ),
-            call. = FALSE
-        )
-
-    rframe[[from_type]] <- factor(rframe[[from_type]], levels = id_vector)
-    rframe <- rframe[order(rframe[[from_type]]), , drop = FALSE]
-    # set rownames to NULL after ordering
-    rownames(rframe) <- NULL
     rframe
 }
 
