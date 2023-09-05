@@ -1,3 +1,10 @@
+## Changes in version 1.22.0
+
+### Bug fixes and minor improvements
+
+* `UUIDtoBarcode` returns barcodes consistent with Genomic Data Commons API
+update
+
 ## Changes in version 1.20.0
 
 ### New features
