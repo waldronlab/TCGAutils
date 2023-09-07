@@ -18,6 +18,7 @@ Depends:
     R (>= 4.2.0)
 Imports:
     AnnotationDbi,
+    BiocBaseUtils,
     BiocGenerics,
     GenomeInfoDb,
     GenomicFeatures,
