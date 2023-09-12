@@ -63,6 +63,7 @@ TCGAbarcode <- function(barcodes, participant = TRUE, sample = FALSE,
 {
     .checkBarcodes(barcodes)
     filler <- .uniqueDelim(barcodes)
+    stopifnot(is.null(index) || is.numeric(index))
     if (is.null(index))
         index <- which(
             c(rep(participant, 3), sample, portion, plate, center)
