@@ -30,8 +30,9 @@ codes of the barcode}
 \item{center}{Logical (default FALSE) returns a matrix with the plate and
 center codes}
 
-\item{index}{A numerical vector of TCGA barcode positions desired when
-split by the delimiter (i.e., hyphen '-')}
+\item{index}{An optional numeric vector indicating barcode positions when
+split by the delimiter (i.e., hyphen '-'). For example, an index of
+\code{c(1, 2)} corresponds to 'TCGA-ZZ' in \code{TCGA-ZZ-A1A1}.}
 }
 \value{
 A character vector or data matrix of TCGA barcode information

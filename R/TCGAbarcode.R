@@ -39,8 +39,9 @@
 #' @param plate Logical (default FALSE) returns the plate value
 #' @param center Logical (default FALSE) returns a matrix with the plate and
 #' center codes
-#' @param index A numerical vector of TCGA barcode positions desired when
-#' split by the delimiter (i.e., hyphen '-')
+#' @param index An optional numeric vector indicating barcode positions when
+#'   split by the delimiter (i.e., hyphen '-'). For example, an index of
+#'   `c(1, 2)` corresponds to 'TCGA-ZZ' in `TCGA-ZZ-A1A1`.
 #'
 #' @return A character vector or data matrix of TCGA barcode information
 #'
