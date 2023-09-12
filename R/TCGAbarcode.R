@@ -63,14 +63,11 @@ TCGAbarcode <- function(barcodes, participant = TRUE, sample = FALSE,
 {
     .checkBarcodes(barcodes)
     filler <- .uniqueDelim(barcodes)
+    if (is.null(index))
+        index <- which(
+            c(rep(participant, 3), sample, portion, plate, center)
+        )
     barcodeMat <- do.call(rbind, strsplit(barcodes, filler))
-    if (is.null(index)) {
-        if (participant) index <- c(index, 1L:3L)
-        if (sample) index <- c(index, 4L)
-        if (portion) index <- c(index, 5L)
-        if (plate) index <- c(index, 6L)
-        if (center) index <- c(index, 7L)
-    }
     apply(barcodeMat[, index, drop = FALSE], 1L, paste, collapse = filler)
 }
 
