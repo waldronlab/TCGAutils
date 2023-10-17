@@ -46,7 +46,6 @@ library(TCGAutils)
 library(curatedTCGAData)
 library(MultiAssayExperiment)
 library(RTCGAToolbox)
-library(BiocFileCache)
 library(rtracklayer)
 library(R.utils)
 ```

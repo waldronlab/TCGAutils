@@ -37,7 +37,6 @@ Imports:
     xml2
 Suggests:
     AnnotationHub,
-    BiocFileCache,
     BiocStyle,
     curatedTCGAData,
     ComplexHeatmap,
