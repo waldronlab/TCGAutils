@@ -69,9 +69,10 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
         stop("'sampleNames' length is inconsistent with 'fileNames'")
 
     btData <- lapply(filepaths, function(file) {
-        if (requireNamespace("readr", quietly = TRUE))
+        if (requireNamespace("readr", quietly = TRUE)) {
+            readr::local_edition(1)
             readr::read_delim(file, delim = "\t", n_max = nrows)
-        else
+        } else
             read.delim(file, sep = "\t",
                 nrows = if (is.infinite(nrows)) -1 else nrows)
     })
