@@ -9,17 +9,13 @@
 \alias{UUIDhistory}
 \title{Translate study identifiers from barcode to UUID and vice versa}
 \usage{
-UUIDtoBarcode(
-  id_vector,
-  from_type = c("case_id", "file_id", "aliquot_ids"),
-  legacy = FALSE
-)
+UUIDtoBarcode(id_vector, from_type = c("case_id", "file_id", "aliquot_ids"))
 
-UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"), legacy = FALSE)
+UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"))
 
-barcodeToUUID(barcodes, legacy = FALSE)
+barcodeToUUID(barcodes)
 
-filenameToBarcode(filenames, legacy = FALSE, slides = FALSE)
+filenameToBarcode(filenames, slides = FALSE)
 
 UUIDhistory(id, endpoint = .HISTORY_ENDPOINT)
 }
@@ -29,9 +25,6 @@ either files or cases (default assumes case_ids)}
 
 \item{from_type}{character(1) Either \code{case_id} or \code{file_id} indicating the
 type of \code{id_vector} entered (default \code{"case_id"})}
-
-\item{legacy}{logical(1) DEPRECATED; whether to search the legacy archives
-(default: \code{FALSE})}
 
 \item{to_type}{character(1) The desired UUID type to obtain, can either be
 \code{"case_id"} (default) or \code{"file_id"}}

@@ -58,7 +58,7 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
 {
     if (is.null(sampleNames) && getBarcodes) {
         sampleNames <-
-            filenameToBarcode(filenames = fileNames, legacy = TRUE)[[
+            filenameToBarcode(filenames = fileNames)[[
                 "cases.samples.portions.analytes.aliquots.submitter_id"
             ]]
     } else if (is.null(sampleNames)) {
