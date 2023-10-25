@@ -151,12 +151,7 @@ UUIDtoBarcode <-  function(
     legacy = FALSE
 ) {
     if (legacy)
-        .Deprecated(
-            msg = paste0(
-                "The 'legacy' argument is deprecated.\n",
-                "See help(\"TCGAutils-deprecated\")"
-            )
-        )
+        .Defunct(msg = "The 'legacy' argument is defunct")
     from_type <- match.arg(from_type)
     targetElement <- APIendpoint <- "submitter_id"
     if (identical(from_type, "file_id")) {
@@ -228,12 +223,7 @@ UUIDtoUUID <- function(
     id_vector, to_type = c("case_id", "file_id"), legacy = FALSE
 ) {
     if (legacy)
-        .Deprecated(
-            msg = paste0(
-                "The 'legacy' argument is deprecated.\n",
-                "See help(\"TCGAutils-deprecated\")"
-            )
-        )
+        .Defunct(msg = "The 'legacy' argument is defunct")
     id_vector <- tolower(id_vector)
     type_ops <- c("case_id", "file_id")
     to_type <- match.arg(to_type)
@@ -286,12 +276,7 @@ barcodeToUUID <-
     function(barcodes, legacy = FALSE)
 {
     if (legacy)
-        .Deprecated(
-            msg = paste0(
-                "The 'legacy' argument is deprecated.\n",
-                "See help(\"TCGAutils-deprecated\")"
-            )
-        )
+        .Defunct(msg = "The 'legacy' argument is defunct")
     .checkBarcodes(barcodes)
     bend <- .findBarcodeLimit(barcodes)
     endtargets <- .barcode_cases(bend)
@@ -386,12 +371,7 @@ barcodeToUUID <-
 #' @export filenameToBarcode
 filenameToBarcode <- function(filenames, legacy = FALSE, slides = FALSE) {
     if (legacy)
-        .Deprecated(
-            msg = paste0(
-                "The 'legacy' argument is deprecated.\n",
-                "See help(\"TCGAutils-deprecated\")"
-            )
-        )
+        .Defunct(msg = "The 'legacy' argument is defunct")
     filesres <- files()
     endpoint <- "cases.samples.portions.analytes.aliquots.submitter_id"
     reselem <- "cases"
