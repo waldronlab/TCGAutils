@@ -1,3 +1,11 @@
+## Changes in version 1.24.0
+
+### Significant User-visible changes
+
+* The `legacy` argument in ID translation functions (`UUIDtoBarcode`,
+`UUIDtoUUID`, `barcodeToUUID`, and `filenameToBarcode`) has been defunct and
+removed.
+
 ## Changes in version 1.22.0
 
 ### Bug fixes and minor improvements
