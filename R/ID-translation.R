@@ -76,6 +76,14 @@
     resframe
 }
 
+.orderedDF <- function(..., orderBy) {
+    df <- data.frame(..., stringsAsFactors = FALSE)
+    orderIdx <- match(orderBy, df[["info..from_type.."]])
+    res <- df[orderIdx, ]
+    rownames(res) <- NULL
+    res
+}
+
 .nestedlisttodf <- function(x, orderBy) {
     .check_ids_found(names(x), orderBy)
     x <- Filter(length, x[orderBy])
@@ -191,9 +199,8 @@ UUIDtoBarcode <-  function(
 
     rframe <-
         if (identical(from_type, "case_id"))
-            data.frame(
-                info[[from_type]], info[[targetElement]],
-                stringsAsFactors = FALSE
+            .orderedDF(
+                info[[from_type]], info[[targetElement]], orderBy = id_vector
             )
         else if (identical(from_type, "file_id"))
             .nestedlisttodf(info[[targetElement]], id_vector)
