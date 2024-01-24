@@ -30,6 +30,10 @@ NULL
 #' Additional helper functions for cleaning and uncovering metadata
 #' within a downloaded \code{MultiAssayExperiment} from \code{curatedTCGAData}.
 #'
+#' @details Note that for `getSubtypeMap`, the column of in-data variable names
+#'   may need to go through `make.names` to be found in the `colData` of the
+#'   `MultiAssayExperiment`.
+#'
 #' @section getSubtypeMap: provides a two column \code{data.frame} with
 #'   interpreted names and in-data variable names. 'Name' usually refers to the
 #'   \code{colData} row names a.k.a. the \code{patientID}.

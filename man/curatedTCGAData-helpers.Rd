@@ -44,6 +44,11 @@ may be found across several cancer disease codes.
 Additional helper functions for cleaning and uncovering metadata
 within a downloaded \code{MultiAssayExperiment} from \code{curatedTCGAData}.
 }
+\details{
+Note that for \code{getSubtypeMap}, the column of in-data variable names
+may need to go through \code{make.names} to be found in the \code{colData} of the
+\code{MultiAssayExperiment}.
+}
 \section{getSubtypeMap}{
  provides a two column \code{data.frame} with
 interpreted names and in-data variable names. 'Name' usually refers to the
