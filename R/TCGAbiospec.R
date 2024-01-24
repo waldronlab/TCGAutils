@@ -18,7 +18,7 @@
 #' plates and the center.
 #'
 #' @param barcodes A character vector of TCGA barcodes
-#' @return A \code{dataframe} with sample type, sample code, portion, plate,
+#' @return A `dataframe` with sample type, sample code, portion, plate,
 #' and center columns.
 #'
 #' @author M. Ramos

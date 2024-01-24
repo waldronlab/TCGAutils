@@ -14,7 +14,8 @@ return a \linkS4class{SummarizedExperiment} class object. The package also
 provides functions for working with data from the \code{curatedTCGAData}
 experiment data package. It provides convenience functions for extracting
 subtype metadata data and adding clinical data to existing
-\linkS4class{MultiAssayExperiment} objects.
+\code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
+objects.
 }
 \seealso{
 Useful links:

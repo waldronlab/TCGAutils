@@ -1,16 +1,16 @@
 #' Make a GRangesList from TCGA Copy Number data
 #'
-#' \code{makeGRangesListFromCopyNumber} allows the user to convert objects of
-#' class \code{data.frame} or \linkS4class{DataFrame} to a
+#' `makeGRangesListFromCopyNumber` allows the user to convert objects of
+#' class `data.frame` or [S4Vectors::DataFrame] to a
 #' \linkS4class{GRangesList}. It includes additional features specific to TCGA
 #' data such as, hugo symbols, probe numbers, segment means, and
 #' ucsc build (if available).
 #'
-#' @param df A \code{data.frame} or \code{DataFrame} class object. \code{list}
-#' class objects are coerced to data.frame or DataFrame.
-#' @param split.field A \code{character} vector of length one indicating
+#' @param df A `data.frame` or `DataFrame` class object. `list`
+#' class objects are coerced to `data.frame` or `DataFrame`.
+#' @param split.field A `character` vector of length one indicating
 #' the column to be used as sample identifiers
-#' @param names.field A \code{character} vector of length one indicating the
+#' @param names.field A `character` vector of length one indicating the
 #' column to be used as names for each of the ranges in the data
 #' @param ... Additional arguments to pass on to
 #' \link{makeGRangesListFromDataFrame}

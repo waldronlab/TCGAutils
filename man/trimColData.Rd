@@ -11,8 +11,9 @@ trimColData(
 )
 }
 \arguments{
-\item{multiassayexperiment}{A \linkS4class{MultiAssayExperiment} object with
-colData}
+\item{multiassayexperiment}{A
+\code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
+object with \code{colData}}
 
 \item{maxNAfrac}{(numeric default 0.2) A decimal between 0 and 1 to indicate
 the amount of NA values allowed per column}
@@ -21,7 +22,9 @@ the amount of NA values allowed per column}
 variables}
 }
 \value{
-A \code{\linkS4class{MultiAssayExperiment}} object
+A
+\code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
+object
 }
 \description{
 This function removes variables that have a high number of missing data

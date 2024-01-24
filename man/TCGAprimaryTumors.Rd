@@ -7,11 +7,12 @@
 TCGAprimaryTumors(multiassayexperiment)
 }
 \arguments{
-\item{multiassayexperiment}{A \linkS4class{MultiAssayExperiment} with TCGA
-data as obtained from \code{\link[curatedTCGAData]{curatedTCGAData}}}
+\item{multiassayexperiment}{A
+\code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
+with TCGA data as obtained from \code{\link[curatedTCGAData:curatedTCGAData]{curatedTCGAData::curatedTCGAData()}}}
 }
 \value{
-A MultiAssayExperiment containing only primary tumor samples
+A \code{MultiAssayExperiment} containing only primary tumor samples
 }
 \description{
 Tumor selection is decided using the \code{sampleTypes} data. For 'LAML' datasets,

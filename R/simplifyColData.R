@@ -1,18 +1,22 @@
 #' Take a MultiAssayExperiment and include curated variables
 #'
-#' This function works on the \code{colData} of a
-#' \code{\linkS4class{MultiAssayExperiment}} object to merge curated variable
-#' columns or other clinical variables that would like to be added. It is
-#' recommended that the user run the scripts in the
-#' \code{MultiAssayExperiment-TCGA} repository that build the "enhanced" type
-#' of data but not necessary if using different clinical data.
-#' Please see the repository's README for more information.
+#' This function works on the `colData` of a
+#' [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#' object to merge curated variable columns or other clinical variables that
+#' would like to be added. It is recommended that the user run the scripts in
+#' the `MultiAssayExperiment.TCGA` repository that build the "enhanced" type of
+#' data but not necessary if using different clinical data. Please see the
+#' repository's README for more information.
 #'
-#' @param MultiAssayExperiment A \linkS4class{MultiAssayExperiment} object
-#' @param colData A \code{DataFrame} or {data.frame} to merge with
-#' clinical data in the MultiAssayExperiment object
+#' @param MultiAssayExperiment A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   object
+#' @param colData A `DataFrame` or `data.frame` to merge with
+#' clinical data in the `MultiAssayExperiment` object
 #'
-#' @return A \code{\link{MultiAssayExperiment}} object
+#' @return A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   object
 #'
 #' @examples
 #'
@@ -45,8 +49,9 @@ mergeColData <- function(MultiAssayExperiment, colData) {
 #' This function removes variables that have a high number of missing data
 #' and contain keywords.
 #'
-#' @param multiassayexperiment A \linkS4class{MultiAssayExperiment} object with
-#'   colData
+#' @param multiassayexperiment A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   object with `colData`
 #'
 #' @param maxNAfrac (numeric default 0.2) A decimal between 0 and 1 to indicate
 #'   the amount of NA values allowed per column
@@ -54,7 +59,9 @@ mergeColData <- function(MultiAssayExperiment, colData) {
 #' @param keystring (character) A vector of keywords to match and remove
 #'   variables
 #'
-#' @return A \code{\linkS4class{MultiAssayExperiment}} object
+#' @return A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   object
 #'
 #' @examples
 #'

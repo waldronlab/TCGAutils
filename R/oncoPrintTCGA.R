@@ -4,8 +4,8 @@
 
 #' OncoPrint for TCGA Mutation Assays
 #'
-#' @param multiassayexperiment A MultiAssayExperiment preferably from
-#'    `curatedTCGAData``
+#' @param multiassayexperiment A `MultiAssayExperiment`, usually from
+#'    `curatedTCGAData`
 #'
 #' @param matchassay character(1) The name of the assay containing mutation
 #'     data, this can be a pattern (e.g., "*_Mutation-*", the default)

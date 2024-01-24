@@ -15,7 +15,7 @@ generateMap(
 }
 \arguments{
 \item{experiments}{A named \code{list} of experiments compatible with the
-MultiAssayExperiment API}
+\code{MultiAssayExperiment} API}
 
 \item{colData}{A \code{data.frame} of clinical data with patient identifiers
 as rownames}

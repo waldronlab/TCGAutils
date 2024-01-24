@@ -192,9 +192,11 @@ NULL
 #' @param suffix character (default "_simplified") A character string to append
 #'   to the newly modified assay for `qreduceTCGA`.
 #'
-#' @return A \linkS4class{MultiAssayExperiment} with any gene expression, miRNA,
-#'   copy number, and mutations converted to
-#'   \linkS4class{RangedSummarizedExperiment} objects
+#' @return A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   with any gene expression, miRNA, copy number, and mutations converted to
+#'   [`RangedSummarizedExperiment`][SummarizedExperiment::RangedSummarizedExperiment-class]
+#'   objects
 #'
 #' @author L. Waldron
 #'

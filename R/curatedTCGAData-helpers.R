@@ -28,24 +28,26 @@ NULL
 #'
 #' @description
 #' Additional helper functions for cleaning and uncovering metadata
-#' within a downloaded \code{MultiAssayExperiment} from \code{curatedTCGAData}.
+#' within a downloaded `MultiAssayExperiment` from `curatedTCGAData`.
 #'
 #' @details Note that for `getSubtypeMap`, the column of in-data variable names
 #'   may need to go through `make.names` to be found in the `colData` of the
 #'   `MultiAssayExperiment`.
 #'
-#' @section getSubtypeMap: provides a two column \code{data.frame} with
+#' @section getSubtypeMap: provides a two column `data.frame` with
 #'   interpreted names and in-data variable names. 'Name' usually refers to the
-#'   \code{colData} row names a.k.a. the \code{patientID}.
+#'   `colData` row names a.k.a. the `patientID`.
 #'
 #' @section getClinicalNames: provides a vector of common variable names that
-#'   exist in the \code{colData} \code{DataFrame} of a \code{curatedTCGAData}
-#'   \code{MultiAssayExperiment} object. These variables are directly obtained
+#'   exist in the `colData` `DataFrame` of a `curatedTCGAData`
+#'   `MultiAssayExperiment` object. These variables are directly obtained
 #'   from the BroadFirehose clinical data (downloaded with
 #'   \link[RTCGAToolbox]{getFirehoseData}) and tend to be present across cancer
 #'   disease codes.
 #'
-#' @param multiassayexperiment A \linkS4class{MultiAssayExperiment} object
+#' @param multiassayexperiment A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   object
 #'
 #' @examples
 #'
@@ -60,10 +62,10 @@ NULL
 #' TCGAsplitAssays(gbm, c("01", "10"))
 #'
 #' @return \itemize{
-#'     \item{getSubtypeMap}: A \code{data.frame} with explanatory names
+#'     \item{getSubtypeMap}: A `data.frame` with explanatory names
 #'     and their in-data variable names. They may not be present for all
 #'     cancer types.
-#'     \item{getClinicalNames}: A \code{vector} of common variable names that
+#'     \item{getClinicalNames}: A `vector` of common variable names that
 #'     may be found across several cancer disease codes.
 #' }
 #'

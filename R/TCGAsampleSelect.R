@@ -3,13 +3,13 @@
 #' The TCGA barcode contains several pieces of information which can
 #' be parsed by the \link{TCGAbarcode} function. To select a specific type of
 #' sample, enter the appropriate sampleCode argument from the lookup table.
-#' See lookup table in \code{data("sampleTypes")}. Barcode inputs can be a
+#' See lookup table in `data("sampleTypes")`. Barcode inputs can be a
 #' character vector or a \linkS4class{CharacterList} object.
 #'
 #' @param barcodes Either a TCGA barcode vector or \linkS4class{CharacterList}
 #'   containing patient identifiers, sample, portion, plate, and center codes.
 #' @param sampleCodes Either a character or numeric vector of TCGA sample codes.
-#'   See the \code{sampleType} dataset.
+#'   See the `sampleType` dataset.
 #'
 #' @return A logical vector or \linkS4class{LogicalList} of the same length as
 #'   'barcodes' indicating sample type matches

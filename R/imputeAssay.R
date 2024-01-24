@@ -1,18 +1,18 @@
 #' @name imputeAssay
 #'
 #' @title This function imputes assays values inside a
-#' \code{MultiAssayExperiment}
+#' `MultiAssayExperiment`
 #'
 #' @description These function allow the user to enter a
-#' \code{MultiAssayExperiment} and impute all the NA values inside assays.
+#' `MultiAssayExperiment` and impute all the NA values inside assays.
 #'
-#' @param multiassayexperiment A \code{MultiAssayExperiment} with genes in the
+#' @param multiassayexperiment A `MultiAssayExperiment` with genes in the
 #' rows, samples in the columns
-#' @param i A numeric, logical, or character \code{vector} indicating the
+#' @param i A numeric, logical, or character `vector` indicating the
 #' assays to perform imputation on (default 1L)
 #' @inheritDotParams impute::impute.knn
 #'
-#' @return MultiAssayExperiment with imputed assays values
+#' @return A `MultiAssayExperiment` with imputed assays values
 #'
 #' @examples
 #'

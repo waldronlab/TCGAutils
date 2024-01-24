@@ -33,9 +33,11 @@ not able to be mapped in reference database}
 to the newly modified assay for \code{qreduceTCGA}.}
 }
 \value{
-A \linkS4class{MultiAssayExperiment} with any gene expression, miRNA,
-copy number, and mutations converted to
-\linkS4class{RangedSummarizedExperiment} objects
+A
+\code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
+with any gene expression, miRNA, copy number, and mutations converted to
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{RangedSummarizedExperiment}}
+objects
 }
 \description{
 This group of functions will convert row annotations as

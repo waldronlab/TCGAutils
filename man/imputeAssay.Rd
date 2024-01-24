@@ -36,7 +36,7 @@ assays to perform imputation on (default 1L)}
   }}
 }
 \value{
-MultiAssayExperiment with imputed assays values
+A \code{MultiAssayExperiment} with imputed assays values
 }
 \description{
 These function allow the user to enter a

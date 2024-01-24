@@ -20,12 +20,12 @@
 #' select data types.
 #'
 #' @param disease The TCGA cancer disease code, e.g., "COAD"
-#' @param runDate The single \code{string} used in the \code{getFirehoseData}
+#' @param runDate The single `string` used in the `getFirehoseData`
 #' function (default "20160128")
 #' @param dataType A single character vector (default "CNASNP") indicating the
 #' data type for which to get the source file name
 #'
-#' @return A single \code{character} file name
+#' @return A single `character` file name
 #'
 #' @examples
 #'

@@ -18,7 +18,9 @@ TCGAsplitAssays(multiassayexperiment, sampleCodes = NULL, exclusive = FALSE)
 sampleTables(multiassayexperiment, vial = FALSE)
 }
 \arguments{
-\item{multiassayexperiment}{A \linkS4class{MultiAssayExperiment} object}
+\item{multiassayexperiment}{A
+\code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
+object}
 
 \item{diseaseCode}{A TCGA cancer code (e.g., "BRCA")}
 

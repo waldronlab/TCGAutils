@@ -3,10 +3,11 @@
 #' Tumor selection is decided using the `sampleTypes` data. For 'LAML' datasets,
 #' the primary tumor code used is "03" otherwise, "01" is used.
 #'
-#' @param multiassayexperiment A \linkS4class{MultiAssayExperiment} with TCGA
-#'     data as obtained from \code{\link[curatedTCGAData]{curatedTCGAData}}
+#' @param multiassayexperiment A
+#'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
+#'   with TCGA data as obtained from [curatedTCGAData::curatedTCGAData()]
 #'
-#' @return A MultiAssayExperiment containing only primary tumor samples
+#' @return A `MultiAssayExperiment` containing only primary tumor samples
 #'
 #' @examples
 #'

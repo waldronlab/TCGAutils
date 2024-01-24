@@ -1,17 +1,17 @@
 #' Create a sampleMap from an experiment list and phenoData dataframe
 #'
 #' This function helps create a sampleMap in preparation of a
-#' \code{MultiAssayExperiment} object. This especially useful when the
+#' `MultiAssayExperiment` object. This especially useful when the
 #' sample identifiers are not very different, as in the case of TCGA barcodes.
-#' An \code{idConverter} function can be provided to truncate such sample
+#' An `idConverter` function can be provided to truncate such sample
 #' identifiers and obtain patient identifiers.
 #'
-#' @param experiments A named \code{list} of experiments compatible with the
-#' MultiAssayExperiment API
-#' @param colData A \code{data.frame} of clinical data with patient identifiers
+#' @param experiments A named `list` of experiments compatible with the
+#' `MultiAssayExperiment` API
+#' @param colData A `data.frame` of clinical data with patient identifiers
 #' as rownames
 #' @param idConverter A function to be used against the sample or specimen
-#' identifiers to match those in the rownames of the \code{colData}
+#' identifiers to match those in the rownames of the `colData`
 #' (default NULL)
 #' @param sampleCol A single string indicating the sample identifiers
 #' column in the colData dataset
@@ -19,7 +19,7 @@
 #' in colData, "row.names" extracts the colData row names
 #' @param ... Additonal arguments to pass to the 'idConverter' function.
 #'
-#' @return A \code{DataFrame} class object of mapped samples and patient
+#' @return A `DataFrame` class object of mapped samples and patient
 #' identifiers including assays
 #'
 #' @author M. Ramos, M. Morgan, L. Schiffer

@@ -15,8 +15,8 @@ oncoPrintTCGA(
 )
 }
 \arguments{
-\item{multiassayexperiment}{A MultiAssayExperiment preferably from
-`curatedTCGAData``}
+\item{multiassayexperiment}{A \code{MultiAssayExperiment}, usually from
+\code{curatedTCGAData}}
 
 \item{matchassay}{character(1) The name of the assay containing mutation
 data, this can be a pattern (e.g., "\emph{_Mutation-}", the default)}

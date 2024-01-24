@@ -19,16 +19,16 @@ human_builds <- function() {
 #' either from NCBI or UCSC.
 #'
 #' \itemize{
-#'   \item \code{translateBuild}: translates between UCSC and NCBI build
+#'   \item `translateBuild`: translates between UCSC and NCBI build
 #'   versions
-#'   \item \code{extractBuild}: use grep patterns to find the first build
+#'   \item `extractBuild`: use grep patterns to find the first build
 #'   within the string input
-#'   \item \code{uniformBuilds}: replace build occurrences below a threshold
+#'   \item `uniformBuilds`: replace build occurrences below a threshold
 #'   level of occurence with the alternative build
-#'   \item \code{correctBuild}: Ensure that the build annotation is correct
-#'   based on the NCBI/UCSC website. If not, use \code{translateBuild} with
+#'   \item `correctBuild`: Ensure that the build annotation is correct
+#'   based on the NCBI/UCSC website. If not, use `translateBuild` with
 #'   the indicated 'style' input
-#'   \item \code{isCorrect}: Check to see if the build is exactly as annotated
+#'   \item `isCorrect`: Check to see if the build is exactly as annotated
 #' }
 #'
 #' @details The `correctBuild` function takes the input and ensures that

@@ -111,12 +111,12 @@
 #' @description These functions allow the user to enter a character vector of
 #' identifiers and use the GDC API to translate from TCGA barcodes to
 #' Universally Unique Identifiers (UUID) and vice versa. These relationships
-#' are not one-to-one. Therefore, a \code{data.frame} is returned for all
+#' are not one-to-one. Therefore, a `data.frame` is returned for all
 #' inputs. The UUID to TCGA barcode translation only applies to file and case
 #' UUIDs. Two-way UUID translation is available from 'file_id' to 'case_id'
 #' and vice versa. Please double check any results before using these
 #' features for analysis. Case / submitter identifiers are translated by
-#' default, see the \code{from_type} argument for details. All identifiers are
+#' default, see the `from_type` argument for details. All identifiers are
 #' converted to lower case.
 #'
 #' @details
