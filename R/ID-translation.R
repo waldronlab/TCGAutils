@@ -189,7 +189,16 @@ UUIDtoBarcode <-  function(
         )
     )
     if (!length(info))
-        stop("No barcodes found, only case and file UUIDs are supported.")
+        stop(
+            paste(strwrap(
+                "No barcodes were found. Note that legacy files were removed
+                as of GDC Data Portal version 1.30.4; see
+                https://docs.gdc.cancer.gov/. Only case, file, and aliquot
+                UUIDs are supported.",
+                exdent = 2
+            ), collapse = "\n"),
+            call. = FALSE
+        )
 
     rframe <-
         if (identical(from_type, "case_id"))
