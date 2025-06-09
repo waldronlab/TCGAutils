@@ -50,31 +50,26 @@ NULL
     return(res)
 }
 
-.getGN <- function(gen, FUN) {
-    stopifnot(is.character(gen), length(gen) == 1L)
-
-    fun <- switch(FUN,
-        genes = GenomicFeatures::genes,
-        microRNAs = GenomicFeatures::microRNAs
-    )
+#' @importFrom BiocBaseUtils isScalarCharacter
+.getGN <- function(gen) {
+    stopifnot(isScalarCharacter(gen))
 
     txdb <- if (identical(gen, "hg18"))
         TxDb.Hsapiens.UCSC.hg18.knownGene::TxDb.Hsapiens.UCSC.hg18.knownGene
     else if (identical(gen, "hg19"))
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
 
-    gn <- keepStandardChromosomes(fun(txdb), pruning.mode = "coarse")
+    gn <- keepStandardChromosomes(
+        GenomicFeatures::genes(txdb), pruning.mode = "coarse"
+    )
     seqlevelsStyle(gn) <- "NCBI"
 
-    if (identical(FUN, "genes"))
-        names(gn) <- AnnotationDbi::mapIds(
-            org.Hs.eg.db::org.Hs.eg.db,
-            names(gn),
-            keytype = "ENTREZID",
-            column = "SYMBOL"
-        )
-    else if (identical(FUN, "microRNAs"))
-        names(gn) <- mcols(gn)[["mirna_id"]]
+    names(gn) <- AnnotationDbi::mapIds(
+        org.Hs.eg.db::org.Hs.eg.db,
+        names(gn),
+        keytype = "ENTREZID",
+        column = "SYMBOL"
+    )
 
     gn
 }
@@ -84,17 +79,10 @@ NULL
 #' unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
 #' @keywords internal
 .getRangesOfSYMBOLS <- function(x) {
-    gn <- .getGN("hg19", "genes")
+    gn <- .getGN("hg19")
     .makeListRanges(x, gn)
 }
 
-#' @rdname hidden-helpers
-#' @param x A SummarizedExperiment containing hsa miR IDs as rownames
-#' @keywords internal
-.getRangesOfMir <- function(x) {
-    mr <- .getGN("hg19", "microRNAs")
-    .makeListRanges(x, mr)
-}
 
 .checkPkgsAvail <- function(pkgnames) {
     vapply(pkgnames, function(pkgname) {
@@ -226,7 +214,6 @@ NULL
 #' @export
 simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     obj <- qreduceTCGA(obj, keep.assay)
-    obj <- mirToRanges(obj, keep.assay, unmapped)
     symbolsToRanges(obj, keep.assay, unmapped)
 }
 
@@ -248,22 +235,22 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     )
 }
 
-#' @name simplifyTCGA
+#' @name simplifyTCGA-defunct
+#'
+#' @title Defunct TCGAutils functions
+#'
+#' @inheritParams simplifyTCGA
+#'
+#' @description `mirToRanges` is defunct and will be removed in the next
+#' release. The `mirbase.db` package is currently deprecated in `RELEASE_3_21`.
+#'
 #' @aliases mirToRanges
+#'
+#' @importFrom BiocBaseUtils lifeCycle
+#'
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    can.fix <- vapply(experiments(obj), function(y) {
-        .checkHas(y, "^hsa") & .isSummarizedExperiment(y)
-    }, logical(1L))
-
-    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "mirbase.db"))
-    .convertTo(
-        x = obj,
-        which = can.fix,
-        FUN = .getRangesOfMir,
-        keep = keep.assay,
-        unmap = unmapped
-    )
+    lifeCycle(cycle = "defunct", title = "simplifyTCGA")
 }
 
 #' @name simplifyTCGA

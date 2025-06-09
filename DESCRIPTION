@@ -47,7 +47,6 @@ Suggests:
     impute,
     knitr,
     magrittr,
-    mirbase.db,
     org.Hs.eg.db,
     RColorBrewer,
     readr,

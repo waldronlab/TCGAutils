@@ -4,17 +4,14 @@
 \alias{hidden-helpers}
 \alias{.makeListRanges}
 \alias{.getRangesOfSYMBOLS}
-\alias{.getRangesOfMir}
 \title{A small document for helper functions}
 \usage{
 .makeListRanges(x, gn)
 
 .getRangesOfSYMBOLS(x)
-
-.getRangesOfMir(x)
 }
 \arguments{
-\item{x}{A SummarizedExperiment containing hsa miR IDs as rownames}
+\item{x}{A character vector}
 
 \item{gn}{A GRanges object with some of its names found in x}
 }

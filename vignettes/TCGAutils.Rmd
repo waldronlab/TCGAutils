@@ -192,19 +192,6 @@ data (27k and 450k).
 methcoad <- CpGtoRanges(coad)
 ```
 
-
-## `mirToRanges`
-
-microRNA assays obtained from `curatedTCGAData` have annotated sequences
-that can be converted to genomic ranges using the `mirbase.db` package.
-The function looks up all sequences and converts them to ('hg19') ranges.
-For those rows that cannot be found, an 'unranged' assay is introduced
-in the resulting MultiAssayExperiment object.
-
-```{r}
-mircoad <- mirToRanges(coad)
-```
-
 ## `qreduceTCGA`
 
 The `qreduceTCGA` function converts `RaggedExperiment` mutation data objects

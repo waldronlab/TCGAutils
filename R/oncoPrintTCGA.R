@@ -94,7 +94,7 @@ oncoPrintTCGA <-
 
     .checkPkgsAvail(paste0("TxDb.Hsapiens.UCSC.", genomeannot, ".knownGene"))
 
-    gn <- sort(.getGN(genomeannot, "genes"))
+    gn <- sort(.getGN(genomeannot))
     gn <- BiocGenerics::unstrand(gn)
     gn <- gn[!is.na(names(gn))]
     sqls <- seqlevelsStyle(ragex)
