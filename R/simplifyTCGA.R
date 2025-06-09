@@ -83,19 +83,6 @@ NULL
     .makeListRanges(x, gn)
 }
 
-
-.checkPkgsAvail <- function(pkgnames) {
-    vapply(pkgnames, function(pkgname) {
-    if (!requireNamespace(pkgname, quietly = TRUE)) {
-        func <- as.character(sys.call(-3L)[[1L]])
-        func <- func[!(func %in% c("::", "TCGAutils"))]
-        stop("Install the '", pkgname, "' package to use '", func, "'",
-            call. = FALSE)
-    } else
-        TRUE
-    }, logical(1L))
-}
-
 .getRangesOfCpG <- function(x) {
     local_data_store <- new.env(parent = emptyenv())
     data("Locations", envir = local_data_store,
@@ -219,13 +206,14 @@ simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 
 #' @name simplifyTCGA
 #' @aliases symbolsToRanges
+#' @importFrom BiocBaseUtils checkInstalled
 #' @export
 symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     can.fix <- vapply(experiments(obj), function(y) {
         .checkHas(y, "symbols") & .isSummarizedExperiment(y)
     }, logical(1L))
 
-    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
+    checkInstalled(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     .convertTo(
         x = obj,
         which = can.fix,
@@ -261,7 +249,7 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
         .checkHas(y, "^cg") & .isSummarizedExperiment(y)
     }, logical(1L))
 
-    .checkPkgsAvail("IlluminaHumanMethylation450kanno.ilmn12.hg19")
+    checkInstalled("IlluminaHumanMethylation450kanno.ilmn12.hg19")
 
     .convertTo(
         x = obj,
@@ -276,7 +264,7 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @aliases qreduceTCGA
 #' @export
 qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
-    .checkPkgsAvail(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
+    checkInstalled(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     gn <- genes(
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
     gn <- keepStandardChromosomes(GenomicRanges::granges(gn),

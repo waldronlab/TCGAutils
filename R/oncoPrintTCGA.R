@@ -25,6 +25,8 @@
 #' @param rowcol character(1) The name of the column in the metadata to annotate
 #'     the rows with either "Hugo_Symbol" (default) or
 #'
+#' @importFrom BiocBaseUtils checkInstalled
+#'
 #' @examples
 #'
 #' library(curatedTCGAData)
@@ -48,7 +50,7 @@ oncoPrintTCGA <-
         .isSingleType(incl.thresh, is.numeric), .isSingleType(rowcol)
     )
 
-    .checkPkgsAvail(c("org.Hs.eg.db", "ComplexHeatmap", "RColorBrewer"))
+    checkInstalled(c("org.Hs.eg.db", "ComplexHeatmap", "RColorBrewer"))
 
     mutname <- grep(utils::glob2rx(matchassay),
         names(multiassayexperiment), value = TRUE)
@@ -92,7 +94,7 @@ oncoPrintTCGA <-
         genomeannot <- translateBuild(genomeannot)
     }
 
-    .checkPkgsAvail(paste0("TxDb.Hsapiens.UCSC.", genomeannot, ".knownGene"))
+    checkInstalled(paste0("TxDb.Hsapiens.UCSC.", genomeannot, ".knownGene"))
 
     gn <- sort(.getGN(genomeannot))
     gn <- BiocGenerics::unstrand(gn)
