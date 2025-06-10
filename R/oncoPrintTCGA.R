@@ -1,7 +1,3 @@
-.isSingleType <- function(x, test = is.character) {
-    test(x) && length(x) == 1L && !is.na(x)
-}
-
 #' OncoPrint for TCGA Mutation Assays
 #'
 #' @param multiassayexperiment A `MultiAssayExperiment`, usually from
@@ -25,7 +21,9 @@
 #' @param rowcol character(1) The name of the column in the metadata to annotate
 #'     the rows with either "Hugo_Symbol" (default) or
 #'
-#' @importFrom BiocBaseUtils checkInstalled
+#' @importFrom BiocBaseUtils isScalarCharacter isScalarNumber checkInstalled
+#'
+#' @return An oncoPrint plot of mutations
 #'
 #' @examples
 #'
@@ -35,8 +33,6 @@
 #'
 #' oncoPrintTCGA(acc)
 #'
-#' @return An oncoPrint plot of mutations
-#'
 #' @export
 oncoPrintTCGA <-
     function(multiassayexperiment, matchassay = "*_Mutation-*",
@@ -44,10 +40,10 @@ oncoPrintTCGA <-
         incl.thresh = 0.01, rowcol = "Hugo_Symbol")
 {
     stopifnot(
-        .isSingleType(matchassay), .isSingleType(variantCol),
-        .isSingleType(brewerPal), .isSingleType(ntop, is.numeric),
+        isScalarCharacter(matchassay), isScalarCharacter(variantCol),
+        isScalarCharacter(brewerPal), isScalarNumber(ntop),
         is(multiassayexperiment, "MultiAssayExperiment"),
-        .isSingleType(incl.thresh, is.numeric), .isSingleType(rowcol)
+        isScalarNumber(incl.thresh), isScalarCharacter(rowcol)
     )
 
     checkInstalled(c("org.Hs.eg.db", "ComplexHeatmap", "RColorBrewer"))
