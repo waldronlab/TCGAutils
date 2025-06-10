@@ -85,13 +85,18 @@ NULL
 
 .getRangesOfCpG <- function(x) {
     local_data_store <- new.env(parent = emptyenv())
-    data("Locations", envir = local_data_store,
-        package = "IlluminaHumanMethylation450kanno.ilmn12.hg19")
+    data(
+        "Locations",
+        envir = local_data_store,
+        package = "IlluminaHumanMethylation450kanno.ilmn12.hg19"
+    )
     Locations <- local_data_store[["Locations"]]
 
     clist <- list(seqnames = "chr", pos = "pos", strand = "strand")
-    gps <- do.call(GenomicRanges::GPos,
-        lapply(clist, function(x) Locations[, x]))
+    gps <- do.call(
+        GenomicRanges::GPos,
+        lapply(clist, function(x) Locations[, x])
+    )
     names(gps) <- rownames(Locations)
     seqlevelsStyle(gps) <- "NCBI"
 
@@ -209,9 +214,13 @@ simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @importFrom BiocBaseUtils checkInstalled
 #' @export
 symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    can.fix <- vapply(experiments(obj), function(y) {
-        .checkHas(y, "symbols") & .isSummarizedExperiment(y)
-    }, logical(1L))
+    can.fix <- vapply(
+        experiments(obj),
+        function(y) {
+            .checkHas(y, "symbols") & .isSummarizedExperiment(y)
+        },
+        logical(1L)
+    )
 
     checkInstalled(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     .convertTo(
@@ -245,9 +254,13 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @aliases CpGtoRanges
 #' @export
 CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    can.fix <- vapply(experiments(obj), function(y) {
-        .checkHas(y, "^cg") & .isSummarizedExperiment(y)
-    }, logical(1L))
+    can.fix <- vapply(
+        experiments(obj),
+        function(y) {
+            .checkHas(y, "^cg") & .isSummarizedExperiment(y)
+        },
+        logical(1L)
+    )
 
     checkInstalled("IlluminaHumanMethylation450kanno.ilmn12.hg19")
 
@@ -266,12 +279,19 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     checkInstalled(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
     gn <- genes(
-        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene)
-    gn <- keepStandardChromosomes(GenomicRanges::granges(gn),
-        pruning.mode = "coarse")
+        TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+    )
+    gn <- keepStandardChromosomes(
+        GenomicRanges::granges(gn),
+        pruning.mode = "coarse"
+    )
     seqlevelsStyle(gn) <- "NCBI"
-    names(gn) <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, names(gn),
-        keytype = "ENTREZID", column = "SYMBOL")
+    names(gn) <- AnnotationDbi::mapIds(
+        org.Hs.eg.db::org.Hs.eg.db,
+        names(gn),
+        keytype = "ENTREZID",
+        column = "SYMBOL"
+    )
 
     weightedmean <- function(scores, ranges, qranges) {
         isects <- GenomicRanges::pintersect(ranges, qranges)
@@ -293,16 +313,21 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
         ## remove patch release info
         gname <- genome(gn)
         genome(gn) <- gsub("\\.p[0-9]{1,2}$", "", genome(gn))
-        mutations <- RaggedExperiment::qreduceAssay(obj[[i]], gn, nonsilent,
-            "Variant_Classification")
+        mutations <- RaggedExperiment::qreduceAssay(
+            obj[[i]],
+            gn,
+            nonsilent,
+            "Variant_Classification"
+        )
         rownames(mutations) <- names(gn)
         mutations[is.na(mutations)] <- 0
         remove.rows <- is.na(rownames(mutations))
         mut_ranges <- gn[!remove.rows]
         ## replace patch release info
         genome(mut_ranges) <- gname
-        mutations <- SummarizedExperiment(mutations[!remove.rows,],
-            rowRanges = mut_ranges)
+        mutations <- SummarizedExperiment(
+            mutations[!remove.rows, ], rowRanges = mut_ranges
+        )
         el <- ExperimentList(x = mutations)
         names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)
@@ -311,8 +336,12 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
         sqls <- seqlevelsStyle(obj[[i]])
         seqlevelsStyle(gn) <- sqls
         suppressWarnings(
-            cn <- RaggedExperiment::qreduceAssay(obj[[i]], gn,
-                weightedmean, "Segment_Mean")
+            cn <- RaggedExperiment::qreduceAssay(
+                obj[[i]],
+                gn,
+                weightedmean,
+                "Segment_Mean"
+            )
         )
         rownames(cn) <- names(gn)
         remove.rows <- is.na(rownames(cn))
