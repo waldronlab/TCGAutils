@@ -158,6 +158,8 @@ getClinicalNames <- function(diseaseCode) {
 #'     entered. By default, all assays will be split by samples present in
 #'     the data.
 #'
+#' @importFrom BiocBaseUtils setSlots
+#'
 #' @export
 TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
     exclusive = FALSE) {
@@ -202,7 +204,7 @@ TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
         idConverter = TCGAbarcode
     )
 
-    BiocBaseUtils::setSlots(
+    setSlots(
         object = multiassayexperiment,
         ExperimentList = ExperimentList(egroups),
         sampleMap = sampmap

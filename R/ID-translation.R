@@ -94,11 +94,12 @@
     )
 }
 
+#' @importFrom BiocBaseUtils selectSome
 .check_ids_found <- function(resnames, id_vector) {
     idin <- id_vector %in% resnames
     if (!all(idin)) {
         mids <- paste(
-            BiocBaseUtils::selectSome(id_vector[!idin], 4), collapse = ", "
+            selectSome(id_vector[!idin], 4), collapse = ", "
         )
         warning("Identifiers not found: ", mids, call. = FALSE)
     }
