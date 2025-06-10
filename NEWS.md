@@ -1,3 +1,13 @@
+## Changes in version 1.30.0
+
+### Significant User-visible changes
+
+* Deprecated `mirbase.db` package affects `mirToRanges` function.
+
+### Bug fixes and minor improvements
+
+* Use `BiocBaseUtils::checkInstalled` to check for suggested packages.
+
 ## Changes in version 1.24.0
 
 ### Significant User-visible changes
