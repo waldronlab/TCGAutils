@@ -30,6 +30,7 @@ Imports:
     RaggedExperiment,
     rvest,
     S4Vectors,
+    Seqinfo,
     stats,
     stringr,
     SummarizedExperiment,

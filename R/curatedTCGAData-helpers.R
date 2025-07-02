@@ -3,7 +3,7 @@
 #' @importFrom rvest html_nodes html_attr
 #' @importFrom GenomicRanges GRanges GRangesList makeGRangesListFromDataFrame
 #' granges
-#' @importFrom GenomeInfoDb genome genome<-
+#' @importFrom Seqinfo genome genome<-
 #' @importFrom MultiAssayExperiment ExperimentList colData colData<- metadata
 #' subsetByColumn experiments
 #' @importFrom utils data head read.delim
