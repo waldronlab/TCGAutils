@@ -247,7 +247,11 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #'
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    lifeCycle(cycle = "defunct", title = "simplifyTCGA")
+    lifeCycle(
+        package = "TCGAutils",
+        cycle = "defunct",
+        title = "simplifyTCGA"
+    )
 }
 
 #' @name simplifyTCGA
