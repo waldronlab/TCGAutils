@@ -48,6 +48,7 @@ library(MultiAssayExperiment)
 library(RTCGAToolbox)
 library(rtracklayer)
 library(R.utils)
+library(GenomeInfoDb)
 ```
 
 # `curatedTCGAData` utility functions
