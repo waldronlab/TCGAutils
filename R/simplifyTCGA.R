@@ -238,6 +238,7 @@ NULL
 #' @export
 simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     obj <- qreduceTCGA(obj, keep.assay)
+    obj <- mirToRanges(obj, keep.assay, unmapped)
     symbolsToRanges(obj, keep.assay, unmapped)
 }
 

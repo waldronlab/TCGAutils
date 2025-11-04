@@ -29,3 +29,58 @@
         all(is.na(column))
     })
 }
+
+.get_hsa_url <- function(gen) {
+    release <- switch(gen, hg19 = "20", hg38 = "22", "22")
+    if (identical(release, "22"))
+        "https://www.mirbase.org/download/hsa.gff3"
+    else
+        glue::glue(
+            "https://www.mirbase.org/download_version_genome_files/",
+            "{release}/hsa.gff3"
+        )
+}
+
+.get_hsa_genome <- function(file) {
+    gff_lines <- readLines(file, n = 50)
+    genome_line <- grepv("genome-build-id", gff_lines)
+    gnm <- strsplit(genome_line, ":\\s+")[[1L]] |>
+        tail(n = 1L) |>
+        trimws()
+    if (!length(gnm))
+        NA_character_
+    else
+        gnm
+}
+
+.get_hsa_gff3 <- function(gen) {
+    url <- .get_hsa_url(gen)
+    gff_local <- .cache_url_file(url)
+    res <- Bioc.gff::import(gff_local)
+    # res <- res[mcols(res)[["type"]] %in% c("miRNA", "microRNA", "tRNA"), ]
+    gnm <- .get_hsa_genome(gff_local)
+    genome(res) <- gnm
+    if (identical(gen, "hg18")) {
+        ## perform liftOver operation from GRCh38 to hg18
+        checkInstalled(c("AnnotationHub", "rtracklayer"))
+        chain <- AnnotationHub::AnnotationHub()[["AH14221"]]
+        ranges18 <- rtracklayer::liftOver(res, chain)
+        res <- res[as.logical(lengths(ranges18))]
+    }
+    res
+}
+
+.cache_url_file <- function(url, redownload = TRUE) {
+    checkInstalled("BiocFileCache")
+    bfc <- BiocFileCache::BiocFileCache()
+    bquery <- BiocFileCache::bfcquery(bfc, url, "rname", exact = TRUE)
+    ## only re-download manually b/c bfcneedsupdate always returns TRUE
+    if (identical(nrow(bquery), 1L) && redownload)
+        BiocFileCache::bfcdownload(
+            x = bfc, rid = bquery[["rid"]], ask = FALSE
+        )
+
+    BiocFileCache::bfcrpath(
+        bfc, rnames = url, exact = TRUE, download = TRUE, rtype = "web"
+    )
+}
