@@ -52,6 +52,7 @@ Suggests:
     impute,
     knitr,
     magrittr,
+    miRNAmeConverter,
     org.Hs.eg.db,
     RColorBrewer,
     readr,

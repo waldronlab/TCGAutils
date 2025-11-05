@@ -32,7 +32,12 @@ NULL
     for (i in which(which)) {
         lookup <- FUN(rownames(x[[i]]))
         ranges <- lookup[["mapped"]]
-        rse <- x[[i]][names(ranges), ]
+        if (!is.null(mcols(ranges)[["rowIdx"]]))
+            rse <- `rownames<-`(
+                x[[i]][mcols(ranges)[["rowIdx"]], ], names(ranges)
+            )
+        else
+            rse <- x[[i]][names(ranges), ]
         # rowData not merged with mcols of RHS in `rowRanges<-` method
         mcols(ranges) <-
             S4Vectors::DataFrame(rowData(rse), S4Vectors::mcols(ranges))
@@ -60,9 +65,18 @@ NULL
 #'   `GRanges()` object with ranges of mapped symbols
 #' @keywords internal
 .makeListRanges <- function(x, gn) {
-    res <- list(unmapped = x[!x %in% names(gn)])
-    x <- x[x %in% names(gn)]
-    gn <- gn[match(x, names(gn))]
+    checkInstalled("miRNAmeConverter")
+    nc <- miRNAmeConverter::MiRNANameConverter()
+    mirna_version <-
+        miRNAmeConverter::assessVersion(nc, names(gn))[1L, "version"]
+    trout <- miRNAmeConverter::translateMiRNAName(
+        nc, x, versions = mirna_version
+    )
+    new_x <- trout[[paste0("v", mirna_version, ".0")]]
+    res <- list(unmapped = setdiff(x, trout[["input"]]))
+    rowIdx <- match(tolower(trout[["input"]]), x)
+    gn <- gn[match(new_x, names(gn))]
+    mcols(gn)[["rowIdx"]] <- rowIdx
     res[["mapped"]] <- gn
     res
 }
