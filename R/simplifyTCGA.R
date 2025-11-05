@@ -4,10 +4,11 @@
 NULL
 
 .checkHas <-
-    function(x, pattern = c("^hsa", "^cg", "symbols"), threshold = 0.9) {
+    function(x, pattern, threshold = 0.9)
+{
     if (identical(pattern, "symbols"))
         pattern <- "^[A-Z0-9]{1,6}|^C[0-9]orf[0-9]{1,4}"
-    mean(c(FALSE, grepl(pattern, rownames(x))), na.rm = TRUE) > 0.9
+    mean(c(FALSE, grepl(pattern, rownames(x))), na.rm = TRUE) > threshold
 }
 
 .isSummarizedExperiment <- function(x) {
