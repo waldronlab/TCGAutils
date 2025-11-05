@@ -275,13 +275,8 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #'
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    can.fix <- vapply(
-        experiments(obj),
-        function(y) {
-            .checkHas(y, "^hsa") & .isSummarizedExperiment(y)
-        },
-        logical(1L)
-    )
+    can.fix <- .isFixable(mae = obj, pattern = "^hsa")
+
     .convertTo(
         x = obj,
         which = can.fix,
