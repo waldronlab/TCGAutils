@@ -117,5 +117,5 @@ simplifyTCGA(accmae)
 
 }
 \author{
-L. Waldron
+L. Waldron, M. Ramos
 }

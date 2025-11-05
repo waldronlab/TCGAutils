@@ -223,9 +223,7 @@ NULL
 #'   [`RangedSummarizedExperiment`][SummarizedExperiment::RangedSummarizedExperiment-class]
 #'   objects
 #'
-#' @author L. Waldron
-#'
-#' @md
+#' @author L. Waldron, M. Ramos
 #'
 #' @examples
 #'
