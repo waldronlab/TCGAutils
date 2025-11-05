@@ -11,8 +11,20 @@ NULL
     mean(c(FALSE, grepl(pattern, rownames(x))), na.rm = TRUE) > threshold
 }
 
-.isSummarizedExperiment <- function(x) {
-    is(x, "SummarizedExperiment") & !is(x, "RangedSummarizedExperiment")
+.isFixable <- function(mae, pattern = c("^hsa", "^cg", "symbols")) {
+    if (missing(pattern) || !isScalarCharacter(pattern))
+        stop("<internal> Provide a single 'pattern' value to search for")
+    vapply(
+        experiments(mae),
+        function(y) {
+            .checkHas(x = y, pattern = pattern) &&
+            (
+                is(y, "SummarizedExperiment") &&
+                    !is(y, "RangedSummarizedExperiment")
+            )
+        },
+        logical(1L)
+    )
 }
 
 .convertTo <- function(x, which, FUN, keep, unmap) {
@@ -215,15 +227,10 @@ simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @importFrom BiocBaseUtils checkInstalled
 #' @export
 symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    can.fix <- vapply(
-        experiments(obj),
-        function(y) {
-            .checkHas(y, "symbols") & .isSummarizedExperiment(y)
-        },
-        logical(1L)
-    )
-
     checkInstalled(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
+
+    can.fix <- .isFixable(mae = obj, pattern = "symbols")
+
     .convertTo(
         x = obj,
         which = can.fix,
@@ -259,15 +266,9 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @aliases CpGtoRanges
 #' @export
 CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    can.fix <- vapply(
-        experiments(obj),
-        function(y) {
-            .checkHas(y, "^cg") & .isSummarizedExperiment(y)
-        },
-        logical(1L)
-    )
-
     checkInstalled("IlluminaHumanMethylation450kanno.ilmn12.hg19")
+
+    can.fix <- .isFixable(mae = obj, pattern = "^cg")
 
     .convertTo(
         x = obj,
