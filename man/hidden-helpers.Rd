@@ -3,25 +3,31 @@
 \name{hidden-helpers}
 \alias{hidden-helpers}
 \alias{.makeListRanges}
+\alias{.getRangesOfMir}
 \alias{.getRangesOfSYMBOLS}
-\title{A small document for helper functions}
+\alias{.getRangesOfCpG}
+\title{Helper functions to get genomic ranges from different identifiers}
 \usage{
 .makeListRanges(x, gn)
 
+.getRangesOfMir(x)
+
 .getRangesOfSYMBOLS(x)
+
+.getRangesOfCpG(x)
 }
 \arguments{
-\item{x}{A character vector}
+\item{x}{\code{character()} vector of either micro RNA identifiers
+(\code{.getRangesOfMir}) or gene symbols (\code{.getRangesOfSYMBOLS}) or CpG probe
+identifiers (\code{.getRangesOfCpG})}
 
-\item{gn}{A GRanges object with some of its names found in x}
+\item{gn}{\code{GRanges()} with some of its names found in x or translated x}
 }
 \value{
-A list of length 2: unmapped (character vector) and mapped (GRanges)
-
-list of length 2: "unmapped" is a character vector providing
-unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
+list of length 2: "unmapped" \code{character()} symbols, "mapped" is a
+\code{GRanges()} object with ranges of mapped symbols
 }
 \description{
-A small document for helper functions
+Helper functions to get genomic ranges from different identifiers
 }
 \keyword{internal}

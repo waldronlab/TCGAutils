@@ -50,10 +50,13 @@ NULL
 }
 
 #' @name hidden-helpers
-#' @title A small document for helper functions
-#' @param x A character vector
-#' @param gn A GRanges object with some of its names found in x
-#' @return A list of length 2: unmapped (character vector) and mapped (GRanges)
+#' @title Helper functions to get genomic ranges from different identifiers
+#' @param x `character()` vector of either micro RNA identifiers
+#'   (`.getRangesOfMir`) or gene symbols (`.getRangesOfSYMBOLS`) or CpG probe
+#'   identifiers (`.getRangesOfCpG`)
+#' @param gn `GRanges()` with some of its names found in x or translated x
+#' @return list of length 2: "unmapped" `character()` symbols, "mapped" is a
+#'   `GRanges()` object with ranges of mapped symbols
 #' @keywords internal
 .makeListRanges <- function(x, gn) {
     res <- list(unmapped = x[!x %in% names(gn)])
@@ -96,6 +99,8 @@ NULL
     .makeListRanges(x, gn)
 }
 
+#' @rdname hidden-helpers
+#' @keywords internal
 .getRangesOfCpG <- function(x) {
     local_data_store <- new.env(parent = emptyenv())
     data(
