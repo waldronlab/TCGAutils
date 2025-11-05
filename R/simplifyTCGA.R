@@ -1,4 +1,4 @@
-#' @importFrom GenomicFeatures genes microRNAs
+#' @importFrom GenomicFeatures genes
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
 #' @importFrom BiocBaseUtils isScalarCharacter
