@@ -287,6 +287,8 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #'
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+    checkInstalled("Bioc.gff")
+
     can.fix <- .isFixable(mae = obj, pattern = "^hsa")
 
     .convertTo(
