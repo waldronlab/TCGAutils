@@ -40,6 +40,8 @@ Imports:
     xml2
 Suggests:
     AnnotationHub,
+    Bioc.gff,
+    BiocFileCache,
     BiocStyle,
     curatedTCGAData,
     ComplexHeatmap,
