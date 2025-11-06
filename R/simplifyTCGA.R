@@ -64,7 +64,7 @@ NULL
     x <- x[x %in% names(gn)]
     gn <- gn[match(x, names(gn))]
     res[["mapped"]] <- gn
-    return(res)
+    res
 }
 
 .getGN <- function(gen) {
@@ -86,13 +86,27 @@ NULL
         keytype = "ENTREZID",
         column = "SYMBOL"
     )
-
     gn
 }
 
 #' @rdname hidden-helpers
-#' @return list of length 2: "unmapped" is a character vector providing
-#' unmapped symbols, "mapped" is a GRanges object with ranges of mapped symbols
+#' @keywords internal
+.getRangesOfMir <- function(x) {
+    stopifnot(isScalarCharacter(x))
+
+    mirnas_gr <- .get_hsa_gff3(x)
+
+    miR <- mirnas_gr[
+        mcols(mirnas_gr)[["type"]] %in% c("miRNA", "microRNA", "tRNA")
+    ]
+    miR <- keepStandardChromosomes(miR, pruning.mode = "coarse")
+    seqlevelsStyle(miR) <- "NCBI"
+
+    names(miR) <- mcols(miR)[["Name"]]
+    .makeListRanges(x, miR)
+}
+
+#' @rdname hidden-helpers
 #' @keywords internal
 .getRangesOfSYMBOLS <- function(x) {
     gn <- .getGN("hg19")
