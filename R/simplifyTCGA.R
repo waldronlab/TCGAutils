@@ -275,10 +275,19 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #'
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
-    lifeCycle(
-        package = "TCGAutils",
-        cycle = "defunct",
-        title = "simplifyTCGA"
+    can.fix <- vapply(
+        experiments(obj),
+        function(y) {
+            .checkHas(y, "^hsa") & .isSummarizedExperiment(y)
+        },
+        logical(1L)
+    )
+    .convertTo(
+        x = obj,
+        which = can.fix,
+        FUN = .getRangesOfMir,
+        keep = keep.assay,
+        unmap = unmapped
     )
 }
 
