@@ -1,6 +1,7 @@
 #' @importFrom GenomicFeatures genes microRNAs
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
+#' @importFrom BiocBaseUtils isScalarCharacter
 NULL
 
 .checkHas <-
@@ -66,7 +67,6 @@ NULL
     return(res)
 }
 
-#' @importFrom BiocBaseUtils isScalarCharacter
 .getGN <- function(gen) {
     stopifnot(isScalarCharacter(gen))
 
