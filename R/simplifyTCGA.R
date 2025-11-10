@@ -108,7 +108,7 @@ NULL
 .getRangesOfMir <- function(x) {
     stopifnot(isCharacter(x))
 
-    mirnas_gr <- .get_hsa_gff3(x)
+    mirnas_gr <- .get_hsa_gff3("hg19")
 
     miR <- mirnas_gr[
         mcols(mirnas_gr)[["type"]] %in% c("miRNA", "microRNA", "tRNA")
