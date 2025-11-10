@@ -1,7 +1,7 @@
 #' @importFrom GenomicFeatures genes
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
 #' seqlevelsStyle<-
-#' @importFrom BiocBaseUtils isScalarCharacter
+#' @importFrom BiocBaseUtils isScalarCharacter isCharacter
 NULL
 
 .checkHas <-
@@ -106,7 +106,7 @@ NULL
 #' @rdname hidden-helpers
 #' @keywords internal
 .getRangesOfMir <- function(x) {
-    stopifnot(isScalarCharacter(x))
+    stopifnot(isCharacter(x))
 
     mirnas_gr <- .get_hsa_gff3(x)
 
