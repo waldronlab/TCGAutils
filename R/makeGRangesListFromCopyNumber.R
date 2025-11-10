@@ -27,18 +27,15 @@
 #'
 #' fname <- gdcdata(manif$id)
 #'
-#' barcode <- UUIDtoBarcode(names(fname), from_type = "file_id")
-#' barcode <- barcode[["associated_entities.entity_submitter_id"]]
+#' UUIDtoBarcode(names(fname), from_type = "file_id")
 #'
-#' cndata <- read.delim(fname[[1L]], nrows = 10L)
+#' cndata <- read.delim(fname[[1L]])
 #'
-#' cngrl <- makeGRangesListFromCopyNumber(cndata, split.field = "GDC_Aliquot",
-#'     keep.extra.columns = TRUE)
-#'
-#' names(cngrl) <- barcode
-#' GenomeInfoDb::genome(cngrl) <- extractBuild(fname[[1L]])
-#' cngrl
-#'
+#' makeGRangesListFromCopyNumber(
+#'     df = cndata,
+#'     split.field = "GDC_Aliquot_ID",
+#'     keep.extra.columns = TRUE
+#' )
 #' @export makeGRangesListFromCopyNumber
 makeGRangesListFromCopyNumber <-
     function(df, split.field, names.field = "Hugo_Symbol", ...) {
