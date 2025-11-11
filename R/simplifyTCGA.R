@@ -32,10 +32,10 @@ NULL
     for (i in which(which)) {
         lookup <- FUN(rownames(x[[i]]))
         ranges <- lookup[["mapped"]]
-        if (!is.null(mcols(ranges)[["rowIdx"]]))
-            rse <- `rownames<-`(
-                x[[i]][mcols(ranges)[["rowIdx"]], ], names(ranges)
-            )
+        rowidx <- mcols(ranges)[["rowIdx"]]
+        rowidx <- Filter(Negate(is.na), rowidx)
+        if (!is.null(rowidx) && length(rowidx))
+            rse <- `rownames<-`(x[[i]][rowidx, ], names(ranges))
         else
             rse <- x[[i]][names(ranges), ]
         # rowData not merged with mcols of RHS in `rowRanges<-` method
