@@ -45,7 +45,7 @@
     gff_lines <- readLines(file, n = 50)
     genome_line <- grepv("genome-build-id", gff_lines)
     gnm <- strsplit(genome_line, ":\\s+")[[1L]] |>
-        tail(n = 1L) |>
+        utils::tail(n = 1L) |>
         trimws()
     if (!length(gnm))
         NA_character_
