@@ -30,14 +30,15 @@ NULL
 
 .convertTo <- function(x, which, FUN, keep, unmap) {
     for (i in which(which)) {
-        lookup <- FUN(rownames(x[[i]]))
+        assay <- x[[i]]
+        lookup <- FUN(rownames(assay))
         ranges <- lookup[["mapped"]]
         rowidx <- mcols(ranges)[["rowIdx"]]
         rowidx <- Filter(Negate(is.na), rowidx)
         if (!is.null(rowidx) && length(rowidx))
-            rse <- `rownames<-`(x[[i]][rowidx, ], names(ranges))
+            rse <- `rownames<-`(assay[rowidx, ], names(ranges))
         else
-            rse <- x[[i]][names(ranges), ]
+            rse <- assay[names(ranges), ]
         # rowData not merged with mcols of RHS in `rowRanges<-` method
         mcols(ranges) <-
             S4Vectors::DataFrame(rowData(rse), S4Vectors::mcols(ranges))
@@ -45,7 +46,7 @@ NULL
         x <- c(x, setNames(S4Vectors::List(rse),
             paste0(names(x)[i], "_ranged")))
         if (length(lookup[["unmapped"]]) && unmap) {
-            se <- x[[i]][lookup[["unmapped"]], ]
+            se <- assay[lookup[["unmapped"]], ]
             x <- c(x, setNames(S4Vectors::List(se),
                 paste0(names(x)[i], "_unranged")))
         }
