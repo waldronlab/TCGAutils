@@ -74,7 +74,7 @@ NULL
     )
     new_x <- trout[[paste0("v", mirna_version, ".0")]]
     res <- list(unmapped = setdiff(x, trout[["input"]]))
-    rowIdx <- match(tolower(trout[["input"]]), x)
+    rowIdx <- match(tolower(trout[["input"]]), tolower(x))
     gn <- gn[match(new_x, names(gn))]
     mcols(gn)[["rowIdx"]] <- rowIdx
     res[["mapped"]] <- gn
