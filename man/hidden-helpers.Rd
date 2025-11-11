@@ -3,12 +3,15 @@
 \name{hidden-helpers}
 \alias{hidden-helpers}
 \alias{.makeListRanges}
+\alias{.makeMiRNAListRanges}
 \alias{.getRangesOfMir}
 \alias{.getRangesOfSYMBOLS}
 \alias{.getRangesOfCpG}
 \title{Helper functions to get genomic ranges from different identifiers}
 \usage{
 .makeListRanges(x, gn)
+
+.makeMiRNAListRanges(x, gn)
 
 .getRangesOfMir(x)
 

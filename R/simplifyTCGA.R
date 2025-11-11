@@ -65,6 +65,16 @@ NULL
 #'   `GRanges()` object with ranges of mapped symbols
 #' @keywords internal
 .makeListRanges <- function(x, gn) {
+    res <- list(unmapped = x[!x %in% names(gn)])
+    x <- x[x %in% names(gn)]
+    gn <- gn[match(x, names(gn))]
+    res[["mapped"]] <- gn
+    res
+}
+
+#' @name hidden-helpers
+#' @keywords internal
+.makeMiRNAListRanges <- function(x, gn) {
     checkInstalled("miRNAmeConverter")
     nc <- miRNAmeConverter::MiRNANameConverter()
     mirna_version <-
@@ -117,7 +127,7 @@ NULL
     seqlevelsStyle(miR) <- "NCBI"
 
     names(miR) <- mcols(miR)[["Name"]]
-    .makeListRanges(x, miR)
+    .makeMiRNAListRanges(x, miR)
 }
 
 #' @rdname hidden-helpers
