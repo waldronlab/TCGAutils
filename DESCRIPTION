@@ -1,7 +1,7 @@
 Package: TCGAutils
 Title: TCGA utility functions for data management
-Version: 1.30.0
-Date: 2025-07-02
+Version: 1.30.1
+Date: 2025-11-17
 Description: A suite of helper functions for checking and manipulating TCGA
   data including data obtained from the curatedTCGAData experiment package.
   These functions aim to simplify and make working with TCGA data more
