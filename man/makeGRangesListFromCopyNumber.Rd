@@ -50,7 +50,7 @@ cndata <- read.delim(fname[[1L]])
 
 makeGRangesListFromCopyNumber(
     df = cndata,
-    split.field = "GDC_Aliquot_ID",
+    split.field = "GDC_Aliquot",
     keep.extra.columns = TRUE
 )
 }
