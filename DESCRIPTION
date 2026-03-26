@@ -9,12 +9,14 @@ Description: A suite of helper functions for checking and manipulating TCGA
   into Bioconductor objects, convert row annotations, and identifier
   translation via the GDC API.
 Authors@R: c(
-    person("Marcel", "Ramos", email = "marcel.ramos@sph.cuny.edu",
-        role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3242-0582")),
+    person("Marcel", "Ramos", , "marcel.ramos@sph.cuny.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3242-0582")),
     person("Lucas", "Schiffer", role = "aut"),
     person("Sean", "Davis", role = "ctb"),
-    person("Levi", "Waldron", role = "aut")
-    )
+    person("Levi", "Waldron", role = "aut"),
+    person("NCI", role = "fnd",
+           comment = c(GrantNo. = "U24CA289073"))
+  )
 Depends:
     R (>= 4.5.0)
 Imports:
