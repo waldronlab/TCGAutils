@@ -60,7 +60,7 @@ for annotations that could not be mapped to
 Using \code{TxDb.Hsapiens.UCSC.hg19.knownGene} as the reference, \code{qreduceTCGA}
 reduces the data by applying either the \code{weightedmean} or \code{nonsilent}
 function (see below) to non-mutation or mutation data, respectively.
-Internally, it uses \code{\link[RaggedExperiment:assay-functions]{RaggedExperiment::qreduceAssay()}} to reduce the ranges
+Internally, it uses \code{\link[RaggedExperiment:qreduceAssay]{RaggedExperiment::qreduceAssay()}} to reduce the ranges
 to the gene-level.
 
 \code{qreduceTCGA} will update \code{genome(x)} based on the NCBI reference annotation

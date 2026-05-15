@@ -29,7 +29,7 @@ A \link[GenomicRanges:GRangesList-class]{GRangesList} class object
 }
 \description{
 \code{makeGRangesListFromCopyNumber} allows the user to convert objects of
-class \code{data.frame} or \link[S4Vectors:DataFrame-class]{S4Vectors::DataFrame} to a
+class \code{data.frame} or \link[S4Vectors:DataFrame]{S4Vectors::DataFrame} to a
 \link[GenomicRanges:GRangesList-class]{GRangesList}. It includes additional
 features specific to TCGA data such as, hugo symbols, probe numbers, segment
 means, and ucsc build (if available).

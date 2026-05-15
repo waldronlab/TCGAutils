@@ -5,7 +5,7 @@
 \alias{clinicalNames}
 \title{Clinical dataset names in TCGA}
 \format{
-A \link[IRanges:AtomicList-class]{CharacterList} of names for 33
+A \link[IRanges:CharacterList-class]{CharacterList} of names for 33
 cancer codes
 }
 \usage{

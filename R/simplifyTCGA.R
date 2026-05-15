@@ -1,6 +1,6 @@
 #' @importFrom GenomicFeatures genes
 #' @importFrom GenomeInfoDb keepStandardChromosomes seqlevelsStyle
-#' seqlevelsStyle<-
+#' @importFrom GenomeInfoDb seqlevelsStyle<-
 #' @importFrom BiocBaseUtils isScalarCharacter isCharacter
 NULL
 
