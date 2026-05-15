@@ -8,11 +8,11 @@
 imputeAssay(multiassayexperiment, i = 1, ...)
 }
 \arguments{
-\item{multiassayexperiment}{A \code{MultiAssayExperiment} with genes in the
-rows, samples in the columns}
+\item{multiassayexperiment}{A \code{MultiAssayExperiment} with genes in the rows,
+samples in the columns}
 
-\item{i}{A numeric, logical, or character \code{vector} indicating the
-assays to perform imputation on (default 1L)}
+\item{i}{A numeric, logical, or character \code{vector} indicating the assays to
+perform imputation on (default 1L)}
 
 \item{...}{
   Arguments passed on to \code{\link[impute:impute.knn]{impute::impute.knn}}
