@@ -294,8 +294,6 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #'
 #' @aliases mirToRanges
 #'
-#' @importFrom BiocBaseUtils lifeCycle
-#'
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     checkInstalled("Bioc.gff")
