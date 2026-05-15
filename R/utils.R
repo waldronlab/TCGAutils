@@ -31,14 +31,24 @@
 }
 
 .get_hsa_url <- function(gen) {
-    release <- switch(gen, hg19 = "20", hg38 = "22", "22")
-    if (identical(release, "22"))
-        "https://www.mirbase.org/download/hsa.gff3"
-    else
-        glue::glue(
-            "https://www.mirbase.org/download_version_genome_files/",
-            "{release}/hsa.gff3"
-        )
+    ## handle cases where genome is specified as "GRCh37.p5"
+    if (startsWith(gen, "GRCh37"))
+        gen <- "GRCh37"
+    else if (startsWith(gen, "GRCh38"))
+        gen <- "GRCh38"
+
+    release <- switch(
+        gen,
+        GRCh37 = ,
+        hg19 = "20",
+        GRCh38 = ,
+        hg38 = "22",
+        stop("Unsupported genome: ", gen)
+    )
+    glue::glue(
+        "https://www.mirbase.org/download_version_genome_files/",
+        "{release}/hsa.gff3"
+    )
 }
 
 .get_hsa_genome <- function(file) {
