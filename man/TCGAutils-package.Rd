@@ -31,6 +31,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Marcel Ramos \email{marcel.ramos@sph.cuny.edu} (\href{https://orcid.org/0000-0002-3242-0582}{ORCID})
   \item Lucas Schiffer
   \item Levi Waldron
 }
@@ -38,6 +39,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Sean Davis [contributor]
+  \item NCI (GrantNo.: U24CA289073) [funder]
 }
 
 }
