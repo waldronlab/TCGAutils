@@ -350,15 +350,11 @@ barcodeToUUID <-
 #' @param filenames `character()` A vector of file names usually obtained
 #'     from a `GenomicDataCommons` query
 #'
-#' @param slides `logical(1L)` **DEPRECATED**: Whether the provided file names
-#'   correspond to slides typically with an `.svs` extension. **Note** The
-#'   barcodes returned correspond 1:1 with the `filename` inputs. Always triple
-#'   check the output against the Genomic Data Commons Data Portal by searching
-#'   the file name and comparing associated "Entity ID" with the `submitter_id`
-#'   given by the function.
+#' @param slides `logical(1L)` **DEFUNCT**: No longer used. See details.
 #'
-#' @details When providing slide file names, the function will only work if
-#'   **all** the provided files are slide files with an `.svs` extension.
+#' @details Slides are identified by the `filenames` input by searching for the
+#'   `.svs` extension. Slide queries can only be done when **all** `filenames`
+#'   inputs are slide file names.
 #'
 #' @examples
 #' library(GenomicDataCommons)
@@ -386,28 +382,23 @@ barcodeToUUID <-
 #'     ) |>
 #'     results(size = 3)
 #'
-#' filenameToBarcode(slides$file_name, slides = TRUE)
+#' filenameToBarcode(slides$file_name)
 #'
 #' @export filenameToBarcode
-filenameToBarcode <- function(filenames, slides = FALSE) {
-    endwithsvs <- endsWith(filenames, "svs")
+filenameToBarcode <- function(filenames, slides) {
+    endwithsvs <- grepl("\\.svs$", filenames, ignore.case = TRUE)
     allsvs <- all(endwithsvs)
     if (!allsvs && any(endwithsvs))
-        stop("Not all file names have an 'svs' extension.")
+        stop("Some 'filenames' have an '.svs' extension, but not all.")
     if (!missing(slides)) {
-        .Deprecated(
-            msg = "The 'slides' argument is deprecated.", package = "TCGAutils"
+        .Defunct(
+            msg = "The 'slides' argument is defunct.", package = "TCGAutils"
         )
-        if (allsvs && !slides)
-            warning(
-                "All files have an 'svs' extension. Setting 'slides' to TRUE."
-            )
-        slides <- allsvs
     }
     filesres <- files()
     endpoint <- "cases.samples.portions.analytes.aliquots.submitter_id"
     reselem <- "cases"
-    if (slides) {
+    if (allsvs) {
         cases_fields <- c(
             "cases.project.project_id",
             "cases.samples.tissue_type",
@@ -439,7 +430,7 @@ filenameToBarcode <- function(filenames, slides = FALSE) {
         stringsAsFactors = FALSE
     )
     res <- cbind(res, .unnest_df(info[[reselem]]))
-    if (slides) {
+    if (allsvs) {
         slidedf <- .unnest_df(info[["cases"]], cols = cases_fields)
         res <- cbind.data.frame(res, slidedf)
     }
