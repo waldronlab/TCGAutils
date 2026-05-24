@@ -2,19 +2,19 @@
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes html_attr
 #' @importFrom GenomicRanges GRanges GRangesList makeGRangesListFromDataFrame
-#' granges
+#' @importFrom GenomicRanges granges
 #' @importFrom Seqinfo genome genome<-
 #' @importFrom MultiAssayExperiment ExperimentList colData colData<- metadata
-#' subsetByColumn experiments
+#' @importFrom MultiAssayExperiment subsetByColumn experiments
 #' @importFrom utils data head read.delim
 #' @importFrom stats as.formula na.omit setNames
 #' @importFrom stringr str_extract
 #' @importFrom SummarizedExperiment SummarizedExperiment mcols mcols<- rowData
-#'   rowData<-
+#' @importFrom SummarizedExperiment rowData<-
 #' @importFrom GenomicDataCommons files results_all select filter ids cases
-#'   expand
+#' @importFrom GenomicDataCommons expand
 #' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
-#' DataFrame
+#' @importFrom S4Vectors DataFrame
 NULL
 
 ## Helpers for downloaded objects
