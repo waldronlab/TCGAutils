@@ -13,7 +13,8 @@
 #' @importFrom SummarizedExperiment rowData<-
 #' @importFrom GenomicDataCommons files results_all select filter ids cases
 #' @importFrom GenomicDataCommons expand
-#' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString DataFrame
+#' @importFrom S4Vectors isSingleNumber isSingleInteger isSingleString
+#' @importFrom S4Vectors DataFrame
 NULL
 
 ## Helpers for downloaded objects
