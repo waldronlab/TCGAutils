@@ -15,7 +15,7 @@ UUIDtoUUID(id_vector, to_type = c("case_id", "file_id"))
 
 barcodeToUUID(barcodes)
 
-filenameToBarcode(filenames, slides = FALSE)
+filenameToBarcode(filenames)
 
 UUIDhistory(id, endpoint = .HISTORY_ENDPOINT)
 }
@@ -33,13 +33,6 @@ type of \code{id_vector} entered (default \code{"case_id"})}
 
 \item{filenames}{\code{character()} A vector of file names usually obtained
 from a \code{GenomicDataCommons} query}
-
-\item{slides}{\code{logical(1L)} \strong{DEPRECATED}: Whether the provided file names
-correspond to slides typically with an \code{.svs} extension. \strong{Note} The
-barcodes returned correspond 1:1 with the \code{filename} inputs. Always triple
-check the output against the Genomic Data Commons Data Portal by searching
-the file name and comparing associated "Entity ID" with the \code{submitter_id}
-given by the function.}
 
 \item{id}{character(1) A UUID whose history of versions is sought}
 
@@ -71,8 +64,9 @@ returned. In previous versions of the package, the 'end_point' parameter
 would require the user to specify what type of barcode needed. This is no
 longer supported as \code{entity_id} returns the appropriate one.
 
-When providing slide file names, the function will only work if
-\strong{all} the provided files are slide files with an \code{.svs} extension.
+Slides are identified by the \code{filenames} input by searching for the
+\code{.svs} extension. Slide queries can only be done when \strong{all} \code{filenames}
+inputs are slide file names.
 }
 \examples{
 ## Translate UUIDs >> TCGA Barcode
@@ -135,7 +129,7 @@ slides <- files() |>
     ) |>
     results(size = 3)
 
-filenameToBarcode(slides$file_name, slides = TRUE)
+filenameToBarcode(slides$file_name)
 
 ## Get the version history of a BAM file in TCGA-KIRC
 UUIDhistory("0001801b-54b0-4551-8d7a-d66fb59429bf")
