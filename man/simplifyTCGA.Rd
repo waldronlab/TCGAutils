@@ -3,6 +3,7 @@
 \name{simplifyTCGA}
 \alias{simplifyTCGA}
 \alias{symbolsToRanges}
+\alias{mirToRanges}
 \alias{CpGtoRanges}
 \alias{qreduceTCGA}
 \title{Functions to convert rows annotations to ranges and RaggedExperiment
@@ -11,6 +12,8 @@ to RangedSummarizedExperiment}
 simplifyTCGA(obj, keep.assay = FALSE, unmapped = TRUE)
 
 symbolsToRanges(obj, keep.assay = FALSE, unmapped = TRUE)
+
+mirToRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 
 CpGtoRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 
@@ -94,15 +97,15 @@ for datasets that are provided against a different reference genome (usually
 }
 
 \examples{
-
 library(curatedTCGAData)
 library(GenomeInfoDb)
 
-accmae <-
-    curatedTCGAData(diseaseCode = "ACC",
+accmae <- curatedTCGAData(
+    diseaseCode = "ACC",
     assays = c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
     version = "1.1.38",
-    dry.run = FALSE)
+    dry.run = FALSE
+)
 
 ## update genome annotation
 rex <- accmae[["ACC_Mutation-20160128"]]
@@ -114,7 +117,6 @@ genome(rex) <- tgenome
 accmae[["ACC_Mutation-20160128"]] <- rex
 
 simplifyTCGA(accmae)
-
 }
 \author{
 L. Waldron, M. Ramos
