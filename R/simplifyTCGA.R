@@ -160,8 +160,6 @@ NULL
     .makeListRanges(x, gps)
 }
 
-#' @rdname simplifyTCGA
-#'
 #' @title Functions to convert rows annotations to ranges and RaggedExperiment
 #' to RangedSummarizedExperiment
 #'
@@ -237,15 +235,15 @@ NULL
 #' @author L. Waldron, M. Ramos
 #'
 #' @examples
-#'
 #' library(curatedTCGAData)
 #' library(GenomeInfoDb)
 #'
-#' accmae <-
-#'     curatedTCGAData(diseaseCode = "ACC",
+#' accmae <- curatedTCGAData(
+#'     diseaseCode = "ACC",
 #'     assays = c("CNASNP", "Mutation", "miRNASeqGene", "GISTICT"),
 #'     version = "1.1.38",
-#'     dry.run = FALSE)
+#'     dry.run = FALSE
+#' )
 #'
 #' ## update genome annotation
 #' rex <- accmae[["ACC_Mutation-20160128"]]
@@ -257,7 +255,6 @@ NULL
 #' accmae[["ACC_Mutation-20160128"]] <- rex
 #'
 #' simplifyTCGA(accmae)
-#'
 #' @export
 simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     obj <- qreduceTCGA(obj, keep.assay)
@@ -265,8 +262,7 @@ simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     symbolsToRanges(obj, keep.assay, unmapped)
 }
 
-#' @name simplifyTCGA
-#' @aliases symbolsToRanges
+#' @rdname simplifyTCGA
 #' @importFrom BiocBaseUtils checkInstalled
 #' @export
 symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
@@ -283,19 +279,7 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     )
 }
 
-#' @name simplifyTCGA-defunct
-#'
-#' @title Defunct TCGAutils functions
-#'
-#' @inheritParams simplifyTCGA
-#'
-#' @description `mirToRanges` is defunct and will be removed in the next
-#' release. The `mirbase.db` package is currently deprecated in `RELEASE_3_21`.
-#'
-#' @aliases mirToRanges
-#'
-#' @importFrom BiocBaseUtils lifeCycle
-#'
+#' @rdname simplifyTCGA
 #' @export
 mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     checkInstalled("Bioc.gff")
@@ -311,8 +295,7 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     )
 }
 
-#' @name simplifyTCGA
-#' @aliases CpGtoRanges
+#' @rdname simplifyTCGA
 #' @export
 CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     checkInstalled("IlluminaHumanMethylation450kanno.ilmn12.hg19")
@@ -328,8 +311,7 @@ CpGtoRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
     )
 }
 
-#' @name simplifyTCGA
-#' @aliases qreduceTCGA
+#' @rdname simplifyTCGA
 #' @export
 qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
     checkInstalled(c("TxDb.Hsapiens.UCSC.hg19.knownGene", "org.Hs.eg.db"))
