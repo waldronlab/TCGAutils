@@ -13,7 +13,7 @@
 
 .makeMiRNAListRanges(x, gn)
 
-.getRangesOfMir(x)
+.getRangesOfMir(x, redownload)
 
 .getRangesOfSYMBOLS(x)
 

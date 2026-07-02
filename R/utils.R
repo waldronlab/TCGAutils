@@ -63,9 +63,9 @@
         gnm
 }
 
-.get_hsa_gff3 <- function(gen) {
+.get_hsa_gff3 <- function(gen, redownload) {
     url <- .get_hsa_url(gen)
-    gff_local <- .cache_url_file(url)
+    gff_local <- .cache_url_file(url, redownload = redownload)
     res <- Bioc.gff::import(gff_local)
     # res <- res[mcols(res)[["type"]] %in% c("miRNA", "microRNA", "tRNA"), ]
     gnm <- .get_hsa_genome(gff_local)
@@ -80,7 +80,7 @@
     res
 }
 
-.cache_url_file <- function(url, redownload = TRUE) {
+.cache_url_file <- function(url, redownload) {
     checkInstalled("BiocFileCache")
     bfc <- BiocFileCache::BiocFileCache()
     bquery <- BiocFileCache::bfcquery(bfc, url, "rname", exact = TRUE)

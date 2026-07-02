@@ -28,10 +28,10 @@ NULL
     )
 }
 
-.convertTo <- function(x, which, FUN, keep, unmap) {
+.convertTo <- function(x, which, FUN, keep, unmap, ...) {
     for (i in which(which)) {
         assay <- x[[i]]
-        lookup <- FUN(rownames(assay))
+        lookup <- FUN(rownames(assay), ...)
         ranges <- lookup[["mapped"]]
         rowidx <- mcols(ranges)[["rowIdx"]]
         rowidx <- Filter(Negate(is.na), rowidx)
@@ -116,10 +116,10 @@ NULL
 
 #' @rdname hidden-helpers
 #' @keywords internal
-.getRangesOfMir <- function(x) {
+.getRangesOfMir <- function(x, redownload) {
     stopifnot(isCharacter(x))
 
-    mirnas_gr <- .get_hsa_gff3("hg19")
+    mirnas_gr <- .get_hsa_gff3("hg19", redownload = redownload)
 
     miR <- mirnas_gr[
         mcols(mirnas_gr)[["type"]] %in% c("miRNA", "microRNA", "tRNA")
@@ -226,6 +226,9 @@ NULL
 #' @param suffix character (default "_simplified") A character string to append
 #'   to the newly modified assay for `qreduceTCGA`.
 #'
+#' @param redownload logical (default FALSE) Whether to re-download the miRNA
+#'   GFF3 file from miRBase. The file is cached with `BiocFileCache`.
+#'
 #' @return A
 #'   [`MultiAssayExperiment`][MultiAssayExperiment::MultiAssayExperiment-class]
 #'   with any gene expression, miRNA, copy number, and mutations converted to
@@ -254,11 +257,14 @@ NULL
 #'
 #' accmae[["ACC_Mutation-20160128"]] <- rex
 #'
-#' simplifyTCGA(accmae)
+#' simplifyTCGA(accmae, redownload = TRUE)
+#'
 #' @export
-simplifyTCGA <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+simplifyTCGA <- function(
+    obj, keep.assay = FALSE, unmapped = TRUE, redownload = FALSE
+) {
     obj <- qreduceTCGA(obj, keep.assay)
-    obj <- mirToRanges(obj, keep.assay, unmapped)
+    obj <- mirToRanges(obj, keep.assay, unmapped, redownload)
     symbolsToRanges(obj, keep.assay, unmapped)
 }
 
@@ -281,7 +287,9 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 
 #' @rdname simplifyTCGA
 #' @export
-mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
+mirToRanges <- function(
+    obj, keep.assay = FALSE, unmapped = TRUE, redownload = FALSE
+) {
     checkInstalled("Bioc.gff")
 
     can.fix <- .isFixable(mae = obj, pattern = "^hsa")
@@ -291,7 +299,8 @@ mirToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
         which = can.fix,
         FUN = .getRangesOfMir,
         keep = keep.assay,
-        unmap = unmapped
+        unmap = unmapped,
+        redownload = redownload
     )
 }
 

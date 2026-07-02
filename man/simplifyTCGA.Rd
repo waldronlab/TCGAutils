@@ -9,11 +9,11 @@
 \title{Functions to convert rows annotations to ranges and RaggedExperiment
 to RangedSummarizedExperiment}
 \usage{
-simplifyTCGA(obj, keep.assay = FALSE, unmapped = TRUE)
+simplifyTCGA(obj, keep.assay = FALSE, unmapped = TRUE, redownload = FALSE)
 
 symbolsToRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 
-mirToRanges(obj, keep.assay = FALSE, unmapped = TRUE)
+mirToRanges(obj, keep.assay = FALSE, unmapped = TRUE, redownload = FALSE)
 
 CpGtoRanges(obj, keep.assay = FALSE, unmapped = TRUE)
 
@@ -28,6 +28,9 @@ qreduceTCGA(obj, keep.assay = FALSE, suffix = "_simplified")
 
 \item{unmapped}{logical (default TRUE) Include an assay of data that was
 not able to be mapped in reference database}
+
+\item{redownload}{logical (default FALSE) Whether to re-download the miRNA
+GFF3 file from miRBase. The file is cached with \code{BiocFileCache}.}
 
 \item{suffix}{character (default "_simplified") A character string to append
 to the newly modified assay for \code{qreduceTCGA}.}
@@ -116,7 +119,8 @@ genome(rex) <- tgenome
 
 accmae[["ACC_Mutation-20160128"]] <- rex
 
-simplifyTCGA(accmae)
+simplifyTCGA(accmae, redownload = TRUE)
+
 }
 \author{
 L. Waldron, M. Ramos
