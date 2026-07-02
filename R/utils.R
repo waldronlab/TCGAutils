@@ -86,9 +86,18 @@
     bquery <- BiocFileCache::bfcquery(bfc, url, "rname", exact = TRUE)
     ## only re-download manually b/c bfcneedsupdate always returns TRUE
     if (identical(nrow(bquery), 1L) && redownload)
-        BiocFileCache::bfcdownload(
-            x = bfc, rid = bquery[["rid"]], ask = FALSE
-        )
+        tryCatch({
+            BiocFileCache::bfcdownload(
+                x = bfc, rid = bquery[["rid"]], ask = FALSE
+            )
+        }, error = function(e) {
+            msg <- conditionMessage(e)
+            if (grepl("download failed", msg, TRUE))
+                warning(msg, call. = FALSE)
+            else
+                stop(msg, call. = FALSE)
+            invisible()
+        })
 
     BiocFileCache::bfcrpath(
         bfc, rnames = url, exact = TRUE, download = TRUE, rtype = "web"
