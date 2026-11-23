@@ -35,21 +35,33 @@
 #'
 #' @export
 oncoPrintTCGA <-
-    function(multiassayexperiment, matchassay = "*_Mutation-*",
-        variantCol = "Variant_Classification", brewerPal = "Set3", ntop = 25,
-        incl.thresh = 0.01, rowcol = "Hugo_Symbol")
+    function(
+        multiassayexperiment,
+        matchassay = "*_Mutation-*",
+        variantCol = "Variant_Classification",
+        brewerPal = "Set3",
+        ntop = 25,
+        incl.thresh = 0.01,
+        rowcol = "Hugo_Symbol"
+    )
 {
     stopifnot(
-        isScalarCharacter(matchassay), isScalarCharacter(variantCol),
-        isScalarCharacter(brewerPal), isScalarNumber(ntop),
+        isScalarCharacter(matchassay),
+        isScalarCharacter(variantCol),
+        isScalarCharacter(brewerPal),
+        isScalarNumber(ntop),
         is(multiassayexperiment, "MultiAssayExperiment"),
-        isScalarNumber(incl.thresh), isScalarCharacter(rowcol)
+        isScalarNumber(incl.thresh),
+        isScalarCharacter(rowcol)
     )
 
     checkInstalled(c("org.Hs.eg.db", "ComplexHeatmap", "RColorBrewer"))
 
-    mutname <- grep(utils::glob2rx(matchassay),
-        names(multiassayexperiment), value = TRUE)
+    mutname <- grep(
+        utils::glob2rx(matchassay),
+        names(multiassayexperiment),
+        value = TRUE
+    )
 
     if (length(mutname) > 1)
         stop("Only one mutation assay supported at this time")
@@ -68,7 +80,7 @@ oncoPrintTCGA <-
 
     types <- table(Variants)
     tottypes <- sum(types)
-    incl <- (types/tottypes) > incl.thresh
+    incl <- (types / tottypes) > incl.thresh
     types <- types[incl]
     validvariants <- setNames(names(types), names(types))
 
@@ -99,10 +111,16 @@ oncoPrintTCGA <-
     seqlevelsStyle(gn) <- sqls
 
     simplify_fun <- function(scores, ranges, qranges)
-        { any(scores != "Silent") }
+    {
+        any(scores != "Silent")
+    }
 
     res <- RaggedExperiment::qreduceAssay(
-        ragex, gn, simplify_fun, "Variant_Classification", background = FALSE
+        ragex,
+        gn,
+        simplify_fun,
+        "Variant_Classification",
+        background = FALSE
     )
     rownames(res) <- names(gn)
 
@@ -114,41 +132,58 @@ oncoPrintTCGA <-
     colors <- setNames(qualcolors, validvariants)
 
     colfuns <- lapply(colors, function(couleur) {
-        args <- alist(x =, y =, w =, h =)
+        args <- alist(x = , y = , w = , h = )
         args <- as.pairlist(args)
-        body <- substitute({
-            grid::grid.rect(x, y, w, h, gp = grid::gpar(fill = z, col = NA))
-        }, list(z = couleur))
+        body <- substitute(
+            {
+                grid::grid.rect(x, y, w, h, gp = grid::gpar(fill = z, col = NA))
+            },
+            list(z = couleur)
+        )
         eval(call("function", args, body))
     })
 
-    background <- function(x, y, w, h)
-        grid::grid.rect(x, y, w, h,
-            gp = grid::gpar(fill = "#FFFFFF", col = "#FFFFFF"))
+    background <- function(x, y, w, h) {
+        grid::grid.rect(
+            x,
+            y,
+            w,
+            h,
+            gp = grid::gpar(fill = "#FFFFFF", col = "#FFFFFF")
+        )
+    }
     mutfuns <- c(background = background, colfuns)
 
-    simplify_funs <- lapply(validvariants,
-        function(variant) {
-            args <- alist(scores =, ranges =, qranges =)
-            args <- as.pairlist(args)
-            body <- substitute({
+    simplify_funs <- lapply(validvariants, function(variant) {
+        args <- alist(scores = , ranges = , qranges = )
+        args <- as.pairlist(args)
+        body <- substitute(
+            {
                 as.numeric(any(S4Vectors::`%in%`(scores, z)))
-            }, list(z = variant))
-            eval(call("function", args, body))
-        }
-    )
+            },
+            list(z = variant)
+        )
+        eval(call("function", args, body))
+    })
 
     list_mats <- lapply(simplify_funs, function(variant_fun) {
-        res <- RaggedExperiment::qreduceAssay(ragex, gn2, variant_fun,
-            "Variant_Classification", background = 0)
+        res <- RaggedExperiment::qreduceAssay(
+            ragex,
+            gn2,
+            variant_fun,
+            "Variant_Classification",
+            background = 0
+        )
         rownames(res) <- names(gn2)
         res
     })
 
     return(
         ComplexHeatmap::oncoPrint(
-            list_mats, alter_fun = mutfuns, col = colors, show_pct = FALSE
+            list_mats,
+            alter_fun = mutfuns,
+            col = colors,
+            show_pct = FALSE
         )
     )
 }
-

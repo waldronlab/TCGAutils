@@ -7,8 +7,9 @@ NULL
 .checkHas <-
     function(x, pattern, threshold = 0.9)
 {
-    if (identical(pattern, "symbols"))
+    if (identical(pattern, "symbols")) {
         pattern <- "^[A-Z0-9]{1,6}|^C[0-9]orf[0-9]{1,4}"
+    }
     mean(c(FALSE, grepl(pattern, rownames(x))), na.rm = TRUE) > threshold
 }
 
@@ -19,10 +20,8 @@ NULL
         experiments(mae),
         function(y) {
             .checkHas(x = y, pattern = pattern) &&
-            (
-                is(y, "SummarizedExperiment") &&
-                    !is(y, "RangedSummarizedExperiment")
-            )
+                (is(y, "SummarizedExperiment") &&
+                    !is(y, "RangedSummarizedExperiment"))
         },
         logical(1L)
     )
@@ -35,24 +34,30 @@ NULL
         ranges <- lookup[["mapped"]]
         rowidx <- mcols(ranges)[["rowIdx"]]
         rowidx <- Filter(Negate(is.na), rowidx)
-        if (!is.null(rowidx) && length(rowidx))
+        if (!is.null(rowidx) && length(rowidx)) {
             rse <- `rownames<-`(assay[rowidx, ], names(ranges))
-        else
+        } else {
             rse <- assay[names(ranges), ]
+        }
         # rowData not merged with mcols of RHS in `rowRanges<-` method
         mcols(ranges) <-
             S4Vectors::DataFrame(rowData(rse), S4Vectors::mcols(ranges))
         SummarizedExperiment::rowRanges(rse) <- ranges
-        x <- c(x, setNames(S4Vectors::List(rse),
-            paste0(names(x)[i], "_ranged")))
+        x <- c(
+            x,
+            setNames(S4Vectors::List(rse), paste0(names(x)[i], "_ranged"))
+        )
         if (length(lookup[["unmapped"]]) && unmap) {
             se <- assay[lookup[["unmapped"]], ]
-            x <- c(x, setNames(S4Vectors::List(se),
-                paste0(names(x)[i], "_unranged")))
+            x <- c(
+                x,
+                setNames(S4Vectors::List(se), paste0(names(x)[i], "_unranged"))
+            )
         }
     }
-    if (!keep & any(which))
-        x <- x[, , -match(names(which(which)), names(x))]
+    if (!keep & any(which)) {
+        x <- x[,, -match(names(which(which)), names(x))]
+    }
     x
 }
 
@@ -81,7 +86,9 @@ NULL
     mirna_version <-
         miRNAmeConverter::assessVersion(nc, names(gn))[1L, "version"]
     trout <- miRNAmeConverter::translateMiRNAName(
-        nc, x, versions = mirna_version
+        nc,
+        x,
+        versions = mirna_version
     )
     new_x <- trout[[paste0("v", mirna_version, ".0")]]
     res <- list(unmapped = setdiff(x, trout[["input"]]))
@@ -95,13 +102,15 @@ NULL
 .getGN <- function(gen) {
     stopifnot(isScalarCharacter(gen))
 
-    txdb <- if (identical(gen, "hg18"))
+    txdb <- if (identical(gen, "hg18")) {
         TxDb.Hsapiens.UCSC.hg18.knownGene::TxDb.Hsapiens.UCSC.hg18.knownGene
-    else if (identical(gen, "hg19"))
+    } else if (identical(gen, "hg19")) {
         TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+    }
 
     gn <- keepStandardChromosomes(
-        GenomicFeatures::genes(txdb), pruning.mode = "coarse"
+        GenomicFeatures::genes(txdb),
+        pruning.mode = "coarse"
     )
     seqlevelsStyle(gn) <- "NCBI"
 
@@ -261,7 +270,10 @@ NULL
 #'
 #' @export
 simplifyTCGA <- function(
-    obj, keep.assay = FALSE, unmapped = TRUE, redownload = FALSE
+    obj,
+    keep.assay = FALSE,
+    unmapped = TRUE,
+    redownload = FALSE
 ) {
     obj <- qreduceTCGA(obj, keep.assay)
     obj <- mirToRanges(obj, keep.assay, unmapped, redownload)
@@ -288,7 +300,10 @@ symbolsToRanges <- function(obj, keep.assay = FALSE, unmapped = TRUE) {
 #' @rdname simplifyTCGA
 #' @export
 mirToRanges <- function(
-    obj, keep.assay = FALSE, unmapped = TRUE, redownload = FALSE
+    obj,
+    keep.assay = FALSE,
+    unmapped = TRUE,
+    redownload = FALSE
 ) {
     checkInstalled("Bioc.gff")
 
@@ -345,8 +360,9 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
             sum(BiocGenerics::width(isects))
     }
 
-    nonsilent <- function(scores, ranges, qranges)
+    nonsilent <- function(scores, ranges, qranges) {
         any(scores != "Silent")
+    }
 
     isRE <-
         function(x) vapply(experiments(x), is, logical(1L), "RaggedExperiment")
@@ -372,7 +388,8 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
         ## replace patch release info
         genome(mut_ranges) <- gname
         mutations <- SummarizedExperiment(
-            mutations[!remove.rows, ], rowRanges = mut_ranges
+            mutations[!remove.rows, ],
+            rowRanges = mut_ranges
         )
         el <- ExperimentList(x = mutations)
         names(el) <- paste0(names(obj)[i], suffix)
@@ -392,14 +409,15 @@ qreduceTCGA <- function(obj, keep.assay = FALSE, suffix = "_simplified") {
         rownames(cn) <- names(gn)
         remove.rows <- is.na(rownames(cn))
         cn <- SummarizedExperiment(
-            cn[!remove.rows, ], rowRanges = gn[!remove.rows]
+            cn[!remove.rows, ],
+            rowRanges = gn[!remove.rows]
         )
         el <- ExperimentList(x = cn)
         names(el) <- paste0(names(obj)[i], suffix)
         obj <- c(obj, el)
     }
     if (!keep.assay) {
-        obj <- obj[, , !isRE(obj)]
+        obj <- obj[,, !isRE(obj)]
     }
     return(obj)
 }

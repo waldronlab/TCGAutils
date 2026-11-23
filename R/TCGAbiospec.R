@@ -42,7 +42,8 @@ TCGAbiospec <- function(barcodes) {
     sampVial <- .strsep(sampCode, 2L)
     names(sampVial) <- c("sample", "vial")
     sample_definition <- sampleTypes[["Definition"]][
-        match(sampVial[["sample"]], sampleTypes[["Code"]])]
+        match(sampVial[["sample"]], sampleTypes[["Code"]])
+    ]
     biospec <-
         data.frame(
             submitter_id = TCGAbarcode(barcodes),
@@ -50,18 +51,22 @@ TCGAbiospec <- function(barcodes) {
             as.data.frame(sampVial, stringsAsFactors = FALSE),
             stringsAsFactors = FALSE
         )
-    if (identical(maxIndx, 4L))
+    if (identical(maxIndx, 4L)) {
         return(biospec)
-    else
+    } else {
         splitDex <- seq(5L, maxIndx)
+    }
 
     tailBarcode <- strsplit(TCGAbarcode(barcodes, index = splitDex), filler)
     splitCol <- splitDex == 5L
-    tailBarcode <- lapply(tailBarcode, function(x)
-        c(unlist(.strsep(x[[1L]], 2L)), x[!splitCol]))
+    tailBarcode <- lapply(tailBarcode, function(x) {
+        c(unlist(.strsep(x[[1L]], 2L)), x[!splitCol])
+    })
 
-    portPlateCent <- do.call(rbind.data.frame,
-        args = c(tailBarcode, list(stringsAsFactors = FALSE)))
+    portPlateCent <- do.call(
+        rbind.data.frame,
+        args = c(tailBarcode, list(stringsAsFactors = FALSE))
+    )
     names(portPlateCent) <-
         c("portion", "analyte", "plate", "center")[seq_along(c(splitDex, 1L))]
 

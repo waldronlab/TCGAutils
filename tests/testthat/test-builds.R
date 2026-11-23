@@ -29,10 +29,10 @@ test_that("translateBuild works correctly", {
         "GRCh37"
     )
     expect_true(
-            is.na(translateBuild(NA_character_))
+        is.na(translateBuild(NA_character_))
     )
     expect_true(
-            is.na(translateBuild("33"))
+        is.na(translateBuild("33"))
     )
 })
 
@@ -67,7 +67,7 @@ test_that("uniformBuilds is returning the appropriate output", {
     # NA converted to main build annotation
     build <- c(rep(c("GRCh37", "hg19"), times = c(7, 2)), NA_character_)
     rebuild <- uniformBuilds(build, cutoff = 0.2)
-    expect_identical(1L , length(unique(rebuild)))
+    expect_identical(1L, length(unique(rebuild)))
 
     # if build numbers identical then replace with high prop
     build <- rep(c("GRCh37", "37"), times = c(7, 2))
@@ -81,4 +81,3 @@ test_that("uniformBuilds is returning the appropriate output", {
     build <- c(rep(c("GRCh37", "37"), times = c(7, 2)), rep(NA_character_, 3))
     expect_error(uniformBuilds(build, cutoff = 0.2))
 })
-

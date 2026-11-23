@@ -3,8 +3,9 @@
     dels <- unique(unlist(
         strsplit(nonnum, "")
     ))
-    if (!length(dels))
+    if (!length(dels)) {
         dels <- ""
+    }
     dels
 }
 
@@ -16,12 +17,16 @@
         stop("Barcode delimiters not consistent")
     bcodelens <- unique(nchar(barcodes))
     if (length(bcodelens) > 1L)
-        warning("Inconsistent barcode lengths: ",
-            paste(bcodelens, collapse = ", "))
+        warning(
+            "Inconsistent barcode lengths: ",
+            paste(bcodelens, collapse = ", ")
+        )
     if (check.sample) {
         if (any(bcodelens < 15L))
-        stop("'barcodes' should be at least 15 characters ",
-                "with sample information")
+            stop(
+                "'barcodes' should be at least 15 characters ",
+                "with sample information"
+            )
     }
 }
 
@@ -59,17 +64,24 @@
 #' TCGAbarcode(barcodes, sample = TRUE)
 #'
 #' @export TCGAbarcode
-TCGAbarcode <- function(barcodes, participant = TRUE, sample = FALSE,
-    portion = FALSE, plate = FALSE, center = FALSE, index = NULL)
+TCGAbarcode <- function(
+    barcodes,
+    participant = TRUE,
+    sample = FALSE,
+    portion = FALSE,
+    plate = FALSE,
+    center = FALSE,
+    index = NULL
+)
 {
     .checkBarcodes(barcodes)
     filler <- .uniqueDelim(barcodes)
     stopifnot(is.null(index) || is.numeric(index))
-    if (is.null(index))
+    if (is.null(index)) {
         index <- which(
             c(rep(participant, 3), sample, portion, plate, center)
         )
+    }
     barcodeMat <- do.call(rbind, strsplit(barcodes, filler))
     apply(barcodeMat[, index, drop = FALSE], 1L, paste, collapse = filler)
 }
-

@@ -71,7 +71,6 @@ NULL
 #'
 #' @export
 getSubtypeMap <- function(multiassayexperiment) {
-
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")
 
@@ -111,26 +110,32 @@ getClinicalNames <- function(diseaseCode) {
 
 .checkSampleCodes <-
     function(sampleCodes, type = "'sampleCodes'", strict = FALSE) {
-    FUN <- if (strict) any else all
-    env <- new.env(parent = emptyenv())
-    data("sampleTypes", envir = env, package = "TCGAutils")
-    sampleTypes <- env[["sampleTypes"]]
-    if (FUN(!sampleCodes %in% sampleTypes[["Code"]]))
-        stop("Provide valid TCGA 'sampleCodes' in ", type)
-}
+        FUN <- if (strict) any else all
+        env <- new.env(parent = emptyenv())
+        data("sampleTypes", envir = env, package = "TCGAutils")
+        sampleTypes <- env[["sampleTypes"]]
+        if (FUN(!sampleCodes %in% sampleTypes[["Code"]]))
+            stop("Provide valid TCGA 'sampleCodes' in ", type)
+    }
 
 .checkCodesAgainstData <- function(samplist, sampleCodes) {
-    invalidCodes <- IRanges::LogicalList(lapply(samplist,
-        function(acode) !sampleCodes %in% acode))
+    invalidCodes <- IRanges::LogicalList(lapply(samplist, function(acode) {
+        !sampleCodes %in% acode
+    }))
 
     if (all(all(invalidCodes) & lengths(invalidCodes)))
-        stop("'sampleCodes' not found in assay data, check 'sampleTables()'",
-            "\n    and see the 'data(\"sampleTypes\")' table", call. = FALSE)
+        stop(
+            "'sampleCodes' not found in assay data, check 'sampleTables()'",
+            "\n    and see the 'data(\"sampleTypes\")' table",
+            call. = FALSE
+        )
 
     if (any(any(invalidCodes))) {
         missingcodes <-
-            IRanges::CharacterList(lapply(invalidCodes[any(invalidCodes)],
-                function(inv) sampleCodes[inv]))
+            IRanges::CharacterList(lapply(
+                invalidCodes[any(invalidCodes)],
+                function(inv) sampleCodes[inv]
+            ))
         warning("Some 'sampleCodes' not found in assays", call. = FALSE)
     }
 }
@@ -138,8 +143,9 @@ getClinicalNames <- function(diseaseCode) {
 .addLeadingZero <- function(vect) {
     vect <- as.character(vect)
     singleDigits <- nchar(vect) < 2L
-    if (any(singleDigits))
+    if (any(singleDigits)) {
         vect <- replace(vect, singleDigits, paste0("0", vect[singleDigits]))
+    }
     vect
 }
 
@@ -161,14 +167,19 @@ getClinicalNames <- function(diseaseCode) {
 #' @importFrom BiocBaseUtils setSlots
 #'
 #' @export
-TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
-    exclusive = FALSE) {
+TCGAsplitAssays <- function(
+    multiassayexperiment,
+    sampleCodes = NULL,
+    exclusive = FALSE
+) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' object")
 
     sampList <- .samplesInData(multiassayexperiment)
-    .checkSampleCodes(unique(unlist(sampList)),
-        "colnames(MultiAssayExperiment)")
+    .checkSampleCodes(
+        unique(unlist(sampList)),
+        "colnames(MultiAssayExperiment)"
+    )
 
     if (!is.null(sampleCodes)) {
         sampleCodes <- .addLeadingZero(sampleCodes)
@@ -189,14 +200,22 @@ TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
     exps <- experiments(multiassayexperiment)
     exps <- exps[names(exps) %in% names(validExp)]
 
-    egroups <- unlist(Map(function(exprmt, sampcodes, ename) {
-        expnames <- setNames(sampcodes, paste0(sampcodes, "_", ename))
-        lapply(expnames, function(code) {
-            logitype <- TCGAsampleSelect(colnames(exprmt), code)
-            exprmt[, logitype, drop = FALSE]
-        })
-    }, exprmt = exps, sampcodes = validExp, ename = names(validExp),
-    USE.NAMES = FALSE), recursive = FALSE)
+    egroups <- unlist(
+        Map(
+            function(exprmt, sampcodes, ename) {
+                expnames <- setNames(sampcodes, paste0(sampcodes, "_", ename))
+                lapply(expnames, function(code) {
+                    logitype <- TCGAsampleSelect(colnames(exprmt), code)
+                    exprmt[, logitype, drop = FALSE]
+                })
+            },
+            exprmt = exps,
+            sampcodes = validExp,
+            ename = names(validExp),
+            USE.NAMES = FALSE
+        ),
+        recursive = FALSE
+    )
 
     sampmap <- generateMap(
         experiments = egroups,
@@ -221,8 +240,9 @@ TCGAsplitAssays <- function(multiassayexperiment, sampleCodes = NULL,
 sampleTables <- function(multiassayexperiment, vial = FALSE) {
     lapply(colnames(multiassayexperiment), function(x) {
         scodes <- TCGAbarcode(x, participant = FALSE, sample = TRUE)
-        if (!vial)
+        if (!vial) {
             scodes <- substr(scodes, 1L, 2L)
+        }
         table(unname(scodes))
     })
 }

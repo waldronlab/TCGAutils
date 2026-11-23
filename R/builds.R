@@ -1,10 +1,15 @@
 human_builds <- function() {
     S4Vectors::DataFrame(
-        Date = c("July 2004", "May 2004", "March 2006", "February 2009",
-            "December 2013"),
+        Date = c(
+            "July 2004",
+            "May 2004",
+            "March 2006",
+            "February 2009",
+            "December 2013"
+        ),
         NCBI_PRE = c("NCBI", "NCBI", "NCBI", "GRCh", "GRCh"),
         NCBI_NO = c("34", "35", "36", "37", "38"),
-        NCBI =  c("NCBI34", "NCBI35", "NCBI36", "GRCh37", "GRCh38"),
+        NCBI = c("NCBI34", "NCBI35", "NCBI36", "GRCh37", "GRCh38"),
         UCSC_PRE = c("hg", "hg", "hg", "hg", "hg"),
         UCSC_NO = c("16", "17", "18", "19", "38"),
         UCSC = c("hg16", "hg17", "hg18", "hg19", "hg38")
@@ -104,8 +109,9 @@ correctBuild <- function(build, style = c("UCSC", "NCBI")) {
     if (identical(tolower(pref), "hg") && identical(style, "NCBI"))
         return(translateBuild(build, style))
     if (
-        tolower(pref) %in% tolower(build.df[["NCBI_PRE"]]) &&
-        identical(style, "UCSC")
+        tolower(pref) %in%
+            tolower(build.df[["NCBI_PRE"]]) &&
+            identical(style, "UCSC")
     )
         return(translateBuild(build, style))
     idx <- match(digits, build.df[[paste0(style, "_NO")]])
@@ -150,15 +156,19 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
     builds <- vector(mode = "character", length(build))
     names(builds) <- build
     for (i in build) {
-        pattrn <- switch(i, UCSC = "[Hh][Gg][0-9]{2}",
-            NCBI = "[Gg][Rr][Cc][Hh][0-9]{2}")
+        pattrn <- switch(
+            i,
+            UCSC = "[Hh][Gg][0-9]{2}",
+            NCBI = "[Gg][Rr][Cc][Hh][0-9]{2}"
+        )
         builds[[i]] <- stringr::str_extract(string, pattrn)
     }
     builds <- Filter(function(x) !is.na(x), builds)
-    if (!length(builds))
+    if (!length(builds)) {
         NA_character_
-    else if (length(builds))
+    } else if (length(builds)) {
         builds[1L]
+    }
 }
 
 .isSingleValue <- function(charvec) {
@@ -205,10 +215,11 @@ extractBuild <- function(string, build = c("UCSC", "NCBI")) {
 uniformBuilds <- function(builds, cutoff = 0.2, na = c("", "NA")) {
     tbuild <- table(builds)
     if (.consistentNumbers(builds)) {
-        if (identical(length(tbuild), 1L))
+        if (identical(length(tbuild), 1L)) {
             return(builds)
-        else
+        } else {
             builds <- .replaceHighProp(builds)
+        }
     }
 
     wbuilds <- toupper(builds)
@@ -230,16 +241,18 @@ uniformBuilds <- function(builds, cutoff = 0.2, na = c("", "NA")) {
     if (.isSingleValue(ubuilds)) {
         builds[nabuilds] <- ubuilds
         return(builds)
-    } else if (sum(!nanames) > 2)
+    } else if (sum(!nanames) > 2) {
         stop("Only two build types at a time can be used")
+    }
 
     props <- proptt[!nanames]
 
     offbuild <- names(props[props <= cutoff])
     mainbuild <- names(props[props > cutoff])
     mainbuild <- builds[match(mainbuild, toupper(builds))]
-    if (any(nabuilds))
+    if (any(nabuilds)) {
         builds[nabuilds] <- mainbuild
+    }
 
     samebuilds <- .consistentNumbers(builds)
     if (samebuilds) {
@@ -247,11 +260,13 @@ uniformBuilds <- function(builds, cutoff = 0.2, na = c("", "NA")) {
     } else {
         pattrn <- vapply(
             c(UCSC = "[Hh][Gg][0-9]{2}", NCBI = "[Gg][Rr][Cc][Hh][0-9]{2}"),
-            grepl, logical(1L), offbuild)
+            grepl,
+            logical(1L),
+            offbuild
+        )
         toconv <- names(pattrn)[!pattrn]
         results <- translateBuild(offbuild, toconv)
         builds[wbuilds == offbuild] <- results
     }
     builds
 }
-
