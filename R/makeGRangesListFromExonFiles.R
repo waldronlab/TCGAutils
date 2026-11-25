@@ -52,9 +52,14 @@
 #'     sampleNames = "TCGA-AA-3678-01A-01R-0905-07")
 #'
 #' @export makeGRangesListFromExonFiles
-makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
-    fileNames = basename(filepaths), getBarcodes = TRUE, rangesColumn = "exon",
-    nrows = Inf)
+makeGRangesListFromExonFiles <- function(
+    filepaths,
+    sampleNames = NULL,
+    fileNames = basename(filepaths),
+    getBarcodes = TRUE,
+    rangesColumn = "exon",
+    nrows = Inf
+)
 {
     if (is.null(sampleNames) && getBarcodes) {
         sampleNames <-
@@ -72,9 +77,13 @@ makeGRangesListFromExonFiles <- function(filepaths, sampleNames = NULL,
         if (requireNamespace("readr", quietly = TRUE)) {
             readr::local_edition(1)
             readr::read_delim(file, delim = "\t", n_max = nrows)
-        } else
-            read.delim(file, sep = "\t",
-                nrows = if (is.infinite(nrows)) -1 else nrows)
+        } else {
+            read.delim(
+                file,
+                sep = "\t",
+                nrows = if (is.infinite(nrows)) -1 else nrows
+            )
+        }
     })
 
     names(btData) <- sampleNames

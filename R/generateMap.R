@@ -44,58 +44,84 @@
 #'     idConverter = function(x) substr(tolower(x), 1L, 1L))
 #'
 #' @export generateMap
-generateMap <- function(experiments, colData, idConverter = identity,
-    sampleCol, patientCol, ...) {
-    if (!is(experiments, "ExperimentList"))
+generateMap <- function(
+    experiments,
+    colData,
+    idConverter = identity,
+    sampleCol,
+    patientCol,
+    ...
+) {
+    if (!is(experiments, "ExperimentList")) {
         experiments <- ExperimentList(experiments)
+    }
     samps <- colnames(experiments)
     expnames <- names(samps)
-    assay <- factor(rep(expnames, lengths(samps)), levels=expnames)
-    colname <- unlist(samps, use.names=FALSE)
+    assay <- factor(rep(expnames, lengths(samps)), levels = expnames)
+    colname <- unlist(samps, use.names = FALSE)
     if (!missing(sampleCol) && !missing(patientCol)) {
-        if (!S4Vectors::isSingleString(sampleCol) ||
-            !S4Vectors::isSingleString(patientCol))
+        if (
+            !S4Vectors::isSingleString(sampleCol) ||
+                !S4Vectors::isSingleString(patientCol)
+        )
             stop("Provide character names in colData for mapping")
-        if (identical(patientCol, "row.names"))
+        if (identical(patientCol, "row.names")) {
             pts <- rownames(colData)
-        else
+        } else {
             pts <- colData[[patientCol]]
+        }
         samples <- colData[[sampleCol]]
-        autoMap <- cbind.data.frame(assay = NA_character_, primary = pts,
-            colname = samples, stringsAsFactors = FALSE)
-        autoMap <- Map(function(cnames, i) {
-            submap <- autoMap[autoMap[["colname"]] %in% cnames, ]
-            if (nrow(submap)) {
-                submap[["assay"]] <- i
-            } else {
-                warning(
-                    "'", i, "' assay dropped; 'colnames' not mappable",
-                    call. = FALSE
-                )
-            }
-            submap
-        }, cnames = samps, i = names(samps))
-        autoMap <- do.call(function(...) {
-            rbind(..., make.row.names = FALSE)
-        }, autoMap)
+        autoMap <- cbind.data.frame(
+            assay = NA_character_,
+            primary = pts,
+            colname = samples,
+            stringsAsFactors = FALSE
+        )
+        autoMap <- Map(
+            function(cnames, i) {
+                submap <- autoMap[autoMap[["colname"]] %in% cnames, ]
+                if (nrow(submap)) {
+                    submap[["assay"]] <- i
+                } else {
+                    warning(
+                        "'",
+                        i,
+                        "' assay dropped; 'colnames' not mappable",
+                        call. = FALSE
+                    )
+                }
+                submap
+            },
+            cnames = samps,
+            i = names(samps)
+        )
+        autoMap <- do.call(
+            function(...) {
+                rbind(..., make.row.names = FALSE)
+            },
+            autoMap
+        )
         autoMap[["assay"]] <- factor(autoMap[["assay"]])
     } else {
         matches <- match(idConverter(colname, ...), rownames(colData))
         if (length(matches) && all(is.na(matches)))
             stop("no way to map colData to ExperimentList")
         primary <- rownames(colData)[matches]
-        autoMap <- S4Vectors::DataFrame(assay=assay,
-            primary=primary, colname=colname)
+        autoMap <- S4Vectors::DataFrame(
+            assay = assay,
+            primary = primary,
+            colname = colname
+        )
     }
     missingPrimary <- is.na(autoMap[["primary"]])
     if (nrow(autoMap) && any(missingPrimary)) {
         notFound <- autoMap[missingPrimary, ]
-        warning("Data from rows:",
-            sprintf("\n %s - %s", notFound[, "primary"],
-                notFound[, "colname"]),
-                "\ndropped due to missing phenotype data")
+        warning(
+            "Data from rows:",
+            sprintf("\n %s - %s", notFound[, "primary"], notFound[, "colname"]),
+            "\ndropped due to missing phenotype data"
+        )
         autoMap <- autoMap[!is.na(autoMap[["primary"]]), ]
     }
     autoMap
 }
-

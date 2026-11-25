@@ -6,16 +6,26 @@ if (!requireNamespace("RTCGAToolbox"))
 
 TCGAcodes <- RTCGAToolbox::getFirehoseDatasets()
 
-excludedCodes <- c("COADREAD", "GBMLGG", "KIPAN", "STES", "FPPP", "CNTL",
-    "LCML", "MISC")
+excludedCodes <- c(
+    "COADREAD",
+    "GBMLGG",
+    "KIPAN",
+    "STES",
+    "FPPP",
+    "CNTL",
+    "LCML",
+    "MISC"
+)
 TCGAcodes <- TCGAcodes[-which(TCGAcodes %in% excludedCodes)]
 
 myDataDir <- tempdir()
 
 lapply(TCGAcodes, function(cancer) {
     if (!file.exists(file.path(myDataDir, cancer, "clinical.csv"))) {
-        clinDat <- RTCGAToolbox::getFirehoseData(dataset = cancer,
-            destdir = myDataDir)
+        clinDat <- RTCGAToolbox::getFirehoseData(
+            dataset = cancer,
+            destdir = myDataDir
+        )
         clinFrame <- RTCGAToolbox::getData(clinDat, "clinical")
         rownames(clinFrame) <-
             TCGAutils:::.standardBarcodes(rownames(clinFrame))
@@ -32,8 +42,10 @@ lapply(TCGAcodes, function(cancer) {
 names(TCGAcodes) <- TCGAcodes
 
 clinicalNames <- IRanges::CharacterList(lapply(TCGAcodes, function(cancer) {
-    clinDat <- read.csv(file.path(myDataDir, cancer, "clinical.csv"),
-        row.names = 1L)
+    clinDat <- read.csv(
+        file.path(myDataDir, cancer, "clinical.csv"),
+        row.names = 1L
+    )
     allNA <- vapply(clinDat, function(col) all(is.na(col)), logical(1L))
     clinDat <- clinDat[, !allNA]
     names(clinDat)[names(clinDat) != "Composite.Element.REF"]

@@ -25,7 +25,8 @@
 TCGAsampleSelect <- function(barcodes, sampleCodes) {
     stopifnot(
         is.character(sampleCodes) || is.numeric(sampleCodes),
-        !is.na(sampleCodes), !is.logical(sampleCodes)
+        !is.na(sampleCodes),
+        !is.logical(sampleCodes)
     )
     if (clist <- is(barcodes, "CharacterList")) {
         bcodes <- barcodes
@@ -40,7 +41,8 @@ TCGAsampleSelect <- function(barcodes, sampleCodes) {
     sampleSnippet <- TCGAbarcode(barcodes, sample = TRUE, participant = FALSE)
     barcodeSamples <- substr(sampleSnippet, 1L, 2L)
     barc <- setNames(barcodeSamples %in% sampleCodes, barcodeSamples)
-    if (exists("clist") && isTRUE(clist))
+    if (exists("clist") && isTRUE(clist)) {
         barc <- BiocGenerics::relist(barc, bcodes)
+    }
     return(barc)
 }

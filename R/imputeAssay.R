@@ -36,7 +36,7 @@ imputeAssay <- function(multiassayexperiment, i = 1, ...) {
     if (!any(is.character(i), is.numeric(i), is.logical(i)))
         stop("'i' has to be character or numeric or logical")
 
-    sub.multiassayexperiment <- multiassayexperiment[, , i]
+    sub.multiassayexperiment <- multiassayexperiment[,, i]
     assays <- assays(sub.multiassayexperiment)
     assayclasses <- vapply(assays, is.matrix, logical(1L))
     if (!all(assayclasses))

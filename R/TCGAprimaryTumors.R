@@ -26,9 +26,13 @@ TCGAprimaryTumors <- function(multiassayexperiment) {
     primaries <- ifelse(dcodes == "LAML", "03", "01")
     primaries <- setNames(primaries, dcodes)
 
-    logisub <- Map(function(barcodes, tumorcode) {
-        TCGAsampleSelect(barcodes, tumorcode)
-    }, colnames(multiassayexperiment), primaries)
+    logisub <- Map(
+        function(barcodes, tumorcode) {
+            TCGAsampleSelect(barcodes, tumorcode)
+        },
+        colnames(multiassayexperiment),
+        primaries
+    )
 
     multiassayexperiment[, logisub, ]
 }

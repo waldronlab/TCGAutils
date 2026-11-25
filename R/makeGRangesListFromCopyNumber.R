@@ -39,8 +39,9 @@
 #' @export makeGRangesListFromCopyNumber
 makeGRangesListFromCopyNumber <-
     function(df, split.field, names.field = "Hugo_Symbol", ...) {
-        if (is.list(df) && !inherits(df, "data.frame"))
+        if (is.list(df) && !inherits(df, "data.frame")) {
             df <- do.call(rbind, df)
+        }
 
         if (!S4Vectors::isSingleString(names.field))
             stop("'names.field' must be a single sting")
@@ -53,18 +54,27 @@ makeGRangesListFromCopyNumber <-
 
         if (any(rnames) && sum(rnames) == 1L) {
             setrname <- names(df)[rnames]
-            grl <- makeGRangesListFromDataFrame(df = df,
-                split.field = split.field, names.field = setrname, ...)
+            grl <- makeGRangesListFromDataFrame(
+                df = df,
+                split.field = split.field,
+                names.field = setrname,
+                ...
+            )
         } else {
-            grl <- makeGRangesListFromDataFrame(df = df, split.field =
-                split.field, ...)
+            grl <- makeGRangesListFromDataFrame(
+                df = df,
+                split.field = split.field,
+                ...
+            )
         }
 
         if (twoMeta) {
             numProb <- names(df)[match("num_probes", tolower(names(df)))]
             segMean <- names(df)[match("segment_mean", tolower(names(df)))]
-            mcols(grl) <- cbind(mcols(grl), DataFrame(num_probes = numProb,
-                segment_mean = segMean))
+            mcols(grl) <- cbind(
+                mcols(grl),
+                DataFrame(num_probes = numProb, segment_mean = segMean)
+            )
         }
         if (any(ncbi) && sum(ncbi) == 1L) {
             ncbi_build <- names(df)[ncbi]

@@ -26,8 +26,11 @@
     obsIdx <- unique(lengths(splitCodes))
 
     if (obsIdx < 3L)
-        stop("Minimum barcode fields required: ", 3L,
-            "; first three are 'project-TSS-participant'")
+        stop(
+            "Minimum barcode fields required: ",
+            3L,
+            "; first three are 'project-TSS-participant'"
+        )
 
     key <- c(rep("case", 3L), "sample", "analyte", "aliquot", "aliquot")[obsIdx]
     if (identical(key, "analyte")) {
@@ -36,14 +39,21 @@
         )
         if (!S4Vectors::isSingleInteger(analyte_chars))
             stop("Inconsistent '", key, "' barcodes")
-        if (analyte_chars < 3)
+        if (analyte_chars < 3) {
             key <- "portion"
+        }
     } else if (identical(key, "aliquot")) {
         if (identical(obsIdx, 6L)) {
-            ali_chars <- vapply(splitCodes, function(x)
-                nchar(x[c(obsIdx-1L, obsIdx)]), integer(2L))
-            if (identical(ali_chars, c(2L, 3L)))
+            ali_chars <- vapply(
+                splitCodes,
+                function(x) {
+                    nchar(x[c(obsIdx - 1L, obsIdx)])
+                },
+                integer(2L)
+            )
+            if (identical(ali_chars, c(2L, 3L))) {
                 key <- "slide"
+            }
         }
     }
     key
@@ -65,13 +75,22 @@
     usamps <- unlist(samps)
     splitsamps <- split(unname(usamps), gsub("[0-9]*$", "", names(usamps)))
     splits <- strsplit(names(splitsamps), "\\.")
-    cnames <- unique(vapply(splits, function(x) {
-        paste0(x[-1], collapse = ".") }, character(1)))
+    cnames <- unique(vapply(
+        splits,
+        function(x) {
+            paste0(x[-1], collapse = ".")
+        },
+        character(1)
+    ))
     first <- unlist(splitsamps[c(TRUE, FALSE)])
     second <- unlist(splitsamps[c(FALSE, TRUE)])
     pos <- match(ids, first)
-    resframe <- cbind.data.frame(first[pos], second[pos], row.names = NULL,
-        stringsAsFactors = FALSE)
+    resframe <- cbind.data.frame(
+        first[pos],
+        second[pos],
+        row.names = NULL,
+        stringsAsFactors = FALSE
+    )
     names(resframe) <- cnames
     resframe
 }
@@ -99,7 +118,8 @@
     idin <- id_vector %in% resnames
     if (!all(idin)) {
         mids <- paste(
-            selectSome(id_vector[!idin], 4), collapse = ", "
+            selectSome(id_vector[!idin], 4),
+            collapse = ", "
         )
         warning("Identifiers not found: ", mids, call. = FALSE)
     }
@@ -152,8 +172,9 @@
 #' @author Sean Davis, M. Ramos
 #'
 #' @export UUIDtoBarcode
-UUIDtoBarcode <-  function(
-    id_vector, from_type = c("case_id", "file_id", "aliquot_ids")
+UUIDtoBarcode <- function(
+    id_vector,
+    from_type = c("case_id", "file_id", "aliquot_ids")
 ) {
     from_type <- match.arg(from_type)
     targetElement <- APIendpoint <- "submitter_id"
@@ -164,47 +185,58 @@ UUIDtoBarcode <-  function(
         APIendpoint <- "samples.portions.analytes.aliquots.submitter_id"
         targetElement <- "samples"
     }
-    selector <- switch(from_type,
+    selector <- switch(
+        from_type,
         case_id = identity,
-        aliquot_ids =
-            function(x)
-                select(
-                    x = x,
-                    fields = c(
-                        APIendpoint,
-                        "samples.portions.analytes.aliquots.aliquot_id"
-                    )
-                ),
+        aliquot_ids = function(x) {
+            select(
+                x = x,
+                fields = c(
+                    APIendpoint,
+                    "samples.portions.analytes.aliquots.aliquot_id"
+                )
+            )
+        },
         function(x) select(x = x, fields = APIendpoint)
     )
 
-    funcRes <- switch(from_type,
+    funcRes <- switch(
+        from_type,
         file_id = files(),
         case_id = cases(),
-        aliquot_ids = cases())
+        aliquot_ids = cases()
+    )
     info <- results_all(
         selector(
-            GenomicDataCommons::filter(funcRes, as.formula(
-                paste("~ ", from_type, "%in% id_vector")
-            ))
+            GenomicDataCommons::filter(
+                funcRes,
+                as.formula(
+                    paste("~ ", from_type, "%in% id_vector")
+                )
+            )
         )
     )
     if (!length(info))
         stop(
-            paste(strwrap(
-                "No barcodes were found. Note that legacy files were removed
-                as of GDC Data Portal version 1.30.4; see
-                https://docs.gdc.cancer.gov/. Only case, file, and aliquot
-                UUIDs are supported.",
-                exdent = 2
-            ), collapse = "\n"),
+            paste(
+                strwrap(
+                    "No barcodes were found. Note that legacy files were removed
+                    as of GDC Data Portal version 1.30.4; see
+                    https://docs.gdc.cancer.gov/. Only case, file, and aliquot
+                    UUIDs are supported.",
+                    exdent = 2
+                ),
+                collapse = "\n"
+            ),
             call. = FALSE
         )
 
     rframe <-
         if (identical(from_type, "case_id"))
             .orderedDF(
-                info[[from_type]], info[[targetElement]], orderBy = id_vector
+                info[[from_type]],
+                info[[targetElement]],
+                orderBy = id_vector
             )
         else if (identical(from_type, "file_id"))
             .nestedlisttodf(info[[targetElement]], id_vector)
@@ -231,7 +263,8 @@ UUIDtoBarcode <-  function(
 #'
 #' @export UUIDtoUUID
 UUIDtoUUID <- function(
-    id_vector, to_type = c("case_id", "file_id")
+    id_vector,
+    to_type = c("case_id", "file_id")
 ) {
     id_vector <- tolower(id_vector)
     type_ops <- c("case_id", "file_id")
@@ -240,20 +273,27 @@ UUIDtoUUID <- function(
     if (!length(from_type))
         stop("Provide a valid UUID type")
 
-    endpoint <- switch(to_type,
+    endpoint <- switch(
+        to_type,
         case_id = "cases.case_id",
-        file_id = "files.file_id")
-    apifun <- switch(to_type,
-        file_id = cases(),
-        case_id = files())
+        file_id = "files.file_id"
+    )
+    apifun <- switch(to_type, file_id = cases(), case_id = files())
     info <- results_all(
-        select(filter(apifun, as.formula(
-            paste("~ ", from_type, "%in% id_vector")
-            )),
-        endpoint)
+        select(
+            filter(
+                apifun,
+                as.formula(
+                    paste("~ ", from_type, "%in% id_vector")
+                )
+            ),
+            endpoint
+        )
     )
     targetElement <- gsub("(\\w+).*", "\\1", endpoint)
-    id_list <- lapply(info[[targetElement]], function(x) {x[[1]]})
+    id_list <- lapply(info[[targetElement]], function(x) {
+        x[[1]]
+    })
 
     rframe <- .buildIDframe(info, id_list)
     names(rframe) <- c(from_type, endpoint)
@@ -289,41 +329,69 @@ barcodeToUUID <-
     endtargets <- .barcode_cases(bend)
     expander <- gsub("cases\\.", "", .barcode_files(bend, FALSE))
 
-    pand <- switch(expander, cases = identity,
-        function(x) expand(x = x, expand = expander))
+    pand <- switch(expander, cases = identity, function(x) {
+        expand(x = x, expand = expander)
+    })
     info <- results_all(
-        pand(x = filter(cases(), as.formula(
-            paste("~ ", endtargets, "%in% barcodes")
-        )))
+        pand(
+            x = filter(
+                cases(),
+                as.formula(
+                    paste("~ ", endtargets, "%in% barcodes")
+                )
+            )
+        )
     )
     if (identical(expander, "cases")) {
-        rframe <- as.data.frame(info[c(endtargets, names(endtargets))],
-            stringsAsFactors = FALSE)
+        rframe <- as.data.frame(
+            info[c(endtargets, names(endtargets))],
+            stringsAsFactors = FALSE
+        )
     } else {
         idnames <- lapply(ids(info), function(ident) {
             info[["samples"]][[ident]]
         })
         if (!identical(expander, "samples")) {
-            exFUN <- switch(expander,
-                samples.portions =
-                    function(x, i) x[["portions"]],
-                samples.portions.analytes =
-                    function(x, i) unlist(lapply(
-                        x[["portions"]], `[[`, "analytes"), recursive = FALSE),
-                samples.portions.analytes.aliquots =
-                    function(x, i) unlist(lapply(
-                        unlist(
-                            lapply(x[["portions"]], `[[`, "analytes"),
-                            recursive = FALSE), `[[`, "aliquots"),
-                        recursive = FALSE)
-                )
-            idnames <- unlist(lapply(seq_along(idnames), function(i)
-                exFUN(x = idnames[[i]], i = i)
-            ), recursive = FALSE)
+            exFUN <- switch(
+                expander,
+                samples.portions = function(x, i) x[["portions"]],
+                samples.portions.analytes = function(x, i) {
+                    unlist(
+                        lapply(
+                            x[["portions"]],
+                            `[[`,
+                            "analytes"
+                        ),
+                        recursive = FALSE
+                    )
+                },
+                samples.portions.analytes.aliquots = function(x, i) {
+                    unlist(
+                        lapply(
+                            unlist(
+                                lapply(x[["portions"]], `[[`, "analytes"),
+                                recursive = FALSE
+                            ),
+                            `[[`,
+                            "aliquots"
+                        ),
+                        recursive = FALSE
+                    )
+                }
+            )
+            idnames <- unlist(
+                lapply(seq_along(idnames), function(i) {
+                    exFUN(x = idnames[[i]], i = i)
+                }),
+                recursive = FALSE
+            )
             idnames <- Filter(function(g) length(g) >= 2L, idnames)
         }
-        rescols <- lapply(idnames, `[`,
-            c("submitter_id", gsub("s$", "", names(endtargets))))
+        rescols <- lapply(
+            idnames,
+            `[`,
+            c("submitter_id", gsub("s$", "", names(endtargets)))
+        )
         rframe <- do.call(rbind, c(rescols, stringsAsFactors = FALSE))
         names(rframe) <- c(endtargets, names(endtargets))
     }

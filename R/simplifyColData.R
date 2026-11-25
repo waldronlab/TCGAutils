@@ -34,9 +34,14 @@ mergeColData <- function(MultiAssayExperiment, colData) {
         stop("'colData' data must have rownames")
 
     maeClinical <- colData(MultiAssayExperiment)
-    mergedClin <- merge(maeClinical, colData,
+    mergedClin <- merge(
+        maeClinical,
+        colData,
         by = c("row.names", intersect(names(maeClinical), names(colData))),
-        all = TRUE, sort = FALSE, stringsAsFactors = FALSE)
+        all = TRUE,
+        sort = FALSE,
+        stringsAsFactors = FALSE
+    )
 
     rownames(mergedClin) <- mergedClin[["Row.names"]]
     mergedClin <- mergedClin[, names(mergedClin) != "Row.names", drop = FALSE]
@@ -72,8 +77,11 @@ mergeColData <- function(MultiAssayExperiment, colData) {
 #' head(colData(gbm_trimmed))[1:5]
 #'
 #' @export trimColData
-trimColData <- function(multiassayexperiment, maxNAfrac = 0.2,
-    keystring = c("portion", "analyte")) {
+trimColData <- function(
+    multiassayexperiment,
+    maxNAfrac = 0.2,
+    keystring = c("portion", "analyte")
+) {
     if (!is(multiassayexperiment, "MultiAssayExperiment"))
         stop("Provide a 'MultiAssayExperiment' input")
     DF <- colData(multiassayexperiment)
@@ -81,8 +89,13 @@ trimColData <- function(multiassayexperiment, maxNAfrac = 0.2,
 
     NAabove <- vapply(DF, function(x) mean(is.na(x)) >= maxNAfrac, logical(1L))
 
-    keymat <- vapply(keystring, function(string)
-        grepl(string, names(DF)), logical(length(DF)))
+    keymat <- vapply(
+        keystring,
+        function(string) {
+            grepl(string, names(DF))
+        },
+        logical(length(DF))
+    )
     keymatch <- apply(keymat, 1L, any)
 
     todrop <- NAabove | keymatch

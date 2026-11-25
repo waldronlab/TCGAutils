@@ -21,7 +21,11 @@
 }
 
 url2 <-
-"https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type-codes"
+    "https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/sample-type-codes"
 ## update_data_file in data-raw/diseaseCodes.R
-update_data_file(url2, verbose = FALSE, resource = "sampleTypes",
-    FUN = .parseSampleTypes)
+update_data_file(
+    url2,
+    verbose = FALSE,
+    resource = "sampleTypes",
+    FUN = .parseSampleTypes
+)

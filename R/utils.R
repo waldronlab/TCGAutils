@@ -2,9 +2,13 @@
 ## **Takes the first result!**
 .findBarcodeCol <- function(DF) {
     cnames <- names(DF)
-    containsBC <- vapply(head(DF), function(column) {
-        all(startsWith(column, "TCGA"))
-    }, logical(1L))
+    containsBC <- vapply(
+        head(DF),
+        function(column) {
+            all(startsWith(column, "TCGA"))
+        },
+        logical(1L)
+    )
     names(containsBC) <- cnames
     bcIdx <- which(containsBC)
     stopifnot(S4Vectors::isSingleInteger(which(containsBC)))
@@ -18,8 +22,9 @@
     }
     sampleBC <- base::sample(sampleBarcode, 10L, replace = TRUE)
     bcodeTest <- grepl("\\.", sampleBC)
-    if (all(bcodeTest))
+    if (all(bcodeTest)) {
         sampleBarcode <- gsub("\\.", "-", sampleBarcode)
+    }
     toupper(sampleBarcode)
 }
 
@@ -32,10 +37,11 @@
 
 .get_hsa_url <- function(gen) {
     ## handle cases where genome is specified as "GRCh37.p5"
-    if (startsWith(gen, "GRCh37"))
+    if (startsWith(gen, "GRCh37")) {
         gen <- "GRCh37"
-    else if (startsWith(gen, "GRCh38"))
+    } else if (startsWith(gen, "GRCh38")) {
         gen <- "GRCh38"
+    }
 
     release <- switch(
         gen,
@@ -57,10 +63,11 @@
     gnm <- strsplit(genome_line, ":\\s+")[[1L]] |>
         utils::tail(n = 1L) |>
         trimws()
-    if (!length(gnm))
+    if (!length(gnm)) {
         NA_character_
-    else
+    } else {
         gnm
+    }
 }
 
 .get_hsa_gff3 <- function(gen, redownload) {
@@ -86,20 +93,29 @@
     bquery <- BiocFileCache::bfcquery(bfc, url, "rname", exact = TRUE)
     ## only re-download manually b/c bfcneedsupdate always returns TRUE
     if (identical(nrow(bquery), 1L) && redownload)
-        tryCatch({
-            BiocFileCache::bfcdownload(
-                x = bfc, rid = bquery[["rid"]], ask = FALSE
-            )
-        }, error = function(e) {
-            msg <- conditionMessage(e)
-            if (grepl("download failed", msg, TRUE))
-                warning(msg, call. = FALSE)
-            else
-                stop(msg, call. = FALSE)
-            invisible()
-        })
+        tryCatch(
+            {
+                BiocFileCache::bfcdownload(
+                    x = bfc,
+                    rid = bquery[["rid"]],
+                    ask = FALSE
+                )
+            },
+            error = function(e) {
+                msg <- conditionMessage(e)
+                if (grepl("download failed", msg, TRUE))
+                    warning(msg, call. = FALSE)
+                else
+                    stop(msg, call. = FALSE)
+                invisible()
+            }
+        )
 
     BiocFileCache::bfcrpath(
-        bfc, rnames = url, exact = TRUE, download = TRUE, rtype = "web"
+        bfc,
+        rnames = url,
+        exact = TRUE,
+        download = TRUE,
+        rtype = "web"
     )
 }
